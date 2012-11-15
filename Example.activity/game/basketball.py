@@ -47,7 +47,7 @@ font = pygame.font.Font(None, FONT_SIZE)
 
 class Ball(spyral.Sprite):
     '''
-    # @TODO: 
+    The basketballs that go up and down
     '''
     def __init__(self, scene, size_factor):
         '''
