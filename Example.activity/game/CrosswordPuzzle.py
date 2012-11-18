@@ -617,6 +617,7 @@ class Question(spyral.Sprite):
         self.pos = [RC_WIDTH/2,30]
         self.dist = dist
         self.done = False
+        self.answers = []
         self.generateAnswers()
         self.render()
     def generateAnswers(self):
@@ -639,8 +640,11 @@ class Question(spyral.Sprite):
             i = random.randint(0,len(answers)-1)
             inorder.append(answers[i])
             answers.remove(answers[i])
+        self.answers = []
         for i in range(len(inorder)):
-            OffScreenAnswer(self,inorder[i],UPPER_BOUND+(2*i+1)*LANE_WIDTH*.5,inorder[i]==right,self.dist)
+            answer = RacingAnswer(self,inorder[i],UPPER_BOUND+(2*i+1)*LANE_WIDTH*.5,
+                                  inorder[i]==right,self.dist+random.randint(500,1500))
+            self.answers.append(answer)
         
     def render(self):
         self.image = spyral.Image(size = [300,30])
@@ -654,7 +658,7 @@ class Question(spyral.Sprite):
     def update(self,dt):
         pass
 
-class OffScreenAnswer(spyral.Sprite):
+class RacingAnswer(spyral.Sprite):
     def __init__(self,question,num,y,correct,dist):
         spyral.Sprite.__init__(self,question.group)
         self.question = question
@@ -663,15 +667,31 @@ class OffScreenAnswer(spyral.Sprite):
         self.pos = [0,y]
         self.correct = correct
         self.dist = dist
+        self.stage = 'far'
         self.render()
     def render(self):
-        self.image = spyral.Image(size = [24,24])
-        self.image.fill([255,255,255,255])
+        self.render2([255,0,0,128],[0,0,0,128])
+    def render2(self,col1,col2):
+        self.image = spyral.Image(size = [32,24])
+        self.image.fill(col1)
         self.anchor = 'midleft'
-        font = pygame.font.SysFont(None,20)
-        surf = font.render(self.num.__str__(),True,[0,0,0,255])
-        self.image._surf.blit(surf,[12-surf.get_width()*.5,
+        font = pygame.font.SysFont(None,24)
+        surf = font.render(self.num.__str__(),True,col2)
+        self.image._surf.blit(surf,[16-surf.get_width()*.5,
                                     12-surf.get_height()*.5])
+    def update(self,dt):
+        if self.stage=='far':
+            if self.question.main.distance>=self.dist-200:
+                self.stage = 'close'
+                self.render2([255,255,0,128],[0,0,0,128])
+        elif self.stage=='close':
+            if self.question.main.distance>=self.dist:
+                self.stage = 'here'
+                self.render2([0,255,0,255],[0,0,0,255])
+                self.x = self.question.main.distance-self.dist
+        else:
+            self.x = self.question.main.distance-self.dist
+
 
 
 class RacingMain(spyral.Scene):
