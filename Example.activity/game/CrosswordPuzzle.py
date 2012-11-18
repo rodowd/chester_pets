@@ -600,7 +600,7 @@ class TurboMeter(spyral.Sprite):
             self.turbo = max(0,self.turbo-dt)
         if self.turbo==0:
             self.active = False
-        self.changed = oldact==self.active
+        self.changed = oldact==self.active or self.changed
         if self.changed:
             self.render()
     def refill(self,num):
@@ -646,8 +646,7 @@ class Question(spyral.Sprite):
         for i in range(len(inorder)):
             answer = RacingAnswer(self,inorder[i],UPPER_BOUND+(2*i+1)*LANE_WIDTH*.5,
                                   inorder[i]==right,self.dist+random.randint(500,1500))
-            self.answers.append(answer)
-        
+            self.answers.append(answer)        
     def render(self):
         self.image = spyral.Image(size = [300,30])
         self.anchor = 'center'
@@ -674,7 +673,6 @@ class Question(spyral.Sprite):
                            True,color)
         self.image._surf.blit(surf,[150-surf.get_width()*.5,
                                     15-surf.get_height()*.5])
-
     def update(self,dt):
         pass
 
@@ -727,13 +725,14 @@ class RacingMain(spyral.Scene):
         self.camera = self.parent_camera.make_child(virtual_size = (RC_WIDTH, RC_HEIGHT))
         self.group = spyral.Group(self.camera)
         self.speed = 200
-        self.distance = 150
+        self.distance = RC_WIDTH
+        self.questionNum = 1
         self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,100,6)
         self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,100,6.9)
         self.car = Car(self.group,200,300,300)
         #(self,group,speed,y,wait)
-        self.question = Question(self,self.distance)
         self.turbometer = TurboMeter(self.group,10)
+        self.question = Question(self,self.distance)
         self.render()
     def render(self):
         self.group.draw()
@@ -742,11 +741,19 @@ class RacingMain(spyral.Scene):
     def update(self,dt):
         if self.turbometer.changed:
             if self.turbometer.active:
-                self.speed = 600
+                self.speed = 400
             else:
                 self.speed = 200
             self.turbometer.changed = False
             self.car.render2(self.turbometer.active)
+        if self.distance>=RC_WIDTH+2000*self.questionNum:
+            print self.distance
+            for ans in self.question.answers:
+                self.group.remove(ans)
+            print "Removing",self.question.num1,self.question.oper,self.question.num2
+            self.group.remove(self.question)
+            self.question = Question(self,self.distance)
+            self.questionNum+=1
         self.distance+=self.speed*dt
         self.linelist1.update(dt)
         self.linelist2.update(dt)
@@ -784,3 +791,4 @@ class RacingMain(spyral.Scene):
         bg.fill([0,0,0,255])
         bg.draw_rect([100,100,100,255],[0,UPPER_BOUND],[RC_WIDTH,RC_HEIGHT])
         self.camera.set_background(bg)
+
