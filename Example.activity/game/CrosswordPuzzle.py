@@ -657,6 +657,24 @@ class Question(spyral.Sprite):
                            True,[255,255,255,255])
         self.image._surf.blit(surf,[150-surf.get_width()*.5,
                                     15-surf.get_height()*.5])
+    def renderGuess(self,correct):
+        right = 0
+        if self.oper == "+":
+            right = self.num1+self.num2
+        if self.oper == "-":
+            right = self.num1-self.num2
+        self.image = spyral.Image(size = [300,30])
+        self.anchor = 'center'
+        font = pygame.font.SysFont(None,40)
+        color = [255,0,0,255]
+        if correct:
+            color = [0,255,0,255]
+        surf = font.render(self.num1.__str__()+" "+self.oper+" "+
+                           self.num2.__str__()+" = "+right.__str__(),
+                           True,color)
+        self.image._surf.blit(surf,[150-surf.get_width()*.5,
+                                    15-surf.get_height()*.5])
+
     def update(self,dt):
         pass
 
@@ -698,9 +716,9 @@ class RacingAnswer(spyral.Sprite):
                     self.question.main.turbometer.refill(2)
                 else:
                     print "NO"
+                self.question.renderGuess(self.correct)
                 for ans in self.question.answers:
                     self.question.main.group.remove(ans)
-
 
 
 class RacingMain(spyral.Scene):
