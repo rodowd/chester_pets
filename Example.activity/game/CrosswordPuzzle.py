@@ -610,8 +610,8 @@ class Question(spyral.Sprite):
         self.main = main
         self.group.add(self)
         self.num1 = random.randint(1,49)
-        i = random.randint(0,2)
-        opers = ["+","-","x"]
+        i = random.randint(0,1)
+        opers = ["+","-"]
         self.oper = opers[i]
         self.num2 = random.randint(1,49)
         self.pos = [RC_WIDTH/2,30]
