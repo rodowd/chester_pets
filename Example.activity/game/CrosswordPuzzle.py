@@ -578,7 +578,7 @@ class TurboMeter(spyral.Sprite):
         spyral.Sprite.__init__(self,group)
         self.group.add(self)
         self.maxTurbo = maxTurbo
-        self.turbo = maxTurbo
+        self.turbo = maxTurbo/2
         self.active = False
         self.changed = False
         self.render()
@@ -603,6 +603,8 @@ class TurboMeter(spyral.Sprite):
         self.changed = oldact==self.active
         if self.changed:
             self.render()
+    def refill(self,num):
+        self.turbo = min(self.turbo+num,self.maxTurbo)
 
 class Question(spyral.Sprite):
     def __init__(self,main,dist):
@@ -691,6 +693,13 @@ class RacingAnswer(spyral.Sprite):
                 self.x = self.question.main.distance-self.dist
         else:
             self.x = self.question.main.distance-self.dist
+            if self.question.main.car.get_rect().collide_rect(self.get_rect()):
+                if self.correct:
+                    self.question.main.turbometer.refill(2)
+                else:
+                    print "NO"
+                for ans in self.question.answers:
+                    self.question.main.group.remove(ans)
 
 
 
@@ -706,7 +715,7 @@ class RacingMain(spyral.Scene):
         self.car = Car(self.group,200,300,300)
         #(self,group,speed,y,wait)
         self.question = Question(self,self.distance)
-        self.turbometer = TurboMeter(self.group,20)
+        self.turbometer = TurboMeter(self.group,10)
         self.render()
     def render(self):
         self.group.draw()
