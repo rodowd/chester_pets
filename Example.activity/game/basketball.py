@@ -41,6 +41,7 @@ COLORS = {"background": (240, 219, 81),
           "axes": (232, 189, 46),
           "highlighted_fill": (255, 255, 153),
           "not_highlighted_fill": (153, 153, 153),
+          "shot_location": (253, 53, 53),
           "shoot_fill": (192, 159, 46)}
 font = pygame.font.Font(None, FONT_SIZE)
 
@@ -211,6 +212,30 @@ class Point(spyral.Sprite):
         self.x = ((i / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
         self.y = HEIGHT - ((j / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
 
+
+class ShotPoint(Point):
+    def __init__(self, scene):
+        super(Point, self).__init__()
+        self.scene = scene
+
+        self.point_radius = 6
+
+        self.image = spyral.Image(size=(self.point_radius*2, self.point_radius*2))
+        self.image.draw_circle(COLORS["shot_location"], (self.point_radius, self.point_radius), self.point_radius)
+
+        self.anchor = "center"
+
+    def update(self, dt):
+        self.image = spyral.Image(size=(WIDTH, HEIGHT))
+        self.image = spyral.Image(size=(self.point_radius*2, self.point_radius*2))
+        self.image.draw_circle(COLORS["shot_location"], (self.point_radius, self.point_radius), self.point_radius)
+        if self.scene.x_input != "" and self.scene.y_input != "" and not self.scene.user_has_shot:
+            self.x = ((int(self.scene.x_input) / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
+            self.y = HEIGHT - ((int(self.scene.y_input) / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
+        else:
+            self.x = -100 # @TODO: ad hoc
+            self.y = -100 # @TODO: ad hoc
+        
 
 class Scoreboard(spyral.Sprite):
     def __init__(self, scene):
@@ -388,6 +413,9 @@ class Basketball(spyral.Scene):
 
         self.scoreboard = Scoreboard(self)
         self.group.add(self.scoreboard)
+        
+        self.shot_point = ShotPoint(self)
+        self.group.add(ShotPoint(self))
 
 
     def reset(self):
@@ -424,6 +452,12 @@ class Basketball(spyral.Scene):
         self.group.draw()
 
 
+    def hide_hoops(self):
+        for hoop in self.hoops:
+            if hoop.is_target:
+                continue
+            self.group.remove(hoop)
+
     def update(self, dt):
         """
         The update loop receives dt as a parameter, which is the amount
@@ -438,6 +472,8 @@ class Basketball(spyral.Scene):
                 pos = event['pos']
                 self.scoreboard.get_input(pos)
             if event['type'] == 'KEYDOWN':
+                if event['key'] == 27:
+                    spyral.director.pop()
                 self.scoreboard.type_key(event['unicode'])
 
         if self.waiting_for_input:
@@ -462,6 +498,7 @@ class Basketball(spyral.Scene):
                     print "You missed the basket!" # @TODO: print to scoreboard
 
         elif self.run_num > 3 and self.user_has_shot:
+            self.hide_hoops()
             self.up_ball.shoot_up(dt)
             self.user_has_shot = False
 
