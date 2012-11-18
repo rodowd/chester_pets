@@ -603,7 +603,56 @@ class TurboMeter(spyral.Sprite):
         self.changed = oldact==self.active
         if self.changed:
             self.render()
-        
+
+class Question(spyral.Sprite):
+    def __init__(self,main,dist):
+        spyral.Sprite.__init__(self,main.group)
+        self.main = main
+        self.group.add(self)
+        self.num1 = random.randint(1,49)
+        i = random.randint(0,2)
+        opers = ["+","-","x"]
+        self.oper = opers[i]
+        self.num2 = random.randint(1,49)
+        self.pos = [RC_WIDTH/2,30]
+        self.dist = dist
+        self.done = False
+        self.render()
+    def generateAnswers(self):
+        right = 0
+        wrongs = []
+        if self.oper == "+":
+            right = self.num1+self.num2
+            wrongs = [right+10,right+1,right-1,right-10]
+        if self.oper == "-":
+            right = self.num1-self.num2
+            wrongs = [right+2*self.num2,-right,right-10,right+10]
+    def render(self):
+        self.image = spyral.Image(size = [300,30])
+        self.anchor = 'center'
+        font = pygame.font.SysFont(None,40)
+        surf = font.render(self.num1.__str__()+" "+self.oper+" "+
+                           self.num2.__str__()+" = ?",
+                           True,[255,255,255,255])
+        self.image._surf.blit(surf,[150-surf.get_width()*.5,
+                                    15-surf.get_height()*.5])
+    def update(self,dt):
+        pass
+
+class OffScreenAnswer(spyral.Sprite):
+    def __init__(self,question,num,y,correct):
+        spyral.Sprite.__init__(self,question.group)
+        self.question = question
+        self.group.add(self)
+        self.num = num
+        self.pos = [0,y]
+        self.anchor = 'midleft'
+        self.correct = correct
+        self.render()
+    def render(self):
+        pass
+
+
 class RacingMain(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
@@ -615,6 +664,7 @@ class RacingMain(spyral.Scene):
         self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,100,6.9)
         self.car = Car(self.group,200,300,300)
         #(self,group,speed,y,wait)
+        self.question = Question(self,self.distance)
         self.turbometer = TurboMeter(self.group,20)
         self.render()
     def render(self):
