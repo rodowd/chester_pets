@@ -617,16 +617,31 @@ class Question(spyral.Sprite):
         self.pos = [RC_WIDTH/2,30]
         self.dist = dist
         self.done = False
+        self.generateAnswers()
         self.render()
     def generateAnswers(self):
         right = 0
         wrongs = []
         if self.oper == "+":
             right = self.num1+self.num2
-            wrongs = [right+10,right+1,right-1,right-10]
+            wrongs = [right+10,right+1,right-1,right-10,right-2*self.num2]
         if self.oper == "-":
             right = self.num1-self.num2
             wrongs = [right+2*self.num2,-right,right-10,right+10]
+        wrongs = [ans for ans in wrongs if not(ans==right)]
+        i = random.randint(0,len(wrongs)-1)
+        i2 = random.randint(0,len(wrongs)-2)
+        if i2>=i:
+            i2+=1
+        answers = [right,wrongs[i],wrongs[i2]]
+        inorder = []
+        while len(answers)>0:
+            i = random.randint(0,len(answers)-1)
+            inorder.append(answers[i])
+            answers.remove(answers[i])
+        for i in range(len(inorder)):
+            OffScreenAnswer(self,inorder[i],UPPER_BOUND+(2*i+1)*LANE_WIDTH*.5,inorder[i]==right,self.dist)
+        
     def render(self):
         self.image = spyral.Image(size = [300,30])
         self.anchor = 'center'
@@ -640,17 +655,23 @@ class Question(spyral.Sprite):
         pass
 
 class OffScreenAnswer(spyral.Sprite):
-    def __init__(self,question,num,y,correct):
+    def __init__(self,question,num,y,correct,dist):
         spyral.Sprite.__init__(self,question.group)
         self.question = question
         self.group.add(self)
         self.num = num
         self.pos = [0,y]
-        self.anchor = 'midleft'
         self.correct = correct
+        self.dist = dist
         self.render()
     def render(self):
-        pass
+        self.image = spyral.Image(size = [24,24])
+        self.image.fill([255,255,255,255])
+        self.anchor = 'midleft'
+        font = pygame.font.SysFont(None,20)
+        surf = font.render(self.num.__str__(),True,[0,0,0,255])
+        self.image._surf.blit(surf,[12-surf.get_width()*.5,
+                                    12-surf.get_height()*.5])
 
 
 class RacingMain(spyral.Scene):
