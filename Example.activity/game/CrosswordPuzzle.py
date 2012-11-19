@@ -396,6 +396,7 @@ class CrosswordMain(spyral.Scene):
         self.camera = self.parent_camera.make_child(virtual_size = (CW_WIDTH, CW_HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
         words = readWords("wordlist.txt")
+        self.words = [word for word in words]
         cross = Crossword(15,words)
         self.font = pygame.font.SysFont(None,LETTERFONT)
         self.grid = PuzzleGrid(cross,self.group)
@@ -487,11 +488,11 @@ class Line(spyral.Sprite):
         
 
 class Car(spyral.Sprite):
-    def __init__(self,group,handle,accel,turn):
+    def __init__(self,group,speed,handle,turn):
         spyral.Sprite.__init__(self,group)
         self.handle = handle
+        self.speed = speed
         self.turn = turn
-        self.accel = accel
         self.vx = 0
         self.vy = 0
         self.left = False
@@ -511,25 +512,25 @@ class Car(spyral.Sprite):
         dx = 0
         dy = 0
         if self.right:
-            dx = self.accel*dt
+            dx = self.handle*dt
         if self.left:
-            dx -= self.accel*dt
+            dx -= self.handle*dt
         if self.down:
             dy = self.turn*dt
         if self.up:
             dy -= self.turn*dt
         if dx==0:
             if self.vx>0:
-                dx = -min(self.vx,self.accel*dt)
+                dx = -min(self.vx,self.handle*dt)
             elif self.vx<0:
-                dx = min(-self.vx,self.accel*dt)
+                dx = min(-self.vx,self.handle*dt)
         if dy==0:
             if self.vy>0:
-                dy = -min(self.vy,self.accel*dt)
+                dy = -min(self.vy,self.turn*dt)
             elif self.vy<0:
-                dy = min(-self.vy,self.accel*dt)
-        self.vx = max(-self.handle,min(self.vx+dx,self.handle))
-        self.vy = max(-self.handle,min(self.vy+dy,self.handle))
+                dy = min(-self.vy,self.turn*dt)
+        self.vx = max(-self.speed,min(self.vx+dx,self.speed))
+        self.vy = max(-self.speed,min(self.vy+dy,self.speed))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
         if self.image._surf.get_height()+self.y>=RC_HEIGHT:
@@ -685,48 +686,53 @@ class RacingAnswer(spyral.Sprite):
                 if self.correct:
                     self.question.main.turbometer.refill(2)
                 else:
-                    print "NO"
+                    self.question.main.setSlow(.2)
                 self.question.renderGuess(self.correct)
                 for ans in self.question.answers:
                     self.question.main.group.remove(ans)
 
-
 class RacingMain(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (RC_WIDTH, RC_HEIGHT))
+        self.camera = self.parent_camera.make_child(virtual_size = (RC_WIDTH, RC_HEIGHT),layers = ['__default__','on_road','over_road'])
         self.group = spyral.Group(self.camera)
-        self.speed = 200
+        self.normalspeed = 200
+        self.accel = 50
+        self.speed = self.normalspeed
+        self.slow = 1
         self.distance = RC_WIDTH
+        self.timer = 0
         self.questionNum = 1
         self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,100,6)
         self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,100,6.9)
-        self.car = Car(self.group,200,300,300)
-        #(self,group,speed,y,wait)
+        self.car = Car(self.group,self.normalspeed,300,300)
         self.turbometer = TurboMeter(self.group,10)
         self.question = Question(self,self.distance)
         self.render()
+    def setSlow(self,slow):
+        self.slow = min(self.slow,slow)
     def render(self):
         self.group.draw()
     def toggleTurbo(self):
         self.turbometer.toggle()
     def update(self,dt):
-        if self.turbometer.changed:
-            if self.turbometer.active:
-                self.speed = 400
-            else:
-                self.speed = 200
+        self.timer+=dt
+        if self.turbometer.changed:            
             self.turbometer.changed = False
             self.car.render2(self.turbometer.active)
+        self.speed = self.normalspeed
+        if self.turbometer.active:
+            self.speed*=2
+        if self.slow<1:
+            self.slow = min(1,self.slow+(dt*self.accel)/self.normalspeed)
+        self.speed*=self.slow
+        self.distance+=self.speed*dt
         if self.distance>=RC_WIDTH+2000*self.questionNum:
-            print self.distance
             for ans in self.question.answers:
                 self.group.remove(ans)
-            print "Removing",self.question.num1,self.question.oper,self.question.num2
             self.group.remove(self.question)
             self.question = Question(self,self.distance)
             self.questionNum+=1
-        self.distance+=self.speed*dt
         self.linelist1.update(dt)
         self.linelist2.update(dt)
         self.group.update(dt)
