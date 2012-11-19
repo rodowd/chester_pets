@@ -19,7 +19,7 @@ patience:A willingness to wait for someone or something without complaining.
 pedestrian:A person who is walking.;Someone traveling on foot.
 retire:To stop working because one has reached a certain age.;To go to bed.
 retirement:The state of no longer working.
-aroma:A smell or odor, especial a pleasant one.
+aroma:A smell or odor, especially a pleasant one.
 beverage:A liquid used as a drink.
 bland:Lacking a strong flavor.;Not irritating, exciting, or disturbing.
 brittle:Easily broken, not flexible.
@@ -31,7 +31,7 @@ crave:To have a strong desire for.
 craving:A strong desire.
 cultivate:To prepare land for the growing of crops.;To grow or to help grow.;To encourage development by attention or study.
 equivalent:Equal to.;That which is equal to.
-export:To send goods to another country for sale.;Something exported.
+export:To send goods to another country for sale.
 extract:To remove or take out.;To obtain with an effort.;Something removed or taken out.
 introduce:To cause to know, to make known by name.;To bring to the attention of, especially for the first time.;To bring into use.
 introduction:Something spoken or written before the main part.;The act of being made known by name.
