@@ -1,8 +1,8 @@
-
 import pygame
 import random
 import spyral
 from spyral.sprite import Sprite
+from spyral.animation import Animation, DelayAnimation
 from spyral.scene import Scene
 
 UNIT_CONV = [3,16,2]
@@ -71,19 +71,20 @@ def gcd(a,b):
     return num
 
 def random_tool(tool):
-    denom = random.randint(2,6)
-    numer = denom
-    while gcd(numer,denom)>1:
-        numer = random.randint(1,denom-1)
+    denom = random.randint(2,5)
+    if denom>=5:
+        denom+=1
+    #numer = denom
+    numer = random.randint(1,denom-1)
     frac = Fraction(numer,denom)
     return Measurement(frac,tool)
 
 def random_recipe(measures,ingredients):
     meas = []
     for ingred in ingredients:
-        toolnum = random.randint(0,2)
-        numtools1 = random.randint(1,3)
-        numtools2 = random.randint(1,2)
+        toolnum = random.randint(0,1)*2
+        numtools1 = random.randint(1,4)
+        numtools2 = random.randint(1,3)
         frac = measures[toolnum].frac.mult(numtools1)
         frac = frac.add(measures[toolnum+1].frac.mult(numtools2).mult(UNIT_CONV[toolnum]))
         meas.append(Measurement(frac,measures[toolnum].tool))
@@ -95,7 +96,7 @@ CK_HEIGHT = 480
 class CookingMain(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (CK_WIDTH,CK_HEIGHT))
+        self.camera = self.parent_camera.make_child(virtual_size = (CK_WIDTH,CK_HEIGHT),layers = ['__default__','tool'])
         self.group = spyral.Group(self.camera)
         self.tools = [random_tool("tsp."),
                       random_tool("tbsp."),
@@ -107,7 +108,7 @@ class CookingMain(spyral.Scene):
                             Ingredient(self.group,"water","WATER.png",350,10),
                             Ingredient(self.group,"eggs","EGG.png",350,170),
                             Ingredient(self.group,"butter","BUTTER.png",350,330)]
-        recipeSprite = self.addImage("cooking_images/RECIPE_SCROLL.png",5,5)
+        recipeSprite = self.addImage("cooking_images/RECIPE_SCROLL.png",112,125)
         self.emptyBG = spyral.Sprite(self.group)
         self.emptyBG.image = spyral.Image(size=[CK_WIDTH,CK_HEIGHT])
         self.group.add(self.emptyBG)
@@ -123,11 +124,12 @@ class CookingMain(spyral.Scene):
             recipe = recipelist[i]
             surf = self.font.render(recipe,True,[0,0,0,255]).convert_alpha()
             recipeSprite.image._surf.blit(surf,[max(max(15,20-5*i),5*i-5),50+25*i])
-        self.addImage("cooking_images/TEA_SPOON.png",30,270)
-        self.addImage("cooking_images/TBL_SPOON.png",130,270)
-        self.addImage("cooking_images/MEASURING_CUP2.png",30,360)
-        self.addImage("cooking_images/MEASURING_CUP.png",130,360)
-        self.addImage("cooking_images/BOWL.png",470,150)
+        self.tsp = self.addImage("cooking_images/TEA_SPOON.png",65,285,'tool')
+        self.tbsp = self.addImage("cooking_images/TBL_SPOON.png",165,285,'tool')
+        self.cup = self.addImage("cooking_images/MEASURING_CUP2.png",65,395,'tool')
+        self.pint = self.addImage("cooking_images/MEASURING_CUP.png",165,395,'tool')
+        self.toolSprites = [self.tsp,self.tbsp,self.cup,self.pint]
+        self.addImage("cooking_images/BOWL.png",545,225)
         for i in range(4):
             tool = self.tools[i]
             x = 65+100*(i%2)
@@ -143,22 +145,23 @@ class CookingMain(spyral.Scene):
             y = 150*(i%3)+130
             self.addText(string,x,y)
         self.toolSelect = 0
-        self.pointer1 = self.addImage("cooking_images/SPOINTER.png",55,320)
+        self.pointer1 = self.addImage("cooking_images/SPOINTER.png",65,330)
         self.ingredSelect = 0
-        self.pointer2 = self.addImage("cooking_images/SPOINTER.png",270,140)
-        self.group.remove(self.pointer2)
-        self.pointer3 = self.addImage("cooking_images/SPOINTER.png",535,310)
+        self.pointer3 = self.addImage("cooking_images/SPOINTER.png",545,320)
         self.group.remove(self.pointer3)
+        self.curTool = None
         self.state = 0
     def addText(self,string,x,y):
         surf = self.font.render(string,True,[0,0,0,255]).convert_alpha()
         y = y-surf.get_height()/2
         x = x-surf.get_width()/2
         self.emptyBG.image._surf.blit(surf,[x,y])
-    def addImage(self,filename,x,y):
+    def addImage(self,filename,x,y,layer = "__default__"):
         sprite = spyral.Sprite(self.group)
+        sprite._set_layer(layer)
         sprite.image = spyral.Image(filename=filename)
         sprite.pos = [x,y]
+        sprite.anchor = 'center'
         self.group.add(sprite)
         return sprite
     def render(self):
@@ -181,24 +184,25 @@ class CookingMain(spyral.Scene):
                 self.ingredSelect = (self.ingredSelect+num)%3
             else:
                 self.ingredSelect = (self.ingredSelect+num)%3+3
-            self.setPointer2()
+            self.setIngredPointer()
             return
     def setPointer1(self):
-        self.pointer1.x = 55+100*((self.toolSelect)%2)
+        self.pointer1.x = 65+100*((self.toolSelect)%2)
         if self.toolSelect<2:
-            self.pointer1.y = 320
+            self.pointer1.y = 330
         else:
-            self.pointer1.y = 450
-    def setPointer2(self):
-        self.pointer2.x = 270
+            self.pointer1.y = 460
+    def setIngredPointer(self):
+        self.curTool = self.toolSprites[self.toolSelect]
+        self.curTool.x = 280
         if self.ingredSelect>2:
-            self.pointer2.x = 390
-        self.pointer2.y = 140+150*((self.ingredSelect)%3)
+            self.curTool.x = 400
+        self.curTool.y = 65+150*((self.ingredSelect)%3)
+        
     def accept(self):
         if self.state==0:
             self.state = 1
-            self.setPointer2()
-            self.group.add(self.pointer2)
+            self.setIngredPointer()
             return
         if self.state==1:
             self.state = 2
@@ -208,7 +212,10 @@ class CookingMain(spyral.Scene):
             return
         if self.state==1:
             self.state = 0
-            self.group.remove(self.pointer2)
+            self.curTool.x = 65+100*(self.toolSelect%2)
+            self.curTool.y = 285
+            if self.toolSelect>1:
+                self.curTool.y = 395
             return
         if self.state==2:
             self.state = 1
@@ -219,6 +226,9 @@ class CookingMain(spyral.Scene):
                 spyral.director.pop()  # Happens when someone asks the OS to close the program
                 return
             if event['type'] == 'KEYDOWN':
+                if event['key']==27:
+                    spyral.director.pop()
+                    return
                 if event['key']>=273 and event['key']<=276:
                     self.movePointer(event['key'])
                 if event['key']==13:
