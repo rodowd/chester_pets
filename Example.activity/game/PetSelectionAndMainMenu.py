@@ -1,24 +1,19 @@
-"""try:
-    import _path
-except NameError:
-    pass"""
 import pygame
 import spyral
 from spyral.sprite import Sprite
 from spyral.scene import Scene
-import math
 import sys
-from basketball import *
+# @TODO: remove import *
+from Basketball import *
 from CrosswordPuzzle import *
-from cooking import *
+from Cooking import *
+from Racing import *
 
 SIZE = (640, 480)
 FONT_SIZE = 42
 BG_COLOR = (100, 100, 100)
 FG_COLOR = (255, 255, 255)
 MY_COLOR = (255, 0, 0)
-
-
 
 # PET TYPE
 CAT    = 0
