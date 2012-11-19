@@ -13,7 +13,6 @@ import random
 CW_WIDTH = 640
 CW_HEIGHT = 480
 BLOCK_SIZE = 20
-NUMBERFONT = 0
 LETTERFONT = 20
 BG_COLOR = (100, 100, 100)
 
@@ -73,6 +72,30 @@ class Crossword:
         self.lettergrid = [['' for y in range(size)] for x in range(size)]
         self.hints = []
         self.create(words)
+        self.hint_sort()
+    def hint_sort(self):
+        hints = self.hints
+        self.hints = []
+        for hint in hints:
+            self.insertHint(hint)
+    def insertHint(self,hint):
+        for i in range(len(self.hints)):
+            if self.comes_before(hint,self.hints[i]):
+                self.hints.insert(i,hint)
+                return
+        self.hints.append(hint)
+    def comes_before(self,hint1,hint2):
+        if hint1[2]=="Across":
+            if hint2[2]=="Down":
+                return True
+        if hint1[2]=="Down":
+            if hint2[2]=="Across":
+                return False
+        if hint1[1]<hint2[1]:
+            return True
+        if hint1[1]>hint2[1]:
+            return False
+        return hint1[0]<hint2[0]
     def create(self,words):
         self.insertFirstWord(words)
         while True:
@@ -253,194 +276,138 @@ class Crossword:
             z ="-"+z+"-"
         return "."+z+"'\n"
 
-class Puzzle(spyral.Sprite):
-    def __init__(self,crossword,group):
+class PuzzleGrid(spyral.Sprite):
+    def __init__(self,cross,group):
         spyral.Sprite.__init__(self,group)
-        group.add(self)
-        self.smallfont = pygame.font.SysFont(None,NUMBERFONT)
-        self.bigfont = pygame.font.SysFont(None,LETTERFONT)
-        self.answer = crossword.lettergrid
-        self.gridsize = crossword.size
-        self.grid = [['' for y in range(self.gridsize)] for x in range(self.gridsize)]
-        self.setHints(crossword.hints)
-        self.setHintGrid()
-        self.currentHint = self.downhints[0]
-        if self.acrosshints[0][0]==1:
-            self.currentHint = self.acrosshints[0]
-        self.setGuess()
+        self.group.add(self)
+        self.gridsize = cross.size
+        self.grid = [[not(cross.lettergrid[x][y]=='') for y in range(cross.size)]
+                     for x in range(cross.size)]
         self.render()
-    def setGuess(self):
-        self.guess = ""
-        for x in range(len(self.currentHint[2])):
-            self.guess+="_ "
-        self.guessindex = 0
-        self.guesslength = len(self.currentHint[2])
-    def setHintGrid(self):
-        self.hintgrid = [[[] for y in range(self.gridsize)] for x in range(self.gridsize)]
-        for hint in self.acrosshints:
-            coords = self.getBoxCoords(hint[0])
-            for x in range(len(hint[2])):
-                self.hintgrid[coords[0]+x][coords[1]].append(hint)
-        for hint in self.downhints:
-            coords = self.getBoxCoords(hint[0])
-            for y in range(len(hint[2])):
-                self.hintgrid[coords[0]][coords[1]+y].append(hint)
-    def getBoxCoords(self,num):
-        for boxnum in self.boxnumbers:
-            if num==boxnum[0]:
-                return [boxnum[1],boxnum[2]]
-    def setHint(self,x,y):
-        xgrid = x/BLOCK_SIZE
-        ygrid = y/BLOCK_SIZE
-        if xgrid<0 or ygrid<0 or xgrid>=self.gridsize or ygrid>=self.gridsize:
-#            print "Out of bounds"
+        self.hint = None
+    def setHint(self,hint):
+        if self.hint==hint:
             return
-        if self.answer[xgrid][ygrid]=='':
-#            print "Not valid box spot"
-            return
-        hintlist = self.hintgrid[xgrid][ygrid]
-        if len(hintlist)==2:
-            if hintlist[0]==self.currentHint:
-                self.currentHint = hintlist[1]
-            else:
-                self.currentHint = hintlist[0]
-        else:
-            self.currentHint = hintlist[0]
-        self.setGuess()
-    def sameHint(self,x,y,hint):
-        hintlist = self.hintgrid[x][y]
-        for hint2 in hintlist:
-            if hint==hint2:
-                return True
-        return False
+        self.render()
+        if not(self.hint==None):
+            self.paintHint(self.hint,[192,192,255,255])
+        self.paintHint(hint,[255,255,128,255])
+        self.hint = hint
+    def paintHint(self,hint,color):
+        x = hint[0]
+        y = hint[1]
+        dx = 0
+        dy = 1
+        if hint[2]=="Across":
+            dx = 1
+            dy = 0
+        for i in range(len(hint[3])):
+            self.image.draw_rect(color,[(x+i*dx)*BLOCK_SIZE+1,(y+i*dy)*BLOCK_SIZE+1],
+                                 [BLOCK_SIZE-1,BLOCK_SIZE-1])
     def render(self):
-        self.image = spyral.Image(size=[CW_WIDTH,CW_HEIGHT])
-        self.image.pos = [0,0]
+        self.image = spyral.Image(size=[self.gridsize*BLOCK_SIZE+1,self.gridsize*BLOCK_SIZE+1])
         for y in range(self.gridsize):
             for x in range(self.gridsize):
-                if not(self.answer[x][y]==''):
-                    color = [204,204,255,255]
-                    if self.sameHint(x,y,self.currentHint):
-                        color = [255,255,153,255]
-                    self.image.draw_rect(color,
-                                         [x*BLOCK_SIZE,y*BLOCK_SIZE],
-                                         [BLOCK_SIZE+1,BLOCK_SIZE+1])
-                    self.image.draw_rect([0,0,0,255],
-                                         [x*BLOCK_SIZE,y*BLOCK_SIZE],
+                if self.grid[x][y]:
+                    self.image.draw_rect([0,0,0,255],[x*BLOCK_SIZE,y*BLOCK_SIZE],
                                          [BLOCK_SIZE+1,BLOCK_SIZE+1],1)
-                if not(self.grid[x][y]==''):
-                    surf = self.bigfont.render(self.answer[x][y],True,[0,0,0,255]).convert_alpha()
-                    self.image._surf.blit(surf,[BLOCK_SIZE*(x+.5)-surf.get_width()*.5+1,
-                                                BLOCK_SIZE*(y+.5)-surf.get_height()*.5+2])
-        hintstring = self.currentHint[1]
-        if self.currentHint[1]=='':
-            hintstring = self.currentHint[2]
-        hintprint = self.bigfont.render(hintstring,True,[0,0,0,255]).convert_alpha()
-        self.image._surf.blit(hintprint,[5,BLOCK_SIZE*self.gridsize+15])
-        for boxnum in self.boxnumbers:
-            num = boxnum[0]
-            x = boxnum[1]
-            y = boxnum[2]
-            surf = self.smallfont.render(num.__str__(),True,[0,0,0,255]).convert_alpha()
-            self.image._surf.blit(surf,[BLOCK_SIZE*x+2,
-                                        BLOCK_SIZE*y+2])
-        guessprint = self.bigfont.render(self.guess,True,[0,0,0,255]).convert_alpha()
-        self.image._surf.blit(guessprint,[5,BLOCK_SIZE*self.gridsize+35])
+                    self.image.draw_rect([192,192,255,255],[x*BLOCK_SIZE+1,y*BLOCK_SIZE+1],
+                                         [BLOCK_SIZE-1,BLOCK_SIZE-1])
     def update(self,dt):
-        self.render()
         pass
-    def setHints(self,hints):
-        self.downhints = []
-        self.acrosshints = []
-        self.boxnumbers = []
-        num = 1
+
+class HintAndAnswer(spyral.Sprite):
+    def __init__(self,group,font,size,hint):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self.font = font
+        self.pos = [0,BLOCK_SIZE*(size+1)]
+        self.anchor = 'topleft'
+        self.hint = None
+        self.setHint(hint)
+    def setHint(self,hint):
+        if self.hint==hint:
+            return
+        self.hint = hint
+        self.answer = ""
+        self.answerIndex = 0
+        for i in range(len(hint[3])):
+            self.answer += "_ "
+        self.render()
+    def typeKey(self,letter):
+        if self.answerIndex==len(self.answer):
+            return
+        self.answer = self.answer[0:self.answerIndex]+letter+self.answer[self.answerIndex+2:]
+        self.answerIndex+=1
+        self.render()
+    def deleteKey(self):
+        if self.answerIndex==0:
+            return
+        self.answer = self.answer[0:self.answerIndex-1]+"_ "+self.answer[self.answerIndex:]
+        self.answerIndex-=1
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size = [CW_WIDTH,50])
+        surf = self.font.render(self.hint[4],True,[0,0,0,255])
+        self.image._surf.blit(surf,[2,0])
+        surf = self.font.render(self.answer,True,[0,0,0,255])
+        self.image._surf.blit(surf,[2,30])
+
+class AnswerGrid(spyral.Sprite):
+    def __init__(self,group,font,size):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self.font = font
+        self.gridsize = size
+        self.grid = [['' for y in range(size)] for x in range(size)]
+        self.render()
+    def setAnswer(self,hint):
+        changed = False
+        X = hint[0]
+        Y = hint[1]
+        dx = 0
+        dy = 1
+        if hint[2]=="Across":
+            dx = 1
+            dy = 0
+        for i in range(len(hint[3])):
+            x = X+dx*i
+            y = Y+dy*i
+            if not(self.grid[x][y]==hint[3][i]):
+                changed = True
+                self.grid[x][y] = hint[3][i]
+        if changed:
+            self.render()
+    def render(self):
+        self.image = spyral.Image(size=[self.gridsize*BLOCK_SIZE,self.gridsize*BLOCK_SIZE])
         for y in range(self.gridsize):
             for x in range(self.gridsize):
-                L = [hint for hint in hints if hint[0]==x and hint[1]==y]
-                if len(L)>0:
-                    self.boxnumbers.append([num,x,y])
-                    for info in L:
-                        if info[2]=="Across":
-                            self.acrosshints.append([num,info[4],info[3]])
-                        else:
-                            self.downhints.append([num,info[4],info[3]])
-                    num+=1
-    def typekey(self,key):
-        key = key.upper()
-        alpha = ['Q','W','E','R','T','Y','U','I','O','P',
-                 'A','S','D','F','G','H','J','K','L',
-                 'Z','X','C','V','B','N','M']
-        if key=='\b':
-            if self.guessindex==0:
-                return
-            self.guess = self.guess[0:self.guessindex-1]+"_ "+self.guess[self.guessindex:]
-            self.guessindex-=1;
-            return
-        for letter in alpha:
-            if letter==key:
-                if self.guessindex==self.guesslength:
-                    return
-                self.guess = self.guess[0:self.guessindex]+key+self.guess[self.guessindex+2:]
-                self.guessindex+=1
-                return
-    def checkanswer(self):
-        if not(self.guess==self.currentHint[2]):
-            print "INCORRECT!!!"
-            return
-        coords = self.getBoxCoords(self.currentHint[0])
-        across = False
-        for hint in self.acrosshints:
-            if hint==self.currentHint:
-                across = True
-        if across:
-            for x in range(len(self.guess)):
-                self.grid[coords[0]+x][coords[1]] = self.guess[x]
-            return
-        for y in range(len(self.guess)):
-            self.grid[coords[0]][coords[1]+y] = self.guess[y]
-            
-    def printHints(self):
-        print "ACROSS:"
-        for hint in self.acrosshints:
-            print " ",hint[0],"\t",hint[2],": ",hint[1]
-        print "DOWN:"
-        for hint in self.downhints:
-            print " ",hint[0],"\t",hint[2],": ",hint[1]
-    def cycleHints(self):
-        for i in range(len(self.acrosshints)):
-            hint = self.acrosshints[i]
-            if hint==self.currentHint:
-                if i+1==len(self.acrosshints):
-                    self.currentHint = self.downhints[0]
-                    self.setGuess()
-                    return
-                self.currentHint = self.acrosshints[i+1]
-                self.setGuess()
-                return
-        for i in range(len(self.downhints)):
-            hint = self.downhints[i]
-            if hint==self.currentHint:
-                if i+1==len(self.downhints):
-                    self.currentHint = self.acrosshints[0]
-                    self.setGuess()
-                    return
-                self.currentHint = self.downhints[i+1]
-                self.setGuess()
-                return
-                
-
+                if not(self.grid[x][y]==''):
+                    surf = self.font.render(self.grid[x][y],True,[0,0,0,255])
+                    self.image._surf.blit(surf,[(x+.5)*BLOCK_SIZE-surf.get_width()/2+.5,
+                                                (y+.5)*BLOCK_SIZE-surf.get_height()/2+.5])
+        
 class CrosswordMain(spyral.Scene):
     """
     this will be the actual scene that the crossword is run on.
     """
     def __init__(self):#change to (self,head,body,etc.)
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (CW_WIDTH, CW_HEIGHT))
+        self.camera = self.parent_camera.make_child(virtual_size = (CW_WIDTH, CW_HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
         words = readWords("wordlist.txt")
         cross = Crossword(15,words)
-        self.puzzle = Puzzle(cross,self.group)
-        self.render()
+        self.font = pygame.font.SysFont(None,LETTERFONT)
+        self.grid = PuzzleGrid(cross,self.group)
+        #for hint in cross.hints:
+         #   print hint[0],hint[1],hint[2],hint[3],hint[4]
+        self.grid.setHint(cross.hints[0])
+        self.hintAndAnswer = HintAndAnswer(self.group,self.font,cross.size,cross.hints[0])
+        self.answergrid = AnswerGrid(self.group,self.font,cross.size)
+        self.hintNum = 0
+        self.hints = cross.hints
+        self.answergrid._set_layer("top")
+        self.alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     
     def on_enter(self):
         bg = spyral.Image(size=(CW_WIDTH,CW_HEIGHT))
@@ -449,30 +416,35 @@ class CrosswordMain(spyral.Scene):
         
     def render(self):
         self.group.draw()
-
+        
+    def currentHint(self):
+        return self.hints[self.hintNum]
+        
     def update(self,dt):
         self.group.update(dt)
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
                 spyral.director.pop()  # Happens when someone asks the OS to close the program
                 return
-            if event['type'] == 'MOUSEBUTTONDOWN':
-                pos = event['pos']
-                self.puzzle.setHint(pos[0],pos[1])
             if event['type'] == 'KEYDOWN':
-                self.puzzle.typekey(event['unicode'])
+                if event['key'] == 27:
+                    spyral.director.pop()
+                    return
+                if event['key'] == 9:
+                    self.hintNum+=1
+                if event['key']>=97 and event['key']<=122:
+                    letter = self.alpha[event['key']-97]
+                    self.hintAndAnswer.typeKey(letter)
+                if event['key']==8:
+                    self.hintAndAnswer.deleteKey()
                 if event['key']==13:
-                    self.puzzle.checkanswer()
-                if event['key']==9:
-                    self.puzzle.cycleHints()
-            if self.puzzle.answer == self.puzzle.grid:
-                print "YOU SOLVED THE PUZZLE!!!"
-                spyral.director.pop()  # Happens when someone asks the OS to close the program
-                return
-                #if event['ascii'] == 'p':
-                 #   spyral.director.pop()
+                    if self.currentHint()[3]==self.hintAndAnswer.answer:
+                        self.answergrid.setAnswer(self.currentHint())
+                self.hintNum%=len(self.hints)
+                self.hintAndAnswer.setHint(self.currentHint())
+                self.grid.setHint(self.currentHint())
 
-## RACING GAME CODE STARTS HERE
+## RACING GAME CODE STARTS HERE-------------------------------------------------------
 
 RC_WIDTH = 640
 RC_HEIGHT = 480
@@ -765,6 +737,9 @@ class RacingMain(spyral.Scene):
                 spyral.director.pop()  # Happens when someone asks the OS to close the program
                 return
             if event['type'] == 'KEYDOWN':
+                if event['key'] == 27:
+                    spyral.director.pop()
+                    return
                 if event['key']==273:
                     self.car.up = True
                 if event['key']==274:
@@ -791,4 +766,3 @@ class RacingMain(spyral.Scene):
         bg.fill([0,0,0,255])
         bg.draw_rect([100,100,100,255],[0,UPPER_BOUND],[RC_WIDTH,RC_HEIGHT])
         self.camera.set_background(bg)
-
