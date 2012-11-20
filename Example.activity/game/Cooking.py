@@ -10,6 +10,7 @@ __doc__ = ''' # @TODO: '''
 import pygame
 import random
 import spyral
+#import nom_nom
 
 UNIT_CONV = [3,16,2]
 UNIT_CONV_2 = [1,3,48,96]
@@ -256,6 +257,7 @@ class CookingMain(spyral.Scene):
         if self.bowl.sameRecipe(self.recipe):
             print "YOU GOT THE CORRECT RECIPE!!!"
             spyral.director.pop()
+            #spyral.director.push(nom_nom.Bake())
             return
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
@@ -264,6 +266,7 @@ class CookingMain(spyral.Scene):
             if event['type'] == 'KEYDOWN':
                 if event['key']==27:
                     spyral.director.pop()
+                    #spyral.director.push(nom_nom.Bake())
                     return
                 if event['key']>=273 and event['key']<=276:
                     self.movePointer(event['key'])
