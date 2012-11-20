@@ -1,9 +1,15 @@
+#!/usr/bin/python
+'''
+Ryan O'Dowd, Kevin Touhey, and Yifan Hong
+CISC 374
+Fall 2012
+'''
+
+__doc__ = ''' # @TODO: '''
+
 import pygame
 import random
 import spyral
-from spyral.sprite import Sprite
-from spyral.animation import Animation, DelayAnimation
-from spyral.scene import Scene
 
 UNIT_CONV = [3,16,2]
 
