@@ -2,12 +2,10 @@ import pygame
 import spyral
 from spyral.sprite import Sprite
 from spyral.scene import Scene
-import sys
-# @TODO: remove import *
-from Basketball import *
-from CrosswordPuzzle import *
-from Cooking import *
-from Racing import *
+import Basketball
+import CrosswordPuzzle
+import Cooking
+import Racing
 
 SIZE = (640, 480)
 FONT_SIZE = 42
@@ -16,29 +14,25 @@ FG_COLOR = (255, 255, 255)
 MY_COLOR = (255, 0, 0)
 
 # PET TYPE
-CAT    = 0
-DOG    = 1
-BIRD   = 3
+CAT = 0
+DOG = 1
+BIRD = 3
 DRAGON = 2
 
-TYPES = [
-    CAT,
-    DOG,
-    DRAGON
-]
+TYPES = [CAT, DOG, DRAGON]
 
 # LAYERS
-HAT_LAYER     = 7
-COOKIE_LAYER  = 6
-HEAD_LAYER    = 4
-FACE_LAYER    = 5
-ARMS_LAYER    = 3
-SLEEVE_LAYER  = 4
-LEGS_LAYER    = 2
-PANTS_LAYER   = 3
-SHIRT_LAYER   = 2
-BODY_LAYER    = 1
-TAIL_LAYER    = 0
+HAT_LAYER = 7
+COOKIE_LAYER = 6
+HEAD_LAYER = 4
+FACE_LAYER = 5
+ARMS_LAYER = 3
+SLEEVE_LAYER = 4
+LEGS_LAYER = 2
+PANTS_LAYER = 3
+SHIRT_LAYER = 2
+BODY_LAYER = 1
+TAIL_LAYER = 0
 
 #==========================================
 # GLOBAL LIST VARIABLES
@@ -60,26 +54,24 @@ STUDENT_HATS = []
 COLOR_TAN = (185,122,87)
 
 #ADDITIONAL COLORS
-COLOR_RED      = (255, 0, 0)
-COLOR_BLUE     = (0, 255, 0)
-COLOR_GREEN    = (0, 0, 255)
+COLOR_RED = (255, 0, 0)
+COLOR_BLUE = (0, 255, 0)
+COLOR_GREEN = (0, 0, 255)
 COLOR_DARK_RED = (125, 0, 0)
-COLOR_PINK     = (200, 100, 100)
-COLOR_PURPLE   = (255, 255, 0)
-COLOR_ORANGE   = (255, 39, 139)
-COLOR_WHITE    = (255, 255, 255)
+COLOR_PINK = (200, 100, 100)
+COLOR_PURPLE = (255, 255, 0)
+COLOR_ORANGE = (255, 39, 139)
+COLOR_WHITE = (255, 255, 255)
 
-COLORS =[
-    COLOR_TAN,
-    COLOR_RED,
-    COLOR_BLUE,
-    COLOR_GREEN,
-    COLOR_PINK,
-    COLOR_DARK_RED,
-    COLOR_PURPLE,
-    COLOR_ORANGE,
-    COLOR_WHITE
-]
+COLORS = [COLOR_TAN,
+          COLOR_RED,
+          COLOR_BLUE,
+          COLOR_GREEN,
+          COLOR_PINK,
+          COLOR_DARK_RED,
+          COLOR_PURPLE,
+          COLOR_ORANGE,
+          COLOR_WHITE]
 
 #********************************************
 # FILES
@@ -147,50 +139,37 @@ OVEN = 'cooking_images/OVEN.png'
 #**********************************************
 
 #MONIES
-MONIES = [
-    STAR,
-    DIAMOND,
-    CUBE,
-    SPHERE,
-    MOON,
-]
+MONIES = [STAR,
+          DIAMOND,
+          CUBE,
+          SPHERE,
+          MOON]
 
 #CAT DOG FACES
-CD_FACES = [
-    CD_SAD_FACE,
-    CD_NORMAL_FACE,
-    CD_WINK_FACE,
-    CD_HAPPY_FACE,
-]
+CD_FACES = [CD_SAD_FACE,
+            CD_NORMAL_FACE,
+            CD_WINK_FACE,
+            CD_HAPPY_FACE]
 
 #BIRD DRAGON FACES
-DB_FACES = [
-    DB_SAD_FACE,
-    DB_NORMAL_FACE,
-    DB_WINK_FACE,
-    DB_HAPPY_FACE,
-
-]
+DB_FACES = [DB_SAD_FACE,
+            DB_NORMAL_FACE,
+            DB_WINK_FACE,
+            DB_HAPPY_FACE]
 
 #COOKIES
-COOKIES = [
-    COOKIE,
-    COOKIE_NOMD
-]
+COOKIES = [COOKIE,
+           COOKIE_NOMD]
 
 
 #COMPONENTS (FOR SELECTION)
-HEADS = [
-    (TAN_CAT_HEAD, TAN_CAT_HEAD, TAN_CAT_HEAD),
-    (TAN_DOG_HEAD, TAN_DOG_HEAD, TAN_DOG_HEAD),
-    (TAN_DRA_HEAD, TAN_DRA_HEAD, TAN_DRA_HEAD),
-]
+HEADS = [(TAN_CAT_HEAD, TAN_CAT_HEAD, TAN_CAT_HEAD),
+         (TAN_DOG_HEAD, TAN_DOG_HEAD, TAN_DOG_HEAD),
+         (TAN_DRA_HEAD, TAN_DRA_HEAD, TAN_DRA_HEAD)]
 
-BODIES = [
-    (TAN_CAT_BODY, TAN_CAT_BODY, TAN_CAT_BODY),
-    (TAN_CAT_BODY, TAN_CAT_BODY, TAN_CAT_BODY),
-    (TAN_CAT_BODY, TAN_CAT_BODY, TAN_CAT_BODY),
-]
+BODIES = [(TAN_CAT_BODY, TAN_CAT_BODY, TAN_CAT_BODY),
+          (TAN_CAT_BODY, TAN_CAT_BODY, TAN_CAT_BODY),
+          (TAN_CAT_BODY, TAN_CAT_BODY, TAN_CAT_BODY)]
 
 ARMS = [
     (TAN_CAT_ARMS, TAN_CAT_ARMS_NOM1, TAN_CAT_ARMS_NOM2),
@@ -198,17 +177,13 @@ ARMS = [
     (TAN_DRA_ARMS, TAN_DRA_ARMS_NOM1, TAN_DRA_ARMS_NOM2),
 ]
 
-LEGS = [
-    (TAN_CAT_LEGS, TAN_CAT_LEGS,TAN_CAT_LEGS),
-    (TAN_CAT_LEGS, TAN_CAT_LEGS,TAN_CAT_LEGS),
-    (TAN_DRA_LEGS, TAN_DRA_LEGS,TAN_DRA_LEGS),
-]
+LEGS = [(TAN_CAT_LEGS, TAN_CAT_LEGS,TAN_CAT_LEGS),
+        (TAN_CAT_LEGS, TAN_CAT_LEGS,TAN_CAT_LEGS),
+        (TAN_DRA_LEGS, TAN_DRA_LEGS,TAN_DRA_LEGS)]
 
-TAILS = [
-    (TAN_CAT_TAIL, TAN_CAT_TAIL2),
-    (TAN_DOG_TAIL, TAN_DOG_TAIL2),
-    (TAN_DRA_TAIL, TAN_DRA_TAIL),
-]
+TAILS = [(TAN_CAT_TAIL, TAN_CAT_TAIL2),
+         (TAN_DOG_TAIL, TAN_DOG_TAIL2),
+         (TAN_DRA_TAIL, TAN_DRA_TAIL)]
 
 #BEGIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -477,8 +452,8 @@ class PetSelection(Scene):
     def update(self, dt):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.quit()
-                sys.exit()
+                spyral.director.pop()
+                return
             if event['type'] == 'KEYDOWN':
                 if event['ascii'] == 'j':
                     self.nextJ()
@@ -680,7 +655,7 @@ class MainMenu(Scene):
         self.qbutton.y = 60
         self.qbutton.layer = 0
 
-        quitbutton   = TextSprite(self.group, font)
+        quitbutton = TextSprite(self.group, font)
         quitbutton.anchor = 'midbottom'
         quitbutton.x = 480
         quitbutton.y = 100
@@ -805,31 +780,32 @@ class MainMenu(Scene):
     def update(self, dt):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.quit()
-                sys.exit()
+                spyral.director.pop()
+                return
             if event['type'] == 'KEYDOWN':
                 if event['ascii'] == 'p':
                     self.nextP()
                 elif event['ascii'] == 's':
-                    if   (self.p == 0 or self.p == 5):
-                        spyral.director.push(CrosswordMain())
+                    if (self.p == 0 or self.p == 5):
+                        spyral.director.push(CrosswordPuzzle.CrosswordMain())
                     elif (self.p == 1 or self.p == 6):
-                        spyral.director.push(Basketball())
+                        spyral.director.push(Basketball.Basketball())
                     elif (self.p == 2 or self.p == 7):
-                        spyral.director.push(RacingMain())
+                        spyral.director.push(Racing.RacingMain())
                     elif (self.p == 3 or self.p == 8):
-                        spyral.director.push(CookingMain())
+                        spyral.director.push(Cooking.CookingMain())
                     elif (self.p == 4):
-                        spyral.director.push(Bake())
+                        spyral.director.push(Cooking.Bake())
                     elif (self.p == 9):
-                        spyral.quit()
-                        system.exit()
+                        spyral.director.pop()
+                        return
         self.group.update(dt)
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #END %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #BEGIN!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# @TODO: put it Cooking.py
 class Bake(Scene):
 
     def __init__(self):
@@ -868,8 +844,8 @@ class Bake(Scene):
     def update(self, dt):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.quit()
-                sys.exit()
+                spyral.director.pop()
+                return
             if event['type'] == 'KEYDOWN':
                 if event['ascii'] == 's':
                     spyral.director.push(Nom())
@@ -1063,8 +1039,8 @@ class Nom(Scene):
 
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.quit()
-                sys.exit()
+                spyral.director.pop()
+                return
             if event['type'] == 'KEYDOWN':
                 if event['ascii'] == 's':
                     spyral.director.push(MainMenu())
