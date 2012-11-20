@@ -12,6 +12,7 @@ import random
 import spyral
 
 UNIT_CONV = [3,16,2]
+UNIT_CONV_2 = [1,3,48,96]
 
 class Fraction:
     def __init__(self,numer,denom):
@@ -25,17 +26,40 @@ class Fraction:
     def divide(self,num):
         return Fraction(self.numer,num*self.denom).simplify()
     def simplify(self):
+        if self.numer==0:
+            return Fraction(0,1)
         x = gcd(self.numer,self.denom)
         return Fraction(self.numer/x,self.denom/x)
+    def sameFrac(self,other):
+        return self.numer==other.numer and self.denom==other.denom
     def __str__(self):
         if self.denom==1:
             return self.numer.__str__()
-        return self.numer.__str__()+"/"+self.denom.__str__();
+        return self.numer.__str__()+"/"+self.denom.__str__()
 
 class Recipe:
     def __init__(self, measurements, ingredients):
         self.measures = measurements
         self.ingredients = ingredients
+    def get_frac_tsp(self,measure):
+        f = measure.frac
+        if measure.tool=="tsp.":
+            return f
+        if measure.tool=="tbsp.":
+            return f.mult(3)
+        if measure.tool=="cup":
+            return f.mult(48)
+        return f.mult(96)
+    def add(self, measure, ingred):
+        for i in range(len(self.ingredients)):
+            if self.ingredients[i]==ingred:
+                self.measures[i] = Measurement(self.get_frac_tsp(self.measures[i]).add(self.get_frac_tsp(measure)),"tsp.")
+    def sameRecipe(self,other):
+        for i in range(len(self.measures)):
+            if not(other.get_frac_tsp(other.measures[i]).sameFrac(self.get_frac_tsp(self.measures[i]))):
+                print self.ingredients[i],": ",self.measures[i]," vs. ",other.ingredients[i],": ",other.measures[i]
+                return False
+        return True
     def __str__(self):
         string = ""
         for i in range(len(self.measures)):
@@ -77,7 +101,7 @@ def gcd(a,b):
     return num
 
 def random_tool(tool):
-    denom = random.randint(2,5)
+    denom = random.randint(2,4)
     if denom>=5:
         denom+=1
     #numer = denom
@@ -89,8 +113,8 @@ def random_recipe(measures,ingredients):
     meas = []
     for ingred in ingredients:
         toolnum = random.randint(0,1)*2
-        numtools1 = random.randint(1,4)
-        numtools2 = random.randint(1,3)
+        numtools1 = random.randint(1,3)
+        numtools2 = random.randint(1,2)
         frac = measures[toolnum].frac.mult(numtools1)
         frac = frac.add(measures[toolnum+1].frac.mult(numtools2).mult(UNIT_CONV[toolnum]))
         meas.append(Measurement(frac,measures[toolnum].tool))
@@ -119,8 +143,6 @@ class CookingMain(spyral.Scene):
         self.emptyBG.image = spyral.Image(size=[CK_WIDTH,CK_HEIGHT])
         self.group.add(self.emptyBG)
         self.font = pygame.font.SysFont(None,20)
-        for tool in self.tools:
-            print tool
         self.recipe = random_recipe(self.tools,self.ingredients)
         recipelist = self.recipe.__str__().split("\n")
         bigfont = pygame.font.SysFont(None,40)
@@ -130,6 +152,7 @@ class CookingMain(spyral.Scene):
             recipe = recipelist[i]
             surf = self.font.render(recipe,True,[0,0,0,255]).convert_alpha()
             recipeSprite.image._surf.blit(surf,[max(max(15,20-5*i),5*i-5),50+25*i])
+        self.bowl = Recipe([Measurement(Fraction(0,1),"tsp.") for ingred in self.ingredients],self.ingredients)
         self.tsp = self.addImage("cooking_images/TEA_SPOON.png",65,285,'tool')
         self.tbsp = self.addImage("cooking_images/TBL_SPOON.png",165,285,'tool')
         self.cup = self.addImage("cooking_images/MEASURING_CUP2.png",65,395,'tool')
@@ -213,6 +236,9 @@ class CookingMain(spyral.Scene):
         if self.state==1:
             self.state = 2
             self.group.add(self.pointer3)
+            return
+        if self.state==2:
+            self.bowl.add(self.tools[self.toolSelect],self.ingredients[self.ingredSelect])
     def cancel(self):
         if self.state==0:
             return
@@ -227,9 +253,13 @@ class CookingMain(spyral.Scene):
             self.state = 1
             self.group.remove(self.pointer3)
     def update(self,dt):
+        if self.bowl.sameRecipe(self.recipe):
+            print "YOU GOT THE CORRECT RECIPE!!!"
+            spyral.director.pop()
+            return
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.director.pop()  # Happens when someone asks the OS to close the program
+                spyral.director.pop() # Happens when someone asks the OS to close the program
                 return
             if event['type'] == 'KEYDOWN':
                 if event['key']==27:
@@ -246,4 +276,3 @@ class CookingMain(spyral.Scene):
         bg.fill([255,64,64,255])
         self.camera.set_background(bg)
     
-
