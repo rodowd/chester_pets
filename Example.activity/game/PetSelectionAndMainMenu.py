@@ -1,3 +1,26 @@
+#!/usr/bin/python
+'''
+Ryan O'Dowd, Kevin Touhey, and Yifan Hong
+CISC 374
+Fall 2012
+'''
+
+__doc__ = '''
+          Pet Selection is the scene that
+              1. Goes through the types of pets
+              2. Goes through the colors of pets
+              3. User selects the final pet
+          Output:
+              -Stores user selection into a global list
+
+                      STUDENT_PET
+                          
+              -STUDENT_PET[0] = int index for COLORS
+              -STUDENT_PET[1] = int index for TYPES
+
+              -Main Menu scene
+          '''
+
 import pygame
 import spyral
 from spyral.sprite import Sprite
@@ -188,38 +211,17 @@ TAILS = [(TAN_CAT_TAIL, TAN_CAT_TAIL2),
 #BEGIN $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-#PET SELECTION
-"""
-Pet Selection is the scene that
-    1. Goes through the types of pets
-    2. Goes through the colors of pets
-    3. User selects the final pet
-
-Output:
-    -Stores user selection into a global list
-
-            STUDENT_PET
-            
-    -STUDENT_PET[0] = int index for COLORS
-    -STUDENT_PET[1] = int index for TYPES
-
-    -Main Menu scene
-
-"""
-
 # IMAGE LOCATIONS
-PET_POINTS = [
-    (0          ,0   ), #HATS
-    (26         ,0   ), #HEAD
-    (26         ,0   ), #FACE
-    (16         ,63  ), #ARMS    
-    (0          ,0   ), #SLEEVE
-    (0          ,110 ), #LEGS
-    (0          ,0   ), #PANTS
-    (0          ,0   ), #SHIRT
-    (44         ,50  ), #BODY
-    (67         ,45  ), #TAIL
-]
+PET_POINTS = [(0, 0), #HATS
+              (26, 0), #HEAD
+              (26, 0), #FACE
+              (16, 63), #ARMS    
+              (0, 0), #SLEEVE
+              (0, 110), #LEGS
+              (0, 0), #PANTS
+              (0, 0), #SHIRT
+              (44, 50), #BODY
+              (67, 45)] #TAIL
 
 class TextSprite(Sprite):
     def __init__(self, group, font):
@@ -244,7 +246,6 @@ class TextSprite(Sprite):
         Sprite.__del__(self)
         
 class PetSelection(Scene):
-
     def __init__(self):
         Scene.__init__(self)
         self.camera = self.parent_camera.make_child(SIZE)
@@ -292,16 +293,15 @@ class PetSelection(Scene):
         self.j = 1
 
         self.face = Sprite(self.group)
-        if self.t <= 1: self.face.image=spyral.Image(filename=CD_FACES[self.j])
-        elif self.t >=2: self.face.image=spyral.Image(filename=DB_FACES[self.j])
+        if self.t <= 1:
+            self.face.image=spyral.Image(filename=CD_FACES[self.j])
+        elif self.t >=2:
+            self.face.image=spyral.Image(filename=DB_FACES[self.j])
         self.face.layer = FACE_LAYER
         self.face.x = PET_POINTS[2][0]+PET_X
         self.face.y = PET_POINTS[2][1]+PET_Y
 
-
-
         self.i = 0
-  
         
         self.set_face()
         self.set_color()
@@ -334,18 +334,22 @@ class PetSelection(Scene):
     def get_tail(self):
         return self.tail._image._surf
 
-    def recolor(self,color1,color2,a):
-        if   a==HEAD_LAYER:surf = self.get_head()
-        elif a==BODY_LAYER:surf = self.get_body()
-        elif a==ARMS_LAYER:surf = self.get_arms()
-        elif a==LEGS_LAYER:surf = self.get_legs()
-        elif a==TAIL_LAYER:surf = self.get_tail()
-        w = surf.get_width()
-        h = surf.get_height()
-        for x in range(w):
-            for y in range(h):
-                if surf.get_at((x,y))==color1:
-                    surf.set_at((x,y),color2)
+    def recolor(self, color1, color2, a):
+        if a == HEAD_LAYER:
+            surf = self.get_head()
+        elif a == BODY_LAYER:
+            surf = self.get_body()
+        elif a == ARMS_LAYER:
+            surf = self.get_arms()
+        elif a == LEGS_LAYER:
+            surf = self.get_legs()
+        elif a == TAIL_LAYER:
+            surf = self.get_tail()
+
+        for x in range(surf.get_width()):
+            for y in range(surf.get_height()):
+                if surf.get_at((x,y)) == color1:
+                    surf.set_at((x,y), color2)
                 
     def on_enter(self):
         bg = spyral.Image(size=SIZE)
@@ -356,82 +360,85 @@ class PetSelection(Scene):
         self.group.draw()
 
     def set_color(self):
-
         self.body.image = spyral.Image(filename=BODIES[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],BODY_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], BODY_LAYER)
         self.body.layer = BODY_LAYER
         
         self.arms.image = spyral.Image(filename=ARMS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],ARMS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], ARMS_LAYER)
         self.arms.layer = ARMS_LAYER
 
         self.head.image = spyral.Image(filename=HEADS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],HEAD_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], HEAD_LAYER)
         self.head.layer = HEAD_LAYER
 
         self.legs.image = spyral.Image(filename=LEGS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],LEGS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], LEGS_LAYER)
         self.legs.layer = LEGS_LAYER
         
         self.tail.image = spyral.Image(filename=TAILS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],TAIL_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], TAIL_LAYER)
         self.tail.layer = TAIL_LAYER
 
-        if self.t <= 1: self.face.image=spyral.Image(filename=CD_FACES[self.j])
-        elif self.t >=2: self.face.image=spyral.Image(filename=DB_FACES[self.j])
+        if self.t <= 1:
+            self.face.image = spyral.Image(filename=CD_FACES[self.j])
+        elif self.t >= 2:
+            self.face.image = spyral.Image(filename=DB_FACES[self.j])
         self.face.layer = FACE_LAYER
 
 
     def set_face(self):
-
         self.body.image = spyral.Image(filename=BODIES[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],BODY_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], BODY_LAYER)
         self.body.layer = BODY_LAYER
         
         self.arms.image = spyral.Image(filename=ARMS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],ARMS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], ARMS_LAYER)
         self.arms.layer = ARMS_LAYER
 
         self.head.image = spyral.Image(filename=HEADS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],HEAD_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], HEAD_LAYER)
         self.head.layer = HEAD_LAYER
 
         self.legs.image = spyral.Image(filename=LEGS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],LEGS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], LEGS_LAYER)
         self.legs.layer = LEGS_LAYER
         
         self.tail.image = spyral.Image(filename=TAILS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],TAIL_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], TAIL_LAYER)
         self.tail.layer = TAIL_LAYER
         
-        if self.t <= 1: self.face.image=spyral.Image(filename=CD_FACES[self.j])
-        elif self.t >=2: self.face.image=spyral.Image(filename=DB_FACES[self.j])
+        if self.t <= 1:
+            self.face.image = spyral.Image(filename=CD_FACES[self.j])
+        elif self.t >= 2:
+            self.face.image = spyral.Image(filename=DB_FACES[self.j])
         self.face.layer = FACE_LAYER
 
     def set_type(self):
-
         self.body.image = spyral.Image(filename=BODIES[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],BODY_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], BODY_LAYER)
         self.body.layer = BODY_LAYER
         
         self.arms.image = spyral.Image(filename=ARMS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],ARMS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], ARMS_LAYER)
         self.arms.layer = ARMS_LAYER
 
         self.head.image = spyral.Image(filename=HEADS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],HEAD_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], HEAD_LAYER)
         self.head.layer = HEAD_LAYER
 
         self.legs.image = spyral.Image(filename=LEGS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],LEGS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], LEGS_LAYER)
         self.legs.layer = LEGS_LAYER
         
         self.tail.image = spyral.Image(filename=TAILS[TYPES[self.t]][0])
-        self.recolor(COLOR_TAN,COLORS[self.i],TAIL_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], TAIL_LAYER)
         self.tail.layer = TAIL_LAYER
 
-        if self.t <= 1: self.face.image=spyral.Image(filename=CD_FACES[self.j])
-        elif self.t >=2: self.face.image=spyral.Image(filename=DB_FACES[self.j])
+        if self.t <= 1:
+            self.face.image = spyral.Image(filename=CD_FACES[self.j])
+        elif self.t >=2:
+            self.face.image = spyral.Image(filename=DB_FACES[self.j])
         self.face.layer = FACE_LAYER
         
     def nextJ(self):
@@ -486,44 +493,41 @@ OUTPUTS
 
 # MONEY LOCATIONS
 MONEY_POINTS = [
-    (0     ,0  ),
-    (0     ,140),
-    (0     ,280),
-    (140   ,0  ),
-    (140   ,140),
-    (140   ,280),
-    (280   ,0  ),
-    (280   ,140),
-    (280   ,280),
+    (0, 0),
+    (0, 140),
+    (0, 280),
+    (140, 0),
+    (140, 140),
+    (140, 280),
+    (280, 0),
+    (280, 140),
+    (280, 280),
 ]
 
 # POINTER_LOCATION
 POINTER_POINTS =[
-    (40    ,40  ),
-    (40    ,180 ),
-    (40    ,320 ),
-    (180   ,40  ),
-    (180   ,180 ),
-    (180   ,320 ),
-    (320   ,40  ),
-    (320   ,180 ),
-    (320   ,320 ),
-    (440   ,40  ),   # QUIT BUTTON
-]
+    (40, 40),
+    (40, 180),
+    (40, 320),
+    (180, 40),
+    (180, 180),
+    (180, 320),
+    (320, 40),
+    (320, 180),
+    (320, 320),
+    (440, 40)] # QUIT BUTTON
 """
 NOTE: Lots of Main Menu is a direct copy of PetSelection
       To actually have an emoting pet on screne you need this code
       We added it to brighten up the main menu
 """
 class MainMenu(Scene):
-    
     def __init__(self):
         Scene.__init__(self)
         self.camera = self.parent_camera.make_child(SIZE)
         self.group = spyral.Group(self.camera)
 
         font = pygame.font.SysFont(None, FONT_SIZE)
-
 
         #BEGIN MONEY MATRIX
         self.M00 = Sprite(self.group)
@@ -585,7 +589,6 @@ class MainMenu(Scene):
         self.t = STUDENT_PET[1] # Type
 
         #PET LOCATION (TOP LEFT HAND CORNER)
-    
         PET_X = 430
         PET_Y = 200
         
@@ -677,15 +680,19 @@ class MainMenu(Scene):
         return self.tail._image._surf
 
     def recolor(self,color1,color2,a):
-        if   a==HEAD_LAYER:surf = self.get_head()
-        elif a==BODY_LAYER:surf = self.get_body()
-        elif a==ARMS_LAYER:surf = self.get_arms()
-        elif a==LEGS_LAYER:surf = self.get_legs()
-        elif a==TAIL_LAYER:surf = self.get_tail()
-        w = surf.get_width()
-        h = surf.get_height()
-        for x in range(w):
-            for y in range(h):
+        if a == HEAD_LAYER:
+            surf = self.get_head()
+        elif a == BODY_LAYER:
+            surf = self.get_body()
+        elif a == ARMS_LAYER:
+            surf = self.get_arms()
+        elif a == LEGS_LAYER:
+            surf = self.get_legs()
+        elif a == TAIL_LAYER:
+            surf = self.get_tail()
+
+        for x in range(surf.get_width()):
+            for y in range(surf.get_height()):
                 if surf.get_at((x,y))==color1:
                     surf.set_at((x,y),color2)
                 
@@ -993,40 +1000,40 @@ class Nom(Scene):
 
 
     def setNOM(self):
-        self.nomIndex +=1
+        self.nomIndex += 1
         self.nomIndex %= len(NOM_INDEX)
-        self.cookieIndex +=1
-        self.cookieIndex %= len (COOKIES)
+        self.cookieIndex += 1
+        self.cookieIndex %= len(COOKIES)
         if self.nomIndex <= 1: self.eatIndex = 0
-        elif self.nomIndex >=2: self.eatIndex =1
+        elif self.nomIndex >= 2: self.eatIndex =1
         self.set_color()
         print(self.nomIndex)
 
     
     def set_face(self):
-
         #PET LOCATION (TOP LEFT HAND CORNER)
-    
         PET_X = 230
         PET_Y = 150
 
         self.group.remove(self.cookie)
         
         self.bg = Sprite(self.group)
-        self.bg.image = spyral.Image(size = (200,200))
+        self.bg.image = spyral.Image(size=(200,200))
         self.bg.image.fill(color=BG_COLOR)
         
         self.arms.image = spyral.Image(filename=ARMS[TYPES[self.t]][NOM_INDEX[self.nomIndex][2]])
-        self.recolor(COLOR_TAN,COLORS[self.i],ARMS_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], ARMS_LAYER)
         self.arms.layer = ARMS_LAYER
         
         self.head.image = spyral.Image(filename=HEADS[TYPES[self.t]][NOM_INDEX[self.nomIndex][0]])
-        self.recolor(COLOR_TAN,COLORS[self.i],HEAD_LAYER)
+        self.recolor(COLOR_TAN, COLORS[self.i], HEAD_LAYER)
         self.head.layer = HEAD_LAYER
 
         
-        if self.t <= 1: self.face.image=spyral.Image(filename=CD_FACES[self.j])
-        elif self.t >=2: self.face.image=spyral.Image(filename=DB_FACES[self.j])
+        if self.t <= 1:
+            self.face.image=spyral.Image(filename=CD_FACES[self.j])
+        elif self.t >=2:
+            self.face.image=spyral.Image(filename=DB_FACES[self.j])
         self.face.layer = FACE_LAYER
 
         self.cookie = Sprite(self.group)
@@ -1036,7 +1043,6 @@ class Nom(Scene):
         self.cookie.y = COOKIE_POINTS[self.eatIndex][self.cookieIndex][1]+PET_Y  
     
     def update(self, dt):
-
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
                 spyral.director.pop()
@@ -1048,18 +1054,18 @@ class Nom(Scene):
         self.counter += dt
 
         answer = 0
-        if self.counter >1 and self.counter <=1+dt:
+        if self.counter > 1 and self.counter <= 1+dt:
             self.setNOM()
-        if self.counter >2 and self.counter <=2+dt:
+        if self.counter > 2 and self.counter <= 2+dt:
             self.setNOM()
-        if self.counter >3 and self.counter <=3+dt:
+        if self.counter > 3 and self.counter <= 3+dt:
             self.setNOM()
             #CHANGE ANSWERS HERE!!!!! 
             if answer == 0:
-                self.j =3
+                self.j = 3
                 self.set_face()
             elif answer == 1:
-                self.j =0
+                self.j = 0
                 self.set_face()
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!
