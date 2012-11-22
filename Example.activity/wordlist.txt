@@ -38,3 +38,22 @@ introduction:Something spoken or written before the main part.;The act of being 
 purchase:To buy.;Something that is bought.;The act of buying.
 tropical:Of, from, or similar to the regions near the equator.;Hot and moist.
 ancestor:A person whom one is descended.;An early kind of animal from which later ones have developed, a forerunner.
+carnivore:A flesh-eating animal.
+carnivorous:Flesh-eating.
+comprehend:To understand.
+comprehension:The act of understanding.;The ability to understand.
+duration:The time in which something lasts or continues.
+evident:Easy to see and understand.;Obvious or clear.
+extinct:No longer existing or living.;No longer active.
+ferocious:Savage or fierce.
+ferocity:The state or quality of being fierce.
+gigantic:Very large.;Like a giant in size.
+obscure:To cover up or keep from being seen.;Hard to see, or hidden.;Not easy to understand.
+option:Choice, or something that is available as a choice.
+optional:Left to choice.
+premature:Too early.;Happening or arriving before the proper time.
+preserve:To save, to keep from harm, or to protect.;To keep from rotting or spoiling.
+prey:An animal that is hunted for food.;One that is helpless or unable to resist attack.;To hunt animals for food.;To take from or rob using violence or trickery.
+puny:Weak, or lacking in size, strength or power.
+survive:To stay alive where there is a chance of dying or being killed.;To continue living or existing through a threatening situation.
+survivor:One who stays alive while others die.
