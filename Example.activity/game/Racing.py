@@ -85,7 +85,7 @@ class Car(spyral.Sprite):
             elif self.vy<0:
                 dy = min(-self.vy,self.turn*dt)
         self.vx = max(-self.speed,min(self.vx+dx,self.speed))
-        self.vy = max(-self.speed,min(self.vy+dy,self.speed))
+        self.vy = max(-self.turn,min(self.vy+dy,self.turn))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
         if self.image._surf.get_height()+self.y>=RC_HEIGHT:
