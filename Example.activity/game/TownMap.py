@@ -6,16 +6,16 @@ TM_WIDTH = 1200
 TM_HEIGHT = 900
 
 class WalkingPet(spyral.Sprite):
-    def __init__(self,mapgrid,x,y,pivotX,pivoty):
+    def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
         spyral.Sprite.__init__(self,mapgrid.group)
         self.group.add(self)
         self.mapgrid = mapgrid
         self.anchor = 'topleft'
         self.grid_x = x
         self.grid_y = y
-        self.pos = [50*x-pivotx,50*y-pivoty]
-        self.pivot_x = pivotx
-        self.pivot_y = pivoty
+        self.pos = [50*x-pivot_x,50*y-pivot_y]
+        self.pivot_x = pivot_x
+        self.pivot_y = pivot_y
         self.moving = False
         self.moved = 0
     def render():
