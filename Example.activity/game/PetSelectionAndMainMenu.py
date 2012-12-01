@@ -29,6 +29,7 @@ import Basketball
 import CrosswordPuzzle
 import Cooking
 import Racing
+import WorldMap
 import globalStudent
 from pet import pet
 
@@ -410,7 +411,9 @@ class MainMenu(Scene):
                 if event['ascii'] == 'p':
                     self.nextP()
                 elif event['ascii'] == 's':
-                    if (self.p == 0 or self.p == 5):
+                    if (self.p == 0):
+                        spyral.director.push(WorldMap.WorldMap())
+                    elif (self.p == 5):
                         spyral.director.push(CrosswordPuzzle.CrosswordMain())
                     elif (self.p == 1 or self.p == 6):
                         spyral.director.push(Basketball.Basketball())
