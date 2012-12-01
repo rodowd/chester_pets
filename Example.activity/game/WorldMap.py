@@ -108,11 +108,11 @@ class WorldMap(spyral.Scene):
                     # esc
                     spyral.director.pop()
                     return
-                elif event['key'] == 276:
+                elif event['key'] == 276 or event['key'] == 274:
                     # left arrow
                     self.curr_city -= 1
                     self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
-                elif event['key'] == 275:
+                elif event['key'] == 275 or event['key'] == 273:
                     # right arrow
                     self.curr_city += 1
                     self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
