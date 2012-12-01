@@ -1,6 +1,8 @@
 import pygame
 import spyral
 import random
+import globalStudent
+from pet import pet
 
 CW_WIDTH = 640
 CW_HEIGHT = 480
@@ -22,7 +24,7 @@ def getWord(string):
     and return a word with its definitions.
     word:definition1;definition2;definition3
     """
-    string = string[0:-1]
+    string = string.replace('\n','').replace('\r','')
     s2 = string.split(":")
     s3 = s2[1].split(";")
     return Word(s2[0],s3)
@@ -90,34 +92,40 @@ class Crossword:
         return hint1[0]<hint2[0]
     def create(self,words):
         self.insertFirstWord(words)
+        #print "==============================================================="
         while True:
             if len(words)==0:
                 return
             done = False
-            for x in range(15):
+            #print "---------------------------------"
+            for x in range(8):
                 if not(done):
                     i = random.randint(0,len(words)-1)
                     done = self.addWordDown(words[i])
                     if done:
+            #            print "  Down:  ",x,words[i].string
                         words.remove(words[i])
+            #        else:
+            #            print "  Failed  ",words[i].string
+            #if not(done):
+            #    print "  Down:  no"
             if len(words)==0:
                 return
             done2 = False
-            for x in range(15):
+            for x in range(8):
                 if not(done2):
                     i = random.randint(0,len(words)-1)
                     done2 = self.addWordAcross(words[i])
                     if done2:
+            #            print "  Across:",x,words[i].string
                         words.remove(words[i])
+            #        else:
+            #            print "  Failed  ",words[i].string
+            #if not(done2):
+            #    print "  Across: no"
             if not(done) and  not(done2):
                 return
     def insertFirstWord(self,words):
-        """
-        i = random.randint(0,len(words)-1)
-        if len(words[i].string)<7:
-            self.insertFirstWord(words)
-            return
-        """
         bigwords = [word for word in words if len(word.string)>7]
         i = random.randint(0,len(bigwords)-1)
         self.placeFirstWord(bigwords[i])
@@ -126,7 +134,6 @@ class Crossword:
         y = self.size/2
         x = (self.size-len(word.string))/2
         self.setWordAcross(x,y,word)
-#        self.setWordAcross(2,2,word)
     def addWordAcross(self,word,lowest = 2):
         n = 0
         L = []
@@ -275,6 +282,11 @@ class PuzzleGrid(spyral.Sprite):
         self.gridsize = cross.size
         self.grid = [[not(cross.lettergrid[x][y]=='') for y in range(cross.size)]
                      for x in range(cross.size)]
+        self.letters = 0
+        for y in range(cross.size):
+            for x in range(cross.size):
+                if self.grid[x][y]:
+                    self.letters+=1
         self.render()
         self.hint = None
     def setHint(self,hint):
@@ -352,6 +364,7 @@ class AnswerGrid(spyral.Sprite):
         self.font = font
         self.gridsize = size
         self.grid = [['' for y in range(size)] for x in range(size)]
+        self.letters = 0
         self.render()
     def setAnswer(self,hint):
         changed = False
@@ -368,6 +381,7 @@ class AnswerGrid(spyral.Sprite):
             if not(self.grid[x][y]==hint[3][i]):
                 changed = True
                 self.grid[x][y] = hint[3][i]
+                self.letters+=1
         if changed:
             self.render()
     def render(self):
@@ -399,8 +413,19 @@ class CrosswordMain(spyral.Scene):
         self.answergrid = AnswerGrid(self.group,self.font,cross.size)
         self.hintNum = 0
         self.hints = cross.hints
+        self.hintDone = [False for hint in self.hints]
         self.answergrid._set_layer("top")
         self.alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        PET_X = 430
+        PET_Y = 200
+
+        self.pet = pet(self.group)
+        self.pet.set_pet(pet_type=globalStudent.ptype,
+                         pet_color=globalStudent.pcolor,
+                         pet_expression=globalStudent.pface,
+                         x=PET_X,
+                         y=PET_Y)  
     
     def on_enter(self):
         bg = spyral.Image(size=(CW_WIDTH,CW_HEIGHT))
@@ -423,8 +448,14 @@ class CrosswordMain(spyral.Scene):
                 if event['key'] == 27:
                     spyral.director.pop()
                     return
-                if event['key'] == 9:
-                    self.hintNum+=1
+                if event['key']==274 or event['key']==275 or event['key']==9:
+                    self.hintNum = (self.hintNum+1)%len(self.hints)
+                    while self.hintDone[self.hintNum]:
+                        self.hintNum = (self.hintNum+1)%len(self.hints)
+                if event['key']==273 or event['key']==276:
+                    self.hintNum = (self.hintNum-1)%len(self.hints)
+                    while self.hintDone[self.hintNum]:
+                        self.hintNum = (self.hintNum-1)%len(self.hints)
                 if event['key']>=97 and event['key']<=122:
                     letter = self.alpha[event['key']-97]
                     self.hintAndAnswer.typeKey(letter)
@@ -433,6 +464,32 @@ class CrosswordMain(spyral.Scene):
                 if event['key']==13:
                     if self.currentHint()[3]==self.hintAndAnswer.answer:
                         self.answergrid.setAnswer(self.currentHint())
-                self.hintNum%=len(self.hints)
+                        self.hintDone[self.hintNum] = True
+                        if self.answergrid.letters==self.grid.letters:
+                            spyral.director.pop()
+                            spyral.director.push(CrosswordVictory())
+                            return
                 self.hintAndAnswer.setHint(self.currentHint())
                 self.grid.setHint(self.currentHint())
+
+class CrosswordVictory(spyral.Scene):
+    def __init__(self):#change to (self,head,body,etc.)
+        spyral.Scene.__init__(self)
+        self.camera = self.parent_camera.make_child(virtual_size = (CW_WIDTH, CW_HEIGHT),layers = ["__default__","top"])
+        self.group = spyral.Group(self.camera)
+    def on_enter(self):
+        bg = spyral.Image(size=(CW_WIDTH,CW_HEIGHT))
+        bg.fill(BG_COLOR)
+        font = pygame.font.SysFont(None,80)
+        surf = font.render("YOU DEFEATED",True,[255,255,0,255])
+        bg._surf.blit(surf,[(CW_WIDTH-surf.get_width())*.5,(CW_HEIGHT-surf.get_height())*.5])
+        self.camera.set_background(bg)
+    def update(self,dt):
+        for event in self.event_handler.get():
+            if event['type'] == 'QUIT':
+                spyral.director.pop()  # Happens when someone asks the OS to close the program
+                return
+            if event['type'] == 'KEYDOWN':
+                if event['key'] == 27 or event['key']==13:
+                    spyral.director.pop()
+                    return

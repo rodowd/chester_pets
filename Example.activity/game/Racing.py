@@ -8,6 +8,8 @@ UPPER_BOUND = 300
 LANE_WIDTH = (RC_HEIGHT-UPPER_BOUND)/3
 LINE_SIZE = [25,5]
 LINE_COLOR = [255,255,0,255]
+FONT1 = pygame.font.SysFont(None,40)
+FONT2 = pygame.font.SysFont(None,24)
 
 class LineList:
     def __init__(self,racingmain,y,between,counterFrac):
@@ -85,7 +87,7 @@ class Car(spyral.Sprite):
             elif self.vy<0:
                 dy = min(-self.vy,self.turn*dt)
         self.vx = max(-self.speed,min(self.vx+dx,self.speed))
-        self.vy = max(-self.speed,min(self.vy+dy,self.speed))
+        self.vy = max(-self.turn,min(self.vy+dy,self.turn))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
         if self.image._surf.get_height()+self.y>=RC_HEIGHT:
@@ -106,22 +108,39 @@ class TurboMeter(spyral.Sprite):
         spyral.Sprite.__init__(self,group)
         self.group.add(self)
         self.maxTurbo = maxTurbo
-        self.turbo = maxTurbo/2
+        self.turbo = maxTurbo*.5
         self.active = False
         self.changed = False
+        self.slow = False
         self.render()
+        TurboText(self)
     def render(self):
+        """
         self.image = spyral.Image(size = [25,80])
         self.anchor = 'topright'
         self.image.fill([255,0,0,255])
         self.image.draw_rect([0,255,0,255],[0,80-self.turbo*80/self.maxTurbo],[25,80])
+        self.pos = [RC_WIDTH-10,10]"""
+        self.image = spyral.Image(size = [100,24])
+        self.anchor = 'topright'
+        self.image.fill([153,153,153,255])
+        self.image.draw_rect(self.get_color(),[self.turbo*100/self.maxTurbo-100,0],[100,24])
         self.pos = [RC_WIDTH-10,10]
+    def get_color(self):
+        ratio = self.turbo/self.maxTurbo
+        return [min(255,510-ratio*510),min(255,510*ratio),0,255]
     def toggle(self):
+        if self.slow:
+            return
         oldact = self.active
         self.active = not(self.active)
         if self.turbo==0:
             self.active = False
         self.changed = oldact==self.active
+    def turnOff(self):
+        self.active = False
+        self.changed = True
+        self.slow = True
     def update(self,dt):
         oldact = self.active
         if self.active:
@@ -133,6 +152,45 @@ class TurboMeter(spyral.Sprite):
             self.render()
     def refill(self,num):
         self.turbo = min(self.turbo+num,self.maxTurbo)
+        self.changed = True
+
+class TurboText(spyral.Sprite):
+    def __init__(self,turbometer):
+        spyral.Sprite.__init__(self,turbometer.group)
+        self.group.add(self)
+        self._set_layer("hud2")
+        self.meter = turbometer
+        emptyText = FONT2.render("Empty",True,[128,0,0,255])
+        turboText = FONT2.render("TURBO!!!",True,[0,0,255,255])
+        maxText = FONT2.render("MAX!",True,[0,0,255,255])
+        slowText = FONT2.render("Slow",True,[128,0,0,255])
+        readyText = FONT2.render("Ready!",True,[0,0,128,255])
+        self.texts = [emptyText,turboText,slowText,maxText,readyText]
+        self.state = self.getState()
+        self.anchor = turbometer.anchor
+        self.pos = turbometer.pos
+        self.render()
+    def getState(self):
+        if self.meter.slow:
+            return 2
+        if self.meter.turbo==0:
+            return 0
+        if self.meter.active:
+            return 1
+        if self.meter.turbo==self.meter.maxTurbo:
+            return 3
+        return 4
+    def render(self):
+        self.image = spyral.Image(size = [100,24])
+        text = self.texts[self.state]
+        self.image._surf.blit(text,[50-text.get_width()*.5,12-text.get_height()*.5])
+        if self.state==1:
+            self.image.draw_rect([0,255,255,128],[0,0],[99,23],2)
+    def update(self,dt):
+        state2 = self.getState()
+        if not(state2==self.state):
+            self.state = state2
+            self.render()
 
 class Question(spyral.Sprite):
     def __init__(self,main,dist):
@@ -178,8 +236,7 @@ class Question(spyral.Sprite):
     def render(self):
         self.image = spyral.Image(size = [300,30])
         self.anchor = 'center'
-        font = pygame.font.SysFont(None,40)
-        surf = font.render(self.num1.__str__()+" "+self.oper+" "+
+        surf = FONT1.render(self.num1.__str__()+" "+self.oper+" "+
                            self.num2.__str__()+" = ?",
                            True,[255,255,255,255])
         self.image._surf.blit(surf,[150-surf.get_width()*.5,
@@ -192,11 +249,10 @@ class Question(spyral.Sprite):
             right = self.num1-self.num2
         self.image = spyral.Image(size = [300,30])
         self.anchor = 'center'
-        font = pygame.font.SysFont(None,40)
         color = [255,0,0,255]
         if correct:
             color = [0,255,0,255]
-        surf = font.render(self.num1.__str__()+" "+self.oper+" "+
+        surf = FONT1.render(self.num1.__str__()+" "+self.oper+" "+
                            self.num2.__str__()+" = "+right.__str__(),
                            True,color)
         self.image._surf.blit(surf,[150-surf.get_width()*.5,
@@ -221,8 +277,7 @@ class RacingAnswer(spyral.Sprite):
         self.image = spyral.Image(size = [32,24])
         self.image.fill(col1)
         self.anchor = 'midleft'
-        font = pygame.font.SysFont(None,24)
-        surf = font.render(self.num.__str__(),True,col2)
+        surf = FONT2.render(self.num.__str__(),True,col2)
         self.image._surf.blit(surf,[16-surf.get_width()*.5,
                                     12-surf.get_height()*.5])
     def update(self,dt):
@@ -246,10 +301,39 @@ class RacingAnswer(spyral.Sprite):
                 for ans in self.question.answers:
                     self.question.main.group.remove(ans)
 
+class TimerSprite(spyral.Sprite):
+    def __init__(self,main):
+        spyral.Sprite.__init__(self,main.group)
+        self.group.add(self)
+        self.main = main
+        self.anchor = 'topleft'
+        self.time = int(main.timer)
+        self.pos = [5,5]
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size = [100,20])
+        surf = FONT2.render(self.getTimeString(),True,[255,255,255,255])
+        self.image._surf.blit(surf,[0,10-surf.get_height()*.5])
+    def getTimeString(self):
+        minutes = int(self.time/60)
+        seconds = self.time%60
+        z = minutes.__str__()+":"
+        if minutes<10:
+            z = "0"+z
+        if seconds<10:
+            z+="0"
+        return z+seconds.__str__()
+    def update(self,dt):
+        time2 = int(self.main.timer)
+        if not(time2==self.time):
+            self.time = time2
+            self.render()
+    
+
 class RacingMain(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (RC_WIDTH, RC_HEIGHT),layers = ['__default__','on_road','over_road'])
+        self.camera = self.parent_camera.make_child(virtual_size = (RC_WIDTH, RC_HEIGHT),layers = ['__default__','on_road','over_road','hud','hud2'])
         self.group = spyral.Group(self.camera)
         self.normalspeed = 200
         self.accel = 50
@@ -263,23 +347,26 @@ class RacingMain(spyral.Scene):
         self.car = Car(self.group,self.normalspeed,300,300)
         self.turbometer = TurboMeter(self.group,10)
         self.question = Question(self,self.distance)
-        self.render()
+        self.timerSprite = TimerSprite(self)
     def setSlow(self,slow):
         self.slow = min(self.slow,slow)
+        self.turbometer.turnOff()
     def render(self):
         self.group.draw()
     def toggleTurbo(self):
         self.turbometer.toggle()
     def update(self,dt):
         self.timer+=dt
-        if self.turbometer.changed:            
-            self.turbometer.changed = False
-            self.car.render2(self.turbometer.active)
         self.speed = self.normalspeed
         if self.turbometer.active:
             self.speed*=2
         if self.slow<1:
             self.slow = min(1,self.slow+(dt*self.accel)/self.normalspeed)
+        else:
+            self.turbometer.slow = False
+        if self.turbometer.changed:            
+            self.turbometer.changed = False
+            self.car.render2(self.turbometer.active)
         self.speed*=self.slow
         self.distance+=self.speed*dt
         if self.distance>=RC_WIDTH+2000*self.questionNum:

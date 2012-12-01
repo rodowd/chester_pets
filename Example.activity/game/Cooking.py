@@ -10,7 +10,9 @@ __doc__ = ''' # @TODO: '''
 import pygame
 import random
 import spyral
-#import nom_nom
+import nom_nom
+import globalStudent
+from pet import pet
 
 UNIT_CONV = [3,16,2]
 UNIT_CONV_2 = [1,3,48,96]
@@ -54,7 +56,7 @@ class Recipe:
     def add(self, measure, ingred):
         for i in range(len(self.ingredients)):
             if self.ingredients[i]==ingred:
-                self.measures[i] = Measurement(self.get_frac_tsp(self.measures[i]).add(self.get_frac_tsp(measure)),"tsp.")
+                self.measures[i].frac = self.measures[i].frac.add(measure.convert_frac(self.measures[i].tool))
     def sameRecipe(self,other):
         for i in range(len(self.measures)):
             if not(other.get_frac_tsp(other.measures[i]).sameFrac(self.get_frac_tsp(self.measures[i]))):
@@ -83,7 +85,12 @@ class Ingredient(spyral.Sprite):
 class Measurement:
     def __init__(self,frac,tool):
         self.frac = frac
-        self.tool = tool # "tsp.", "tbsp.", "cup", "pint"
+        self.tool = tool
+    def convert_frac(self,tool):
+        tools = ["tsp.","tbsp.","cup","pint"]
+        i = tools.index(self.tool)
+        i2 = tools.index(tool)
+        return self.frac.mult(UNIT_CONV_2[i]).divide(UNIT_CONV_2[i2])
     def __str__(self):
         return self.frac.__str__()+" "+self.tool
 
@@ -154,12 +161,14 @@ class CookingMain(spyral.Scene):
             surf = self.font.render(recipe,True,[0,0,0,255]).convert_alpha()
             recipeSprite.image._surf.blit(surf,[max(max(15,20-5*i),5*i-5),50+25*i])
         self.bowl = Recipe([Measurement(Fraction(0,1),"tsp.") for ingred in self.ingredients],self.ingredients)
+        for i in range(6):
+            self.bowl.measures[i].tool = self.recipe.measures[i].tool
         self.tsp = self.addImage("cooking_images/TEA_SPOON.png",65,285,'tool')
         self.tbsp = self.addImage("cooking_images/TBL_SPOON.png",165,285,'tool')
         self.cup = self.addImage("cooking_images/MEASURING_CUP2.png",65,395,'tool')
         self.pint = self.addImage("cooking_images/MEASURING_CUP.png",165,395,'tool')
         self.toolSprites = [self.tsp,self.tbsp,self.cup,self.pint]
-        self.addImage("cooking_images/BOWL.png",545,225)
+        self.addImage("cooking_images/BOWL.png",545,150)
         for i in range(4):
             tool = self.tools[i]
             x = 65+100*(i%2)
@@ -177,10 +186,21 @@ class CookingMain(spyral.Scene):
         self.toolSelect = 0
         self.pointer1 = self.addImage("cooking_images/SPOINTER.png",65,330)
         self.ingredSelect = 0
-        self.pointer3 = self.addImage("cooking_images/SPOINTER.png",545,320)
+        self.pointer3 = self.addImage("cooking_images/SPOINTER.png",545,250)
         self.group.remove(self.pointer3)
         self.curTool = None
         self.state = 0
+
+        PET_X = 475
+        PET_Y = 300
+
+        self.pet = pet(self.group)
+        self.pet.set_pet(pet_type=globalStudent.ptype,
+                         pet_color=globalStudent.pcolor,
+                         pet_expression=globalStudent.pface,
+                         x=PET_X,
+                         y=PET_Y)  
+        
     def addText(self,string,x,y):
         surf = self.font.render(string,True,[0,0,0,255]).convert_alpha()
         y = y-surf.get_height()/2
@@ -257,7 +277,7 @@ class CookingMain(spyral.Scene):
         if self.bowl.sameRecipe(self.recipe):
             print "YOU GOT THE CORRECT RECIPE!!!"
             spyral.director.pop()
-            #spyral.director.push(nom_nom.Bake())
+            spyral.director.push(nom_nom.Bake())
             return
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
@@ -266,7 +286,7 @@ class CookingMain(spyral.Scene):
             if event['type'] == 'KEYDOWN':
                 if event['key']==27:
                     spyral.director.pop()
-                    #spyral.director.push(nom_nom.Bake())
+                    spyral.director.push(nom_nom.Bake())
                     return
                 if event['key']>=273 and event['key']<=276:
                     self.movePointer(event['key'])
