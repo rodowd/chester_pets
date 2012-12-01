@@ -4,10 +4,22 @@ TM_WIDTH = 640
 TM_HEIGHT = 480
 
 class WalkingPet(spyral.Sprite):
-    def __init__(self,group):
+    def __init__(self,group,x,y,pivot_X,pivot_y):
         spyral.Sprite.__init__(self,group)
         self.group.add(self)
-
+        self.anchor = 'topleft'
+        self.grid_x = x
+        self.grid_y = y
+        self.pos = [40*x-pivot_x,40*y-pivot_y]
+        self.pivot_x = pivot_x
+        self.pivot_y = pivot_y
+        self.moving = False
+        self.moved = 0
+    def render():
+        self.image = spyral.Image(filename="pet_images/Tan_Cat_Move1.png")
+    def update(self,dt):
+        pass
+        
 class Map(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
