@@ -126,6 +126,18 @@ def get_hoops(scene):
     return hoops
 
 
+class Pet(spyral.Sprite):
+    def __init__(self, scene):
+        super(Pet, self).__init__()
+        self.scene = scene
+
+        self.image = spyral.Image(filename="basketball_images/Tan_Side_Cat.png") # @TODO: make this dynamic
+        
+        self.anchor = "center"
+        self.x = 1000 # @TODO: magic
+        self.y = 700 # @TODO: magic
+
+
 class Graph(spyral.Sprite):
     def __init__(self, scene):
         super(Graph, self).__init__()
@@ -415,7 +427,10 @@ class Basketball(spyral.Scene):
         self.group.add(self.scoreboard)
         
         self.shot_point = ShotPoint(self)
-        self.group.add(ShotPoint(self))
+        self.group.add(self.shot_point)
+
+        self.pet = Pet(self)
+        self.group.add(self.pet)
 
 
     def reset(self):
