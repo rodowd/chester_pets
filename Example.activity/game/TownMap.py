@@ -18,8 +18,22 @@ class WalkingPet(spyral.Sprite):
         self.pivot_y = pivot_y
         self.moving = False
         self.moved = 0
-    def render():
-        self.image = spyral.Image(filename="pet_images/Tan_Cat_Move1.png")
+        self.set_moving_images()
+        self.render()
+    def set_moving_images(self):
+        self.images = [spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
+                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png")]
+    def render(self):
+        if self.moved<.25:
+            self.image = self.images[0]
+        else:
+            self.image = self.images[1]
     def finish_move(self):
         if self.moving=="up":
             self.grid_y-=1
@@ -30,6 +44,10 @@ class WalkingPet(spyral.Sprite):
         elif self.moving=="left":
             self.grid_x-=1
         self.pos = [50*self.grid_x-self.pivot_x,50*self.grid_y-self.pivot_y]
+        print self.grid_x,self.grid_y
+        print self.pos[0],self.pos[1]
+        self.moving = False
+        self.moved = 0
     def set_position(self):
         x = 0
         y = 0
@@ -41,8 +59,8 @@ class WalkingPet(spyral.Sprite):
             x = 1
         elif self.moving=="left":
             x = -1
-        self.x = self.grid_x*50+x*100*self.moved
-        self.y = self.grid_y*50+y*100*self.moved
+        self.x = self.grid_x*50+x*100*self.moved-self.pivot_x
+        self.y = self.grid_y*50+y*100*self.moved-self.pivot_y
     def update(self,dt):
         if self.moving:
             self.moved+=dt
@@ -50,6 +68,7 @@ class WalkingPet(spyral.Sprite):
                 self.finish_move()
             else:
                 self.set_position()
+            self.render()
         if not(self.moving):
             if self.mapgrid.up:
                 self.moving = "up"
@@ -64,13 +83,15 @@ class WalkingPet(spyral.Sprite):
 class MapGrid(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = [TM_WIDTH,TM_HEIGHT])
+        self.camera = self.parent_camera.make_child(virtual_size = (TM_WIDTH,TM_HEIGHT))
         self.group = spyral.Group(self.camera)
         self.up = False
         self.left = False
         self.right = False
         self.down = False
         self.pet = WalkingPet(self,10,10,20,30)
+    def render(self):
+        self.group.draw()
     def update(self,dt):
         self.group.update(dt)
         for event in self.event_handler.get():
@@ -101,10 +122,9 @@ class Room(MapGrid):
         self.number = number
     def on_enter(self):
         pass
-        """
         bg = spyral.Image(size = [TM_WIDTH,TM_HEIGHT])
         bg.fill([0,0,0,255])
-        self.camera.set_background(bg)"""
+        self.camera.set_background(bg)
         
 """
 class Lobby(MapGrid):
