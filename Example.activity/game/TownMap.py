@@ -100,9 +100,11 @@ class Room(MapGrid):
         MapGrid.__init__(self)
         self.number = number
     def on_enter(self):
+        pass
+        """
         bg = spyral.Image(size = [TM_WIDTH,TM_HEIGHT])
         bg.fill([0,0,0,255])
-        self.camera.set_background(bg)
+        self.camera.set_background(bg)"""
         
 """
 class Lobby(MapGrid):
