@@ -134,7 +134,7 @@ class Pet(spyral.Sprite):
         self.image = spyral.Image(filename="basketball_images/Tan_Side_Cat.png") # @TODO: make this dynamic
         
         self.anchor = "center"
-        self.x = 1000 # @TODO: magic
+        self.x = 1100 # @TODO: magic
         self.y = 700 # @TODO: magic
 
 
