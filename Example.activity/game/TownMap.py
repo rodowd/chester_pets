@@ -89,7 +89,7 @@ class MapGrid(spyral.Scene):
         self.left = False
         self.right = False
         self.down = False
-        self.pet = WalkingPet(self,10,10,20,30)
+        self.pet = WalkingPet(self,10,10,0,0)
     def render(self):
         self.group.draw()
     def update(self,dt):
