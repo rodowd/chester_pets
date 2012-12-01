@@ -425,7 +425,6 @@ class MainMenu(Scene):
                         spyral.director.pop()
                     elif (self.p == 9):
                         spyral.director.pop()
-                        sys.exit()
                         return
         self.group.update(dt)
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
