@@ -421,7 +421,7 @@ class MainMenu(Scene):
                     elif (self.p == 2 or self.p == 7):
                         spyral.director.push(Racing.RacingMain())
                     elif (self.p == 3 or self.p == 8):
-                        spyral.director.push(TownMap.Room())
+                        spyral.director.push(TownMap.Room(100))
                     elif (self.p == 4):
                         spyral.director.pop()
                     elif (self.p == 9):
