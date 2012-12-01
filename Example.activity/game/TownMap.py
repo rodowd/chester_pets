@@ -1,4 +1,6 @@
+import pygame
 import spyral
+import random
 
 TM_WIDTH = 640
 TM_HEIGHT = 480
