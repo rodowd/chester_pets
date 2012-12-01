@@ -134,7 +134,7 @@ class Room(MapGrid):
         MapGrid.__init__(self)
         self.number = number
     def on_enter(self):
-        bg = spyral.Image(filename="world_images/TheROOM.png")
+        bg = spyral.Image(filename="world_images/HongKong.png")
         self.camera.set_background(bg)
         
 """
