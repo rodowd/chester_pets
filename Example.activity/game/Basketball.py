@@ -50,7 +50,7 @@ class Ball(spyral.Sprite):
     '''
     The basketballs that go up and down
     '''
-    def __init__(self, scene, size_factor):
+    def __init__(self, scene):
         '''
         # @TODO: 
         '''
@@ -385,7 +385,7 @@ class Basketball(spyral.Scene):
         
         self.user_has_shot = True
         self.waiting_for_input = True
-        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT))
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT), layers=["under", "__default__"])
         
         self.hoops = get_hoops(self)
 
@@ -394,10 +394,12 @@ class Basketball(spyral.Scene):
             for j in range(int(NUM_Y_POINTS + 1)):
                 self.points.append(Point(self, i, j))
 
-        self.up_ball = Ball(self, 5)
+        self.up_ball = Ball(self)
         self.up_ball.pos = (COORD_WIDTH/2 + PAD_LEFT, HEIGHT)
-        self.down_ball = Ball(self, 1)
-        self.down_ball.image = spyral.Image(filename="basketball_images/basketball_small.png")
+        self.up_ball._set_layer("under")
+        self.down_ball = Ball(self)
+        self.down_ball.image = spyral.Image(filename="basketball_images/basketball.png")
+        self.down_ball._set_layer("under")
 
         # starts in middle, moved to correct posn later (before it drops)
         self.down_ball.pos = (WIDTH/2, -self.down_ball.image._surf.get_height())
@@ -410,6 +412,7 @@ class Basketball(spyral.Scene):
         # We can add the sprites to the group
         for hoop in self.hoops:
             self.group.add(hoop)
+
         self.group.add(self.up_ball)
         self.group.add(self.down_ball)
 

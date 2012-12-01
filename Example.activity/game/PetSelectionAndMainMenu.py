@@ -85,11 +85,11 @@ class TextSprite(Sprite):
             def __init__(self):
                 self._surf = surf
         self.image = DumbImage()
-        self.layer=2
+        self.layer = 2
 
     def change (self):
         self.image.fill(color=BG_COLOR)
-        self.layer=0
+        self.layer = 0
         Sprite.__del__(self)
 
     def erase (self):
@@ -110,9 +110,9 @@ class PetSelection(Scene):
         self.PET_X = 230
         self.PET_Y = 200
 
-        self.i =0
-        self.j =0
-        self.t =0
+        self.i = 0
+        self.j = 0
+        self.t = 0
 
         self.pet = pet(self.group)
         self.pet.set_pet(pet_type=self.t,
