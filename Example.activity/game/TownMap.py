@@ -30,10 +30,10 @@ class WalkingPet(spyral.Sprite):
                        spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
                        spyral.Image(filename = "pet_images/Tan_Cat_Move2.png")]
     def render(self):
-        if self.moved<.25:
-            self.image = self.images[0]
-        else:
+        if self.moved<=.25 and self.moved>0:
             self.image = self.images[1]
+        else:
+            self.image = self.images[0]
     def finish_move(self):
         if self.moving=="up":
             self.grid_y-=1
