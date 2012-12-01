@@ -5,7 +5,8 @@ TM_HEIGHT = 480
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,group):
-        spyral.Sprite.__init__(self,
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
 
 class Map(spyral.Scene):
     def __init__(self):
