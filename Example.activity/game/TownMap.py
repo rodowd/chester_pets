@@ -18,6 +18,7 @@ class WalkingPet(spyral.Sprite):
         self.pivot_y = pivot_y
         self.moving = False
         self.moved = 0
+        self.facing = "up"
         self.set_moving_images()
         self.render()
     def set_moving_images(self):
@@ -29,11 +30,21 @@ class WalkingPet(spyral.Sprite):
                        spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
                        spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
                        spyral.Image(filename = "pet_images/Tan_Cat_Move2.png")]
+        for i in range(4):
+            self.images[i*2].rotate(i*90)
+            self.images[i*2+1].rotate(i*90)
     def render(self):
+        i = 6
+        if self.facing == "up":
+            i = 0
+        if self.facing == "left":
+            i = 2
+        if self.facing == "down":
+            i = 4
         if self.moved<=.25 and self.moved>0:
-            self.image = self.images[1]
+            self.image = self.images[i+1]
         else:
-            self.image = self.images[0]
+            self.image = self.images[i]
     def finish_move(self):
         if self.moving=="up":
             self.grid_y-=1
@@ -78,6 +89,8 @@ class WalkingPet(spyral.Sprite):
                 self.moving = "right"
             elif self.mapgrid.left:
                 self.moving = "left"
+            if self.moving:
+                self.facing = self.moving
             
                 
 class MapGrid(spyral.Scene):
