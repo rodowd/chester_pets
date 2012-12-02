@@ -304,10 +304,14 @@ class TimerSprite(spyral.Sprite):
         self.time = int(main.timer)
         self.pos = [5,5]
         self.render()
+
+
     def render(self):
         self.image = spyral.Image(size = [100,20])
         surf = FONT2.render(self.getTimeString(),True,[255,255,255,255])
         self.image._surf.blit(surf,[0,10-surf.get_height()*.5])
+
+
     def getTimeString(self):
         minutes = int(self.time/60)
         seconds = self.time%60
@@ -317,6 +321,8 @@ class TimerSprite(spyral.Sprite):
         if seconds<10:
             z+="0"
         return z+seconds.__str__()
+
+
     def update(self,dt):
         time2 = int(self.main.timer)
         if not(time2==self.time):
@@ -325,7 +331,7 @@ class TimerSprite(spyral.Sprite):
     
 
 class RacingMain(spyral.Scene):
-    def __init__(self):
+    def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ['__default__','on_road','over_road','hud','hud2'])
         self.group = spyral.Group(self.camera)
@@ -342,14 +348,32 @@ class RacingMain(spyral.Scene):
         self.turbometer = TurboMeter(self.group,10)
         self.question = Question(self,self.distance)
         self.timerSprite = TimerSprite(self)
+
+        self.pet = passed_in_pet
+
+
     def setSlow(self,slow):
         self.slow = min(self.slow,slow)
         self.turbometer.turnOff()
+
+
     def render(self):
         self.group.draw()
+
+
     def toggleTurbo(self):
         self.turbometer.toggle()
+
+
     def update(self,dt):
+        if self.distance > 10000: # @TODO: magic
+            # game over
+            # @TODO: wait
+            # @TODO: show end screen
+            self.pet.money += (100 - int(self.timer)) # @TODO: 100 is magic
+            print self.pet.money
+            spyral.director.pop()
+            return
         self.timer+=dt
         self.speed = self.normalspeed
         if self.turbometer.active:
@@ -358,7 +382,7 @@ class RacingMain(spyral.Scene):
             self.slow = min(1,self.slow+(dt*self.accel)/self.normalspeed)
         else:
             self.turbometer.slow = False
-        if self.turbometer.changed:            
+        if self.turbometer.changed:
             self.turbometer.changed = False
             self.car.render2(self.turbometer.active)
         self.speed*=self.slow
@@ -401,8 +425,6 @@ class RacingMain(spyral.Scene):
                     self.car.right = False
                 if event['key']==276:
                     self.car.left = False
-        #print (self.speed-self.car.vx)/20,"m/s"
-        #print (self.distance-self.car.x)/20,"meters"
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill([0,0,0,255])

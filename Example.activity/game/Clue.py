@@ -4,13 +4,13 @@ SHAPES = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Dia
 
 class Clue:
     def __init__(self,last_town):
-        towns = ["Hong Kong","Touheyville","O'dowd Shire"]
+        towns = ["Hong Kong","Touheyville","O'Dowd Shire"]
         towns = [town for town in towns if not(town==last_town)]
         self.town = towns[random.randint(0,1)]
         if last_town=="Start":
             self.town = "Touheyville"
         self.number = random.randint(21,38)
-        if self.town=="O'dowd Shire":
+        if self.town=="O'Dowd Shire":
             self.number = random.randint(41,57)
         self.set_number_clue()
         self.shape = SHAPES[random.randint(0,6)]

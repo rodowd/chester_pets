@@ -56,6 +56,7 @@ class Pet(spyral.Sprite):
         self.pet_type = 0
 
         self.anchor = "center"
+        self.money = 100
 
         self.x = 230 # @TODO: magic
         self.y = 200 # @TODO: magic
@@ -151,6 +152,6 @@ class PetSelection(Scene):
                 elif event['ascii'] =='t':
                     self.next_type()
                 elif event['ascii'] == 's':
+                    spyral.director.push(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))
-                    #spyral.director.push(WorldMap.WorldMap(self.pet))
         self.group.update(dt)

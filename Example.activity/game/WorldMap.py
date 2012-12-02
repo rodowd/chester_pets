@@ -107,7 +107,7 @@ class WorldMap(spyral.Scene):
                     self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
                 elif event['key'] == 13:
                     # enter key
-                    spyral.director.push(Racing.RacingMain())
+                    spyral.director.push(Racing.RacingMain(self.pet))
                 # @TODO: rest is for debug; delete
                 elif event['key'] == 113:
                     # q
