@@ -2,10 +2,10 @@ import pygame
 import spyral
 import random
 
-RC_WIDTH = 640
-RC_HEIGHT = 480
+WIDTH = 1200
+HEIGHT = 900
 UPPER_BOUND = 300
-LANE_WIDTH = (RC_HEIGHT-UPPER_BOUND)/3
+LANE_WIDTH = (HEIGHT-UPPER_BOUND)/3
 LINE_SIZE = [25,5]
 LINE_COLOR = [255,255,0,255]
 FONT1 = pygame.font.SysFont(None,40)
@@ -24,9 +24,9 @@ class LineList:
             self.list.append(Line(self,self.group,self.main.distance-self.dist,self.dist,self.y))
             self.dist+=self.between
         for line in self.list:
-            if line.x>=RC_WIDTH+LINE_SIZE[0]:
+            if line.x>=WIDTH+LINE_SIZE[0]:
                 self.group.remove(line)
-        self.list = [line for line in self.list if line.x<=RC_WIDTH+LINE_SIZE[0]]
+        self.list = [line for line in self.list if line.x<=WIDTH+LINE_SIZE[0]]
 
 class Line(spyral.Sprite):
     def __init__(self,linelist,group,x,dist,y):
@@ -90,11 +90,11 @@ class Car(spyral.Sprite):
         self.vy = max(-self.turn,min(self.vy+dy,self.turn))
         self.x+=self.vx*dt
         self.y+=self.vy*dt
-        if self.image._surf.get_height()+self.y>=RC_HEIGHT:
-            self.y = RC_HEIGHT-self.image._surf.get_height()
+        if self.image._surf.get_height()+self.y>=HEIGHT:
+            self.y = HEIGHT-self.image._surf.get_height()
             self.vy = 0
-        if self.image._surf.get_width()+self.x>=RC_WIDTH:
-            self.x = RC_WIDTH-self.image._surf.get_width()
+        if self.image._surf.get_width()+self.x>=WIDTH:
+            self.x = WIDTH-self.image._surf.get_width()
             self.vx = 0
         if self.x<=0:
             self.x = 0
@@ -120,12 +120,12 @@ class TurboMeter(spyral.Sprite):
         self.anchor = 'topright'
         self.image.fill([255,0,0,255])
         self.image.draw_rect([0,255,0,255],[0,80-self.turbo*80/self.maxTurbo],[25,80])
-        self.pos = [RC_WIDTH-10,10]"""
+        self.pos = [WIDTH-10,10]"""
         self.image = spyral.Image(size = [100,24])
         self.anchor = 'topright'
         self.image.fill([153,153,153,255])
         self.image.draw_rect(self.get_color(),[self.turbo*100/self.maxTurbo-100,0],[100,24])
-        self.pos = [RC_WIDTH-10,10]
+        self.pos = [WIDTH-10,10]
     def get_color(self):
         ratio = self.turbo/self.maxTurbo
         return [min(255,510-ratio*510),min(255,510*ratio),0,255]
@@ -202,7 +202,7 @@ class Question(spyral.Sprite):
         opers = ["+","-"]
         self.oper = opers[i]
         self.num2 = random.randint(1,49)
-        self.pos = [RC_WIDTH/2,30]
+        self.pos = [WIDTH/2,30]
         self.dist = dist
         self.done = False
         self.answers = []
@@ -333,13 +333,13 @@ class TimerSprite(spyral.Sprite):
 class RacingMain(spyral.Scene):
     def __init__(self):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (RC_WIDTH, RC_HEIGHT),layers = ['__default__','on_road','over_road','hud','hud2'])
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ['__default__','on_road','over_road','hud','hud2'])
         self.group = spyral.Group(self.camera)
         self.normalspeed = 200
         self.accel = 50
         self.speed = self.normalspeed
         self.slow = 1
-        self.distance = RC_WIDTH
+        self.distance = WIDTH
         self.timer = 0
         self.questionNum = 1
         self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,100,6)
@@ -369,7 +369,7 @@ class RacingMain(spyral.Scene):
             self.car.render2(self.turbometer.active)
         self.speed*=self.slow
         self.distance+=self.speed*dt
-        if self.distance>=RC_WIDTH+2000*self.questionNum:
+        if self.distance>=WIDTH+2000*self.questionNum:
             for ans in self.question.answers:
                 self.group.remove(ans)
             self.group.remove(self.question)
@@ -410,7 +410,7 @@ class RacingMain(spyral.Scene):
         #print (self.speed-self.car.vx)/20,"m/s"
         #print (self.distance-self.car.x)/20,"meters"
     def on_enter(self):
-        bg = spyral.Image(size=(RC_WIDTH,RC_HEIGHT))
+        bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill([0,0,0,255])
-        bg.draw_rect([100,100,100,255],[0,UPPER_BOUND],[RC_WIDTH,RC_HEIGHT])
+        bg.draw_rect([100,100,100,255],[0,UPPER_BOUND],[WIDTH,HEIGHT])
         self.camera.set_background(bg)

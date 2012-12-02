@@ -127,13 +127,13 @@ def random_recipe(measures,ingredients):
         meas.append(Measurement(frac,measures[toolnum].tool))
     return Recipe(meas,ingredients)
 
-CK_WIDTH = 640
-CK_HEIGHT = 480
+WIDTH = 1200
+HEIGHT = 900
 
 class Cooking(spyral.Scene):
     def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (CK_WIDTH,CK_HEIGHT),layers = ['__default__','tool'])
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH,HEIGHT),layers = ['__default__','tool'])
         self.group = spyral.Group(self.camera)
         self.tools = [random_tool("tsp."),
                       random_tool("tbsp."),
@@ -148,7 +148,7 @@ class Cooking(spyral.Scene):
                             Ingredient(self.group, "butter", "images/cooking/butter.png", 350, 330)]
         recipeSprite = self.addImage("images/cooking/recipe_scroll.png",112,125)
         self.emptyBG = spyral.Sprite(self.group)
-        self.emptyBG.image = spyral.Image(size=[CK_WIDTH,CK_HEIGHT])
+        self.emptyBG.image = spyral.Image(size=[WIDTH,HEIGHT])
         self.group.add(self.emptyBG)
         self.font = pygame.font.SysFont(None,20)
         self.recipe = random_recipe(self.tools,self.ingredients)
@@ -192,6 +192,8 @@ class Cooking(spyral.Scene):
         self.state = 0
 
         self.pet = passed_in_pet
+        self.pet.x = 500
+        self.pet.y = 500
         self.group.add(self.pet)
 
         
@@ -291,7 +293,7 @@ class Cooking(spyral.Scene):
                 if event['key']==8:
                     self.cancel()
     def on_enter(self):
-        bg = spyral.Image(size=(CK_WIDTH,CK_HEIGHT))
+        bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill([255,64,64,255])
         self.camera.set_background(bg)
     

@@ -37,15 +37,13 @@ MY_COLOR = (255, 0, 0)
 
 PET_TYPES = ["cat", "dog", "bird", "dragon"]
 
-PET_COLORS = [("tan", (185, 122, 87)),
-               "red", (255, 0, 0),
-               "blue", (0, 255, 0),
-               "green", (0, 0, 255),
-               "dark_red", (125, 0, 0),
-               "pink", (200, 100, 100),
-               "purple", (255, 255, 0),
-               "orange", (255, 39, 139),
-               "white", (255, 255, 255)]
+PET_COLORS = ["tan",
+              "red",
+              "blue",
+              "green",
+              "magenta",
+              "cyan",
+              "yellow"]
         
 class Pet(spyral.Sprite):
     def __init__(self, scene):
@@ -67,10 +65,10 @@ class Pet(spyral.Sprite):
         bg = spyral.Image(size=(WIDTH, HEIGHT))
         bg.fill(BG_COLOR)
         self.camera.set_background(bg)
-                
+
 
     def set_pet(self):
-        self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color][0]))
+        self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
 
 
 class TextSprite(Sprite):
@@ -116,12 +114,6 @@ class PetSelection(Scene):
         heading.y = 70
         heading.render("CHESTER PETS")      
 
-    def recolor(self, color1, color2, a):
-        for x in range(self.image.get_width()):
-            for y in range(self.image.get_height()):
-                if self.image.get_at((x,y)) == color1:
-                    self.image.set_at((x,y), color2)
-                
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH, HEIGHT))
         bg.fill(BG_COLOR)
@@ -131,11 +123,11 @@ class PetSelection(Scene):
         self.group.draw()
         
     def next_color(self):
-        self.pet.color = (self.pet.color + 1) % 9
+        self.pet.color = (self.pet.color + 1) % len(PET_COLORS)
         self.pet.set_pet()
 
     def next_type(self):
-        self.pet.pet_type = (self.pet.pet_type + 1) % 4
+        self.pet.pet_type = (self.pet.pet_type + 1) % len(PET_TYPES)
         self.pet.set_pet()
         
     def update(self, dt):
