@@ -379,3 +379,32 @@ class Touheyville(Town):
         bg = spyral.Image(filename="images/town/Touheyville.png")
         self.paint_numbers(bg)
         self.camera.set_background(bg)
+
+class OdowdShire(Town):
+    def __init__(self,pet):
+        Town.__init__(self,pet)
+        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        self.add_tower([1,standard_shapes],9,3)
+        self.add_tower([2,standard_shapes],13,2)
+        self.add_building([3,standard_shapes],17,2)
+        self.add_building([4,standard_shapes],21,3)
+        self.add_tower([5,standard_shapes],6,6)
+        self.add_building([6,standard_shapes],10,6)
+        self.add_building([7,standard_shapes],14,5)
+        self.add_tower([8,standard_shapes],18,6)
+        self.add_tower([9,standard_shapes],22,7)
+        self.add_building([10,standard_shapes],8,9)
+        self.add_building([11,standard_shapes],21,10)
+        self.add_tower([12,standard_shapes],2,14)
+        self.add_tower([13,standard_shapes],6,14)
+        self.add_tower([14,standard_shapes],14,12)
+        self.add_tower([15,standard_shapes],10,16)
+        self.add_tower([16,standard_shapes],15,16)
+        self.add_building([17,standard_shapes],19,16)
+    def add_tower(self,data,x,y):
+        Town.add_building(self,data,x,y)
+        self.grid[x][y-2] = False
+    def on_enter(self):
+        bg = spyral.Image(filename="images/town/odowd_shire.png")
+        self.paint_numbers(bg)
+        self.camera.set_background(bg)
