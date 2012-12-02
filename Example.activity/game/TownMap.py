@@ -3,7 +3,7 @@ import pygame
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
-NUMBER_FONT = pygame.font.SysFont(None,20)
+NUMBER_FONT = pygame.font.SysFont(None,30)
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
@@ -23,8 +23,8 @@ class WalkingPet(spyral.Sprite):
         self.changed_room = False
         self.render()
     def set_moving_images(self):
-        move1 = "images/pets/cat_move1_tan.png"
-        move2 = "images/pets/cat_move2_tan.png"
+        move1 = self.get_move1()
+        move2 = self.get_move2()
         self.images = [spyral.Image(filename = move1),
                        spyral.Image(filename = move2),
                        spyral.Image(filename = move1),
@@ -36,6 +36,18 @@ class WalkingPet(spyral.Sprite):
         for i in range(4):
             self.images[i*2].rotate(i*90)
             self.images[i*2+1].rotate(i*90)
+    def get_move1(self):
+        moves = ["cat_move1_tan.png",
+                 "dog_move1_tan.png",
+                 "bird_move_tan.png",
+                 "dragon_move_tan.png"]
+        return "images/pets/"+moves[self.mapgrid.pet.pet_type]
+    def get_move2(self):
+        moves = ["cat_move2_tan.png",
+                 "dog_move2_tan.png",
+                 "bird_move_tan.png",
+                 "dragon_move_tan.png"]
+        return "images/pets/"+moves[self.mapgrid.pet.pet_type]
     def render(self):
         i = 6
         if self.facing == "up":
@@ -119,15 +131,16 @@ class WalkingPet(spyral.Sprite):
             
 
 class MapGrid(spyral.Scene):
-    def __init__(self):
+    def __init__(self,pet):
         spyral.Scene.__init__(self)
+        self.pet = pet
         self.camera = self.parent_camera.make_child(virtual_size = (TM_WIDTH,TM_HEIGHT))
         self.group = spyral.Group(self.camera)
         self.up = False
         self.left = False
         self.right = False
         self.down = False
-        self.pet = WalkingPet(self,11,17,0,0)
+        self.walking_pet = WalkingPet(self,11,17,0,0)
         self.grid = [[True for y in range(18)] for x in range(24)]
     def out_of_bounds(self,x,y):
         return x<0 or x>=24 or y<0 or y>=18
@@ -156,12 +169,12 @@ class MapGrid(spyral.Scene):
                     self.right = False
                 if event['key'] == 276:
                     self.left = False
-        if self.out_of_bounds(self.pet.grid_x,self.pet.grid_y):
+        if self.out_of_bounds(self.walking_pet.grid_x,self.walking_pet.grid_y):
             spyral.director.pop()
 
 class Room(MapGrid):
-    def __init__(self,shape):
-        MapGrid.__init__(self)
+    def __init__(self,pet,shape):
+        MapGrid.__init__(self,pet)
         self.shape = shape
         for y in range(6):
             for x in range(24):
@@ -180,8 +193,8 @@ class Room(MapGrid):
         
 
 class Lobby(MapGrid):
-    def __init__(self,number,shapes):
-        MapGrid.__init__(self)
+    def __init__(self,pet,number,shapes):
+        MapGrid.__init__(self,pet)
         self.number = number
         self.shapes = shapes
         for y in range(8):
@@ -209,26 +222,26 @@ class Lobby(MapGrid):
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
-        x = self.pet.grid_x
-        y = self.pet.grid_y
+        x = self.walking_pet.grid_x
+        y = self.walking_pet.grid_y
         if self.out_of_bounds(x,y):
             return
-        if not(self.pet.changed_room):
+        if not(self.walking_pet.changed_room):
             if not(isinstance(self.grid[x][y],bool)):
-                spyral.director.push(Room(self.grid[x][y]))
-                self.pet.changed_room = True
-                self.pet.facing = "down"
+                spyral.director.push(Room(self.pet,self.grid[x][y]))
+                self.walking_pet.changed_room = True
+                self.walking_pet.facing = "down"
                 self.up = False
                 self.down = False
                 self.right = False
                 self.left = False
-                self.pet.render()
+                self.walking_pet.render()
                 return
                 
 
 class Town(MapGrid):
-    def __init__(self):
-        MapGrid.__init__(self)
+    def __init__(self,pet):
+        MapGrid.__init__(self,pet)
         for x in range(4):
             for y in range(7):
                 self.grid[x][y] = False
@@ -241,25 +254,31 @@ class Town(MapGrid):
         self.grid[x][y] = data
     def update(self,dt):
         MapGrid.update(self,dt)
-        x = self.pet.grid_x
-        y = self.pet.grid_y
+        x = self.walking_pet.grid_x
+        y = self.walking_pet.grid_y
         if self.out_of_bounds(x,y):
             return
-        if not(self.pet.changed_room):
+        if not(self.walking_pet.changed_room):
             if not(isinstance(self.grid[x][y],bool)):
-                spyral.director.push(Lobby(self.grid[x][y][0],self.grid[x][y][1]))
-                self.pet.changed_room = True
-                self.pet.facing = "down"
+                spyral.director.push(Lobby(self.pet,self.grid[x][y][0],self.grid[x][y][1]))
+                self.walking_pet.changed_room = True
+                self.walking_pet.facing = "down"
                 self.up = False
                 self.down = False
                 self.right = False
                 self.left = False
-                self.pet.render()
+                self.walking_pet.render()
                 return
+    def paint_numbers(self,bg):
+        for y in range(18):
+            for x in range(24):
+                if not(isinstance(self.grid[x][y],bool)):
+                    surf = NUMBER_FONT.render(self.grid[x][y][0].__str__(),True,[255,255,0,255])
+                    bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
 
 class HongKong(Town):
-    def __init__(self):
-        Town.__init__(self)
+    def __init__(self,pet):
+        Town.__init__(self,pet)
         for x in range(4):
             for y in range(3):
                 self.grid[x+9][y] = False
@@ -274,42 +293,25 @@ class HongKong(Town):
             self.grid[23-x][7] = False
             self.grid[20][x+5] = True
         self.grid[23][8] = False
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          6,2)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          10,2)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          6,5)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          10,5)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          14,4)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          14,7)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          20,4)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          2,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          6,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          10,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          19,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          14,10)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          5,13)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          9,13)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          13,13)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          18,12)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          17,15)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          8,16)
+        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        self.add_building([20,standard_shapes],6,2)
+        self.add_building([20,standard_shapes],10,2)
+        self.add_building([20,standard_shapes],6,5)
+        self.add_building([20,standard_shapes],10,5)
+        self.add_building([20,standard_shapes],14,4)
+        self.add_building([20,standard_shapes],14,7)
+        self.add_building([20,standard_shapes],20,4)
+        self.add_building([20,standard_shapes],2,9)
+        self.add_building([20,standard_shapes],6,9)
+        self.add_building([20,standard_shapes],10,9)
+        self.add_building([20,standard_shapes],19,9)
+        self.add_building([20,standard_shapes],14,10)
+        self.add_building([20,standard_shapes],5,13)
+        self.add_building([20,standard_shapes],9,13)
+        self.add_building([20,standard_shapes],13,13)
+        self.add_building([20,standard_shapes],18,12)
+        self.add_building([20,standard_shapes],17,15)
+        self.add_building([20,standard_shapes],8,16)
         for i in range(5):
             for i2 in range(i+1):
                 self.grid[23-i2][i+13] = False
@@ -320,24 +322,60 @@ class HongKong(Town):
         
     def on_enter(self):
         bg = spyral.Image(filename="images/town/hong_kong.png")
-        for y in range(18):
-            for x in range(24):
-                if not(isinstance(self.grid[x][y],bool)):
-                    surf = NUMBER_FONT.render(self.grid[x][y][0].__str__(),True,[255,255,0,255])
-                    bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
+        self.paint_numbers(bg)
         self.camera.set_background(bg)
 
 class Touheyville(Town):
-    def __init__(self):
-        Town.__init__(self)
-    def add_tall_building(self,data,x,y):
-        Town.add_building(self,data,x,y)
+    def __init__(self,pet):
+        Town.__init__(self,pet)
+        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        self.add_building([1,standard_shapes],2,8)
+        self.add_building([2,standard_shapes],4,11)
+        self.add_building([3,standard_shapes],4,14)
+        self.add_building([4,standard_shapes],8,3)
+        self.add_skyscraper([5,standard_shapes],8,8)
+        self.add_building([6,standard_shapes],8,11)
+        self.add_building([7,standard_shapes],8,14)
+        self.add_building([8,standard_shapes],12,5)
+        self.add_building([9,standard_shapes],12,8)
+        self.add_building([10,standard_shapes],12,11)
+        self.add_skyscraper([11,standard_shapes],12,16)
+        self.add_building([12,standard_shapes],16,4)
+        self.add_building([13,standard_shapes],16,7)
+        self.add_tall_building([14,standard_shapes],16,11)
+        self.add_building([15,standard_shapes],16,16)
+        self.add_building([16,standard_shapes],20,7)
+        self.add_building([17,standard_shapes],20,11)
+        self.add_building([18,standard_shapes],20,14)
+        for y in range(6):
+            self.grid[0][17-y] = False
+        self.grid[1][15] = False
+        for x in range(4):
+            for y in range(2):
+                self.grid[x+1][17-y] = False
+        for x in range(2):
+            self.grid[x+5][17] = False
+        for x in range(20):
+            self.grid[23-x][0] = False
+        for x in range(9):
+            self.grid[23-x][1] = False
+        for y in range(3):
+            for x in range(5-y):
+                self.grid[23-x][y+2] = False
+        self.grid[23][5] = False
+        for x in range(2):
+            self.grid[x+4][1] = False
+    def add_skyscraper(self,data,x,y):
+        self.add_tall_building(data,x,y)
         self.grid[x-1][y-3] = False
         self.grid[x][y-3] = False
         self.grid[x+1][y-3] = False
+    def add_tall_building(self,data,x,y):
+        Town.add_building(self,data,x,y)
         self.grid[x-1][y-2] = False
         self.grid[x+1][y-2] = False
         self.grid[x][y-2] = False
     def on_enter(self):
-        bg = spyral.Image(filename="images/town/hong_kong.png")
+        bg = spyral.Image(filename="images/town/Touheyville.png")
+        self.paint_numbers(bg)
         self.camera.set_background(bg)
