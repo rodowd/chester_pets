@@ -27,6 +27,8 @@ import spyral
 from spyral.sprite import Sprite
 from spyral.scene import Scene
 import WorldMap
+import TownMap
+import Clue
 
 WIDTH = 1200
 HEIGHT = 900
@@ -58,9 +60,16 @@ class Pet(spyral.Sprite):
         self.x = 230 # @TODO: magic
         self.y = 200 # @TODO: magic
 
+        self.clues = [Clue("Start")]
+        for i in range(29):
+            self.clues.append(Clue(self.clues[i].town))
+        self.current_clue = 0
+
         self.set_pet()
 
-
+    def get_clue(self):
+        return self.clues[self.current_clue]
+    
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH, HEIGHT))
         bg.fill(BG_COLOR)
@@ -142,6 +151,6 @@ class PetSelection(Scene):
                 elif event['ascii'] =='t':
                     self.next_type()
                 elif event['ascii'] == 's':
+                    #spyral.director.push(TownMap.Touheyville(self.pet))
                     spyral.director.push(WorldMap.WorldMap(self.pet))
-                    #spyral.director.push(MainMenu.MainMenu(self.pet)) # @TODO: delete this
         self.group.update(dt)
