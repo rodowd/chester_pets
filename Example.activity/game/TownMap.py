@@ -228,7 +228,7 @@ class Lobby(MapGrid):
             return
         if not(self.walking_pet.changed_room):
             if not(isinstance(self.grid[x][y],bool)):
-                spyral.director.push(Room(self.grid[x][y]))
+                spyral.director.push(Room(self.pet,self.grid[x][y]))
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
@@ -260,7 +260,7 @@ class Town(MapGrid):
             return
         if not(self.walking_pet.changed_room):
             if not(isinstance(self.grid[x][y],bool)):
-                spyral.director.push(Lobby(self.grid[x][y][0],self.grid[x][y][1]))
+                spyral.director.push(Lobby(self.pet,self.grid[x][y][0],self.grid[x][y][1]))
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
