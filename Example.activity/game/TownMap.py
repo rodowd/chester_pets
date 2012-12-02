@@ -3,7 +3,7 @@ import pygame
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
-NUMBER_FONT = pygame.font.SysFont(None,20)
+NUMBER_FONT = pygame.font.SysFont(None,30)
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
@@ -269,6 +269,12 @@ class Town(MapGrid):
                 self.left = False
                 self.walking_pet.render()
                 return
+    def paint_numbers(self,bg):
+        for y in range(18):
+            for x in range(24):
+                if not(isinstance(self.grid[x][y],bool)):
+                    surf = NUMBER_FONT.render(self.grid[x][y][0].__str__(),True,[255,255,0,255])
+                    bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
 
 class HongKong(Town):
     def __init__(self,pet):
@@ -287,42 +293,25 @@ class HongKong(Town):
             self.grid[23-x][7] = False
             self.grid[20][x+5] = True
         self.grid[23][8] = False
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          6,2)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          10,2)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          6,5)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          10,5)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          14,4)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          14,7)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          20,4)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          2,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          6,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          10,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          19,9)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          14,10)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          5,13)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          9,13)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          13,13)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          18,12)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          17,15)
-        self.add_building([20,["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]],
-                          8,16)
+        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        self.add_building([20,standard_shapes],6,2)
+        self.add_building([20,standard_shapes],10,2)
+        self.add_building([20,standard_shapes],6,5)
+        self.add_building([20,standard_shapes],10,5)
+        self.add_building([20,standard_shapes],14,4)
+        self.add_building([20,standard_shapes],14,7)
+        self.add_building([20,standard_shapes],20,4)
+        self.add_building([20,standard_shapes],2,9)
+        self.add_building([20,standard_shapes],6,9)
+        self.add_building([20,standard_shapes],10,9)
+        self.add_building([20,standard_shapes],19,9)
+        self.add_building([20,standard_shapes],14,10)
+        self.add_building([20,standard_shapes],5,13)
+        self.add_building([20,standard_shapes],9,13)
+        self.add_building([20,standard_shapes],13,13)
+        self.add_building([20,standard_shapes],18,12)
+        self.add_building([20,standard_shapes],17,15)
+        self.add_building([20,standard_shapes],8,16)
         for i in range(5):
             for i2 in range(i+1):
                 self.grid[23-i2][i+13] = False
@@ -333,24 +322,60 @@ class HongKong(Town):
         
     def on_enter(self):
         bg = spyral.Image(filename="images/town/hong_kong.png")
-        for y in range(18):
-            for x in range(24):
-                if not(isinstance(self.grid[x][y],bool)):
-                    surf = NUMBER_FONT.render(self.grid[x][y][0].__str__(),True,[255,255,0,255])
-                    bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
+        self.paint_numbers(bg)
         self.camera.set_background(bg)
 
 class Touheyville(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
-    def add_tall_building(self,data,x,y):
-        Town.add_building(self,data,x,y)
+        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        self.add_building([1,standard_shapes],2,8)
+        self.add_building([2,standard_shapes],4,11)
+        self.add_building([3,standard_shapes],4,14)
+        self.add_building([4,standard_shapes],8,3)
+        self.add_skyscraper([5,standard_shapes],8,8)
+        self.add_building([6,standard_shapes],8,11)
+        self.add_building([7,standard_shapes],8,14)
+        self.add_building([8,standard_shapes],12,5)
+        self.add_building([9,standard_shapes],12,8)
+        self.add_building([10,standard_shapes],12,11)
+        self.add_skyscraper([11,standard_shapes],12,16)
+        self.add_building([12,standard_shapes],16,4)
+        self.add_building([13,standard_shapes],16,7)
+        self.add_tall_building([14,standard_shapes],16,11)
+        self.add_building([15,standard_shapes],16,16)
+        self.add_building([16,standard_shapes],20,7)
+        self.add_building([17,standard_shapes],20,11)
+        self.add_building([18,standard_shapes],20,14)
+        for y in range(6):
+            self.grid[0][17-y] = False
+        self.grid[1][15] = False
+        for x in range(4):
+            for y in range(2):
+                self.grid[x+1][17-y] = False
+        for x in range(2):
+            self.grid[x+5][17] = False
+        for x in range(20):
+            self.grid[23-x][0] = False
+        for x in range(9):
+            self.grid[23-x][1] = False
+        for y in range(3):
+            for x in range(5-y):
+                self.grid[23-x][y+2] = False
+        self.grid[23][5] = False
+        for x in range(2):
+            self.grid[x+4][1] = False
+    def add_skyscraper(self,data,x,y):
+        self.add_tall_building(data,x,y)
         self.grid[x-1][y-3] = False
         self.grid[x][y-3] = False
         self.grid[x+1][y-3] = False
+    def add_tall_building(self,data,x,y):
+        Town.add_building(self,data,x,y)
         self.grid[x-1][y-2] = False
         self.grid[x+1][y-2] = False
         self.grid[x][y-2] = False
     def on_enter(self):
         bg = spyral.Image(filename="images/town/Touheyville.png")
+        self.paint_numbers(bg)
         self.camera.set_background(bg)
