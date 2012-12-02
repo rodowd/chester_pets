@@ -60,9 +60,9 @@ class Pet(spyral.Sprite):
         self.x = 230 # @TODO: magic
         self.y = 200 # @TODO: magic
 
-        self.clues = [Clue("Start")]
+        self.clues = [Clue.Clue("Start")]
         for i in range(29):
-            self.clues.append(Clue(self.clues[i].town))
+            self.clues.append(Clue.Clue(self.clues[i].town))
         self.current_clue = 0
 
         self.set_pet()
@@ -151,6 +151,6 @@ class PetSelection(Scene):
                 elif event['ascii'] =='t':
                     self.next_type()
                 elif event['ascii'] == 's':
-                    #spyral.director.push(TownMap.Touheyville(self.pet))
-                    spyral.director.push(WorldMap.WorldMap(self.pet))
+                    spyral.director.push(TownMap.Touheyville(self.pet))
+                    #spyral.director.push(WorldMap.WorldMap(self.pet))
         self.group.update(dt)
