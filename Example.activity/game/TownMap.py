@@ -1,6 +1,4 @@
-import pygame
 import spyral
-import random
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
@@ -22,14 +20,14 @@ class WalkingPet(spyral.Sprite):
         self.set_moving_images()
         self.render()
     def set_moving_images(self):
-        self.images = [spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move1.png"),
-                       spyral.Image(filename = "pet_images/Tan_Cat_Move2.png")]
+        self.images = [spyral.Image(filename = "images/pets/cat_move1_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move2_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move1_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move2_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move1_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move2_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move1_tan.png"),
+                       spyral.Image(filename = "images/pets/cat_move2_tan.png")]
         for i in range(4):
             self.images[i*2].rotate(i*90)
             self.images[i*2+1].rotate(i*90)
