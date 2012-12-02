@@ -34,11 +34,10 @@ FONT_SIZE = 37
 
 COLORS = {"background": (240, 219, 81),
           "basketball": (255, 174, 0),
-          "hoop": (33, 3, 3),
-          "point": (0, 0, 0),
-          "labels": (0, 0, 0),
+          "point": (55, 55, 255),
+          "labels": (55, 55, 255),
           "inputs": (0, 0, 0),
-          "axes": (232, 189, 46),
+          "axes": (55, 55, 255),
           "highlighted_fill": (255, 255, 153),
           "not_highlighted_fill": (153, 153, 153),
           "shot_location": (253, 53, 53),
@@ -302,7 +301,7 @@ class Scoreboard(spyral.Sprite):
                                     self.submit_rect_size)
 
         # score
-        temp_surface = font.render("Score: %x/%x" % (self.scene.score, self.scene.num_shots), True, COLORS["labels"])
+        temp_surface = font.render("Score: %x/%x" % (self.scene.score, self.scene.num_shots), True, COLORS["inputs"])
         self.image._surf.blit(temp_surface, self.score_posn)
 
         # parens
@@ -386,7 +385,7 @@ class Basketball(spyral.Scene):
         self.up_ball.pos = (COORD_WIDTH/2 + PAD_LEFT, HEIGHT)
         self.up_ball._set_layer("under")
         self.down_ball = Ball(self)
-        self.down_ball.image = spyral.Image(filename="basketball_images/basketball.png")
+        self.down_ball.image = spyral.Image(filename="images/basketball/basketball.png")
         self.down_ball._set_layer("under")
 
         # starts in middle, moved to correct posn later (before it drops)
@@ -421,7 +420,8 @@ class Basketball(spyral.Scene):
         self.group.add(self.shot_point)
 
         self.pet = passed_in_pet
-        pet_type = self.pet.split("_")[0]
+        #pet_type = self.pet.split("_")[0] # @TODO: split the filepath; may have to add as Pet attribute
+        pet_type = "cat"
         self.pet.image = spyral.Image(filename="images/pets/%s_big_tan.png" % pet_type) # @TODO: make color dynamic
         self.pet.anchor = "center"
         self.pet.x = 1100 # @TODO: magic
@@ -453,7 +453,7 @@ class Basketball(spyral.Scene):
 
 
     def on_enter(self):
-        background = spyral.Image(filename="images/basketball/background.jpg")
+        background = spyral.Image(filename="images/basketball/background.png")
         self.camera.set_background(background)
 
         

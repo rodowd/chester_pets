@@ -130,7 +130,7 @@ def random_recipe(measures,ingredients):
 CK_WIDTH = 640
 CK_HEIGHT = 480
 
-class CookingMain(spyral.Scene):
+class Cooking(spyral.Scene):
     def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (CK_WIDTH,CK_HEIGHT),layers = ['__default__','tool'])
@@ -144,7 +144,7 @@ class CookingMain(spyral.Scene):
                             Ingredient(self.group, "sugar", "images/cooking/sugar.png", 230, 170),
                             Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 230, 330),
                             Ingredient(self.group, "water", "images/cooking/water.png", 350, 10),
-                            Ingredient(self.group, "eggs", "images/cooking/egg.png", 350, 170),
+                            Ingredient(self.group, "eggs", "images/cooking/eggs.png", 350, 170),
                             Ingredient(self.group, "butter", "images/cooking/butter.png", 350, 330)]
         recipeSprite = self.addImage("images/cooking/recipe_scroll.png",112,125)
         self.emptyBG = spyral.Sprite(self.group)

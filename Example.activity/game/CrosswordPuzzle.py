@@ -1,11 +1,9 @@
 import pygame
 import spyral
 import random
-import globalStudent
-from pet import pet
 
-CW_WIDTH = 640
-CW_HEIGHT = 480
+WIDTH = 1200
+HEIGHT = 900
 BLOCK_SIZE = 20
 LETTERFONT = 20
 BG_COLOR = (100, 100, 100)
@@ -351,7 +349,7 @@ class HintAndAnswer(spyral.Sprite):
         self.answerIndex-=1
         self.render()
     def render(self):
-        self.image = spyral.Image(size = [CW_WIDTH,50])
+        self.image = spyral.Image(size = [WIDTH,50])
         surf = self.font.render(self.hint[4],True,[0,0,0,255])
         self.image._surf.blit(surf,[2,0])
         surf = self.font.render(self.answer,True,[0,0,0,255])
@@ -397,9 +395,9 @@ class CrosswordMain(spyral.Scene):
     """
     this will be the actual scene that the crossword is run on.
     """
-    def __init__(self):#change to (self,head,body,etc.)
+    def __init__(self, passed_in_pet):#change to (self,head,body,etc.)
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (CW_WIDTH, CW_HEIGHT),layers = ["__default__","top"])
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
         words = readWords("wordlist.txt")
         self.words = [word for word in words]
@@ -417,18 +415,12 @@ class CrosswordMain(spyral.Scene):
         self.answergrid._set_layer("top")
         self.alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-        PET_X = 430
-        PET_Y = 200
+        self.pet = passed_in_pet
+        self.group.add(self.pet)
 
-        self.pet = pet(self.group)
-        self.pet.set_pet(pet_type=globalStudent.ptype,
-                         pet_color=globalStudent.pcolor,
-                         pet_expression=globalStudent.pface,
-                         x=PET_X,
-                         y=PET_Y)  
     
     def on_enter(self):
-        bg = spyral.Image(size=(CW_WIDTH,CW_HEIGHT))
+        bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill(BG_COLOR)
         self.camera.set_background(bg)
         
@@ -475,14 +467,14 @@ class CrosswordMain(spyral.Scene):
 class CrosswordVictory(spyral.Scene):
     def __init__(self):#change to (self,head,body,etc.)
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (CW_WIDTH, CW_HEIGHT),layers = ["__default__","top"])
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
     def on_enter(self):
-        bg = spyral.Image(size=(CW_WIDTH,CW_HEIGHT))
+        bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill(BG_COLOR)
         font = pygame.font.SysFont(None,80)
         surf = font.render("YOU DEFEATED",True,[255,255,0,255])
-        bg._surf.blit(surf,[(CW_WIDTH-surf.get_width())*.5,(CW_HEIGHT-surf.get_height())*.5])
+        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
         self.camera.set_background(bg)
     def update(self,dt):
         for event in self.event_handler.get():

@@ -10,6 +10,9 @@ __doc__ = ''' # @TODO: '''
 import spyral
 import pygame
 import Racing
+import Basketball # @TODO: for debug; delete
+import CrosswordPuzzle # @TODO: for debug; delete
+import Cooking # @TODO: for debug; delete
 
 WIDTH = 1200
 HEIGHT = 900
@@ -105,3 +108,13 @@ class WorldMap(spyral.Scene):
                 elif event['key'] == 13:
                     # enter key
                     spyral.director.push(Racing.RacingMain())
+                # @TODO: rest is for debug; delete
+                elif event['key'] == 113:
+                    # q
+                    spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
+                elif event['key'] == 119:
+                    # w
+                    spyral.director.push(Basketball.Basketball(self.pet))
+                elif event['key'] == 101:
+                    # e
+                    spyral.director.push(Cooking.Cooking(self.pet))
