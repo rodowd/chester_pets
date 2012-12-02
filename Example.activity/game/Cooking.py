@@ -11,14 +11,12 @@ import pygame
 import random
 import spyral
 import nom_nom
-import globalStudent
-from pet import pet
 
-UNIT_CONV = [3,16,2]
-UNIT_CONV_2 = [1,3,48,96]
+UNIT_CONV = [3, 16, 2]
+UNIT_CONV_2 = [1, 3, 48, 96]
 
 class Fraction:
-    def __init__(self,numer,denom):
+    def __init__(self, numer, denom):
         self.numer = numer
         self.denom = denom
     def add(self,other):
@@ -31,14 +29,15 @@ class Fraction:
     def simplify(self):
         if self.numer==0:
             return Fraction(0,1)
-        x = gcd(self.numer,self.denom)
+        x = greatest_common_denominator(self.numer, self.denom)
         return Fraction(self.numer/x,self.denom/x)
-    def sameFrac(self,other):
-        return self.numer==other.numer and self.denom==other.denom
+    def sameFrac(self, other):
+        return self.numer == other.numer and self.denom == other.denom
     def __str__(self):
-        if self.denom==1:
+        if self.denom == 1:
             return self.numer.__str__()
-        return self.numer.__str__()+"/"+self.denom.__str__()
+        return self.numer.__str__() + "/" + self.denom.__str__()
+
 
 class Recipe:
     def __init__(self, measurements, ingredients):
@@ -78,7 +77,7 @@ class Ingredient(spyral.Sprite):
         self.pos = [x,y]
         self.render()
     def render(self):
-        self.image = spyral.Image(filename="cooking_images/"+self.filename)
+        self.image = spyral.Image(filename=self.filename)
     def __str__(self):
         return self.name
 
@@ -87,16 +86,16 @@ class Measurement:
         self.frac = frac
         self.tool = tool
     def convert_frac(self,tool):
-        tools = ["tsp.","tbsp.","cup","pint"]
+        tools = ["tsp.", "tbsp.", "cup", "pint"]
         i = tools.index(self.tool)
         i2 = tools.index(tool)
         return self.frac.mult(UNIT_CONV_2[i]).divide(UNIT_CONV_2[i2])
     def __str__(self):
         return self.frac.__str__()+" "+self.tool
 
-def gcd(a,b):
-    if b<a:
-        return gcd(b,a)
+def greatest_common_denominator(a,b):
+    if b < a:
+        return greatest_common_denominator(b, a)
     num = 1
     x = 2
     while x<=a:
@@ -132,7 +131,7 @@ CK_WIDTH = 640
 CK_HEIGHT = 480
 
 class CookingMain(spyral.Scene):
-    def __init__(self):
+    def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (CK_WIDTH,CK_HEIGHT),layers = ['__default__','tool'])
         self.group = spyral.Group(self.camera)
@@ -140,13 +139,14 @@ class CookingMain(spyral.Scene):
                       random_tool("tbsp."),
                       random_tool("cup"),
                       random_tool("pint")]
-        self.ingredients = [Ingredient(self.group,"flour","FLOUR.png",230,10),
-                            Ingredient(self.group,"sugar","SUGAR.png",230,170),
-                            Ingredient(self.group,"chocolate","CHOCOLATE.png",230,330),
-                            Ingredient(self.group,"water","WATER.png",350,10),
-                            Ingredient(self.group,"eggs","EGG.png",350,170),
-                            Ingredient(self.group,"butter","BUTTER.png",350,330)]
-        recipeSprite = self.addImage("cooking_images/RECIPE_SCROLL.png",112,125)
+        # @TODO: magic numbers below
+        self.ingredients = [Ingredient(self.group, "flour", "images/cooking/flour.png", 230, 10),
+                            Ingredient(self.group, "sugar", "images/cooking/sugar.png", 230, 170),
+                            Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 230, 330),
+                            Ingredient(self.group, "water", "images/cooking/water.png", 350, 10),
+                            Ingredient(self.group, "eggs", "images/cooking/egg.png", 350, 170),
+                            Ingredient(self.group, "butter", "images/cooking/butter.png", 350, 330)]
+        recipeSprite = self.addImage("images/cooking/recipe_scroll.png",112,125)
         self.emptyBG = spyral.Sprite(self.group)
         self.emptyBG.image = spyral.Image(size=[CK_WIDTH,CK_HEIGHT])
         self.group.add(self.emptyBG)
@@ -163,12 +163,12 @@ class CookingMain(spyral.Scene):
         self.bowl = Recipe([Measurement(Fraction(0,1),"tsp.") for ingred in self.ingredients],self.ingredients)
         for i in range(6):
             self.bowl.measures[i].tool = self.recipe.measures[i].tool
-        self.tsp = self.addImage("cooking_images/TEA_SPOON.png",65,285,'tool')
-        self.tbsp = self.addImage("cooking_images/TBL_SPOON.png",165,285,'tool')
-        self.cup = self.addImage("cooking_images/MEASURING_CUP2.png",65,395,'tool')
-        self.pint = self.addImage("cooking_images/MEASURING_CUP.png",165,395,'tool')
-        self.toolSprites = [self.tsp,self.tbsp,self.cup,self.pint]
-        self.addImage("cooking_images/BOWL.png",545,150)
+        self.tsp = self.addImage("images/cooking/teaspoon.png", 65, 285, 'tool')
+        self.tbsp = self.addImage("images/cooking/tablespoon.png", 165, 285, 'tool')
+        self.cup = self.addImage("images/cooking/measuring_cup1.png", 65, 395, 'tool')
+        self.pint = self.addImage("images/cooking/measuring_cup2.png", 165, 395, 'tool')
+        self.toolSprites = [self.tsp, self.tbsp, self.cup, self.pint]
+        self.addImage("images/cooking/bowl.png", 545, 150)
         for i in range(4):
             tool = self.tools[i]
             x = 65+100*(i%2)
@@ -184,28 +184,24 @@ class CookingMain(spyral.Scene):
             y = 150*(i%3)+130
             self.addText(string,x,y)
         self.toolSelect = 0
-        self.pointer1 = self.addImage("cooking_images/SPOINTER.png",65,330)
+        self.pointer1 = self.addImage("images/cooking/pointer.png", 65, 330) # @TODO: magic numbers everywhere!
         self.ingredSelect = 0
-        self.pointer3 = self.addImage("cooking_images/SPOINTER.png",545,250)
+        self.pointer3 = self.addImage("images/cooking/pointer.png", 545, 250)
         self.group.remove(self.pointer3)
         self.curTool = None
         self.state = 0
 
-        PET_X = 475
-        PET_Y = 300
+        self.pet = passed_in_pet
+        self.group.add(self.pet)
 
-        self.pet = pet(self.group)
-        self.pet.set_pet(pet_type=globalStudent.ptype,
-                         pet_color=globalStudent.pcolor,
-                         pet_expression=globalStudent.pface,
-                         x=PET_X,
-                         y=PET_Y)  
         
     def addText(self,string,x,y):
         surf = self.font.render(string,True,[0,0,0,255]).convert_alpha()
         y = y-surf.get_height()/2
         x = x-surf.get_width()/2
         self.emptyBG.image._surf.blit(surf,[x,y])
+
+
     def addImage(self,filename,x,y,layer = "__default__"):
         sprite = spyral.Sprite(self.group)
         sprite._set_layer(layer)

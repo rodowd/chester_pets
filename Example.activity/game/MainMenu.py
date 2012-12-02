@@ -203,11 +203,11 @@ class MainMenu(Scene):
                     if (self.pick == 0):
                         spyral.director.push(WorldMap.WorldMap())
                     elif (self.pick == 5):
-                        spyral.director.push(CrosswordPuzzle.CrosswordMain())
+                        spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
                     elif (self.pick == 1 or self.p == 6):
-                        spyral.director.push(Basketball.Basketball())
+                        spyral.director.push(Basketball.Basketball(self.pet))
                     elif (self.pick == 2 or self.p == 7):
-                        spyral.director.push(Racing.RacingMain())
+                        spyral.director.push(Racing.RacingMain(self.pet))
                     elif (self.pick == 3 or self.p == 8):
                         spyral.director.push(TownMap.Room(100))
                     elif (self.pick == 4):

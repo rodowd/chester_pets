@@ -59,10 +59,10 @@ class Car(spyral.Sprite):
         self.render()
         self.pos = (400,300)
     def render(self):
-        self.image = spyral.Image(filename="racing_images/CatCar.png")
+        self.image = spyral.Image(filename="images/racing/cat.png")
     def render2(self,active):
         if active:
-            self.image = spyral.Image(filename="racing_images/CatCarFast.png")
+            self.image = spyral.Image(filename="images/racing/cat_turbo.png")
         else:
             self.render()
     def update(self,dt):

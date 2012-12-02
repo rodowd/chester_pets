@@ -50,7 +50,7 @@ class CityName(spyral.Sprite):
 
 
 class WorldMap(spyral.Scene):
-    def __init__(self, pet, *args, **kwargs):
+    def __init__(self, passed_in_pet, *args, **kwargs):
         super(WorldMap, self).__init__(*args, **kwargs)
         
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT))
@@ -64,7 +64,7 @@ class WorldMap(spyral.Scene):
         self.city_name = CityName(self)
         self.group.add(self.city_name)
 
-        self.pet = pet
+        self.pet = passed_in_pet
         self.pet.pos = CITY_POSNS[self.curr_city][1]
         self.group.add(self.pet)
 

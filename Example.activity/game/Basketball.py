@@ -92,7 +92,7 @@ class Hoop(spyral.Sprite):
 
         self.is_target = False
 
-        hoop_image = spyral.Image(filename="basketball_images/hoop.png")
+        hoop_image = spyral.Image(filename="images/basketball/hoop.png")
         
         self.image = hoop_image
 
@@ -119,23 +119,11 @@ def get_hoops(scene):
         hoop_posns.append(temp_coord)
 
     target_hoop = random.choice(range(num_hoops))
-    new_hoop_image = spyral.Image(filename="basketball_images/target_hoop.png")
+    new_hoop_image = spyral.Image(filename="images/basketball/target_hoop.png")
     hoops[target_hoop].image = new_hoop_image
     hoops[target_hoop].is_target = True
 
     return hoops
-
-
-class Pet(spyral.Sprite):
-    def __init__(self, scene):
-        super(Pet, self).__init__()
-        self.scene = scene
-
-        self.image = spyral.Image(filename="basketball_images/Tan_Side_Cat.png") # @TODO: make this dynamic
-        
-        self.anchor = "center"
-        self.x = 1100 # @TODO: magic
-        self.y = 700 # @TODO: magic
 
 
 class Graph(spyral.Sprite):
@@ -380,7 +368,7 @@ class Scoreboard(spyral.Sprite):
                 self.scene.y_input += key
 
 class Basketball(spyral.Scene):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, passed_in_pet, *args, **kwargs):
         super(Basketball, self).__init__(*args, **kwargs)
         
         self.user_has_shot = True
@@ -432,7 +420,12 @@ class Basketball(spyral.Scene):
         self.shot_point = ShotPoint(self)
         self.group.add(self.shot_point)
 
-        self.pet = Pet(self)
+        self.pet = passed_in_pet
+        pet_type = self.pet.split("_")[0]
+        self.pet.image = spyral.Image(filename="images/pets/%s_big_tan.png" % pet_type) # @TODO: make color dynamic
+        self.pet.anchor = "center"
+        self.pet.x = 1100 # @TODO: magic
+        self.pet.y = 700 # @TODO: magic
         self.group.add(self.pet)
 
 
@@ -460,8 +453,7 @@ class Basketball(spyral.Scene):
 
 
     def on_enter(self):
-        background = spyral.Image(size=(WIDTH, HEIGHT))##filename="basketball_images/background.jpg")#
-        background.fill(COLORS["background"])
+        background = spyral.Image(filename="images/basketball/background.jpg")
         self.camera.set_background(background)
 
         
