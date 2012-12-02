@@ -4,6 +4,7 @@ import pygame
 TM_WIDTH = 1200
 TM_HEIGHT = 900
 NUMBER_FONT = pygame.font.SysFont(None,30)
+CLUE_FONT = pygame.font.SysFont(None,24)
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
@@ -185,7 +186,13 @@ class MapGrid(spyral.Scene):
                     self.left = False
         if self.out_of_bounds(self.walking_pet.grid_x,self.walking_pet.grid_y):
             spyral.director.pop()
-
+    def add_clue(self,bg):
+        clue = self.pet.get_clue()
+        surf = CLUE_FONT.render(clue.town,True,[255,255,0,255])
+        bg._surf.blit(surf,[100-surf.get_width()/2,40])
+        surf = CLUE_FONT.render(clue.number_clue,True,[255,255,0,255])
+        bg._surf.blit(surf,[100-surf.get_width()/2,80])
+        
 class Room(MapGrid):
     def __init__(self,pet,shape):
         MapGrid.__init__(self,pet)
@@ -203,6 +210,7 @@ class Room(MapGrid):
                 self.grid[16-x][17-y] = False
     def on_enter(self):
         bg = spyral.Image(filename = "images/town/the_room.png")
+        self.add_clue(bg)
         self.camera.set_background(bg)
         
 
@@ -233,6 +241,7 @@ class Lobby(MapGrid):
             self.grid[3*i+3][8] = shapes[i]
     def on_enter(self):
         bg = spyral.Image(filename="images/town/Lobby.png")
+        self.add_clue(bg)
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
@@ -336,6 +345,7 @@ class HongKong(Town):
         
     def on_enter(self):
         bg = spyral.Image(filename="images/town/hong_kong.png")
+        self.add_clue(bg)
         self.paint_numbers(bg)
         self.camera.set_background(bg)
 
@@ -343,24 +353,24 @@ class Touheyville(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
         standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
-        self.add_building([1,standard_shapes],2,8)
-        self.add_building([2,standard_shapes],4,11)
-        self.add_building([3,standard_shapes],4,14)
-        self.add_building([4,standard_shapes],8,3)
-        self.add_skyscraper([5,standard_shapes],8,8)
-        self.add_building([6,standard_shapes],8,11)
-        self.add_building([7,standard_shapes],8,14)
-        self.add_building([8,standard_shapes],12,5)
-        self.add_building([9,standard_shapes],12,8)
-        self.add_building([10,standard_shapes],12,11)
-        self.add_skyscraper([11,standard_shapes],12,16)
-        self.add_building([12,standard_shapes],16,4)
-        self.add_building([13,standard_shapes],16,7)
-        self.add_tall_building([14,standard_shapes],16,11)
-        self.add_building([15,standard_shapes],16,16)
-        self.add_building([16,standard_shapes],20,7)
-        self.add_building([17,standard_shapes],20,11)
-        self.add_building([18,standard_shapes],20,14)
+        self.add_building([21,standard_shapes],2,8)
+        self.add_building([22,standard_shapes],4,11)
+        self.add_building([23,standard_shapes],4,14)
+        self.add_building([24,standard_shapes],8,3)
+        self.add_skyscraper([25,standard_shapes],8,8)
+        self.add_building([26,standard_shapes],8,11)
+        self.add_building([27,standard_shapes],8,14)
+        self.add_building([28,standard_shapes],12,5)
+        self.add_building([29,standard_shapes],12,8)
+        self.add_building([30,standard_shapes],12,11)
+        self.add_skyscraper([31,standard_shapes],12,16)
+        self.add_building([32,standard_shapes],16,4)
+        self.add_building([33,standard_shapes],16,7)
+        self.add_tall_building([34,standard_shapes],16,11)
+        self.add_building([35,standard_shapes],16,16)
+        self.add_building([36,standard_shapes],20,7)
+        self.add_building([37,standard_shapes],20,11)
+        self.add_building([38,standard_shapes],20,14)
         for y in range(6):
             self.grid[0][17-y] = False
         self.grid[1][15] = False
@@ -391,6 +401,7 @@ class Touheyville(Town):
         self.grid[x][y-2] = False
     def on_enter(self):
         bg = spyral.Image(filename="images/town/Touheyville.png")
+        self.add_clue(bg)
         self.paint_numbers(bg)
         self.camera.set_background(bg)
 
@@ -398,27 +409,28 @@ class OdowdShire(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
         standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
-        self.add_tower([1,standard_shapes],9,3)
-        self.add_tower([2,standard_shapes],13,2)
-        self.add_building([3,standard_shapes],17,2)
-        self.add_building([4,standard_shapes],21,3)
-        self.add_tower([5,standard_shapes],6,6)
-        self.add_building([6,standard_shapes],10,6)
-        self.add_building([7,standard_shapes],14,5)
-        self.add_tower([8,standard_shapes],18,6)
-        self.add_tower([9,standard_shapes],22,7)
-        self.add_building([10,standard_shapes],8,9)
-        self.add_building([11,standard_shapes],21,10)
-        self.add_tower([12,standard_shapes],2,14)
-        self.add_tower([13,standard_shapes],6,14)
-        self.add_tower([14,standard_shapes],14,12)
-        self.add_tower([15,standard_shapes],10,16)
-        self.add_tower([16,standard_shapes],15,16)
-        self.add_building([17,standard_shapes],19,16)
+        self.add_tower([41,standard_shapes],9,3)
+        self.add_tower([42,standard_shapes],13,2)
+        self.add_building([43,standard_shapes],17,2)
+        self.add_building([44,standard_shapes],21,3)
+        self.add_tower([45,standard_shapes],6,6)
+        self.add_building([46,standard_shapes],10,6)
+        self.add_building([47,standard_shapes],14,5)
+        self.add_tower([48,standard_shapes],18,6)
+        self.add_tower([49,standard_shapes],22,7)
+        self.add_building([50,standard_shapes],8,9)
+        self.add_building([51,standard_shapes],21,10)
+        self.add_tower([52,standard_shapes],2,14)
+        self.add_tower([53,standard_shapes],6,14)
+        self.add_tower([54,standard_shapes],14,12)
+        self.add_tower([55,standard_shapes],10,16)
+        self.add_tower([56,standard_shapes],15,16)
+        self.add_building([57,standard_shapes],19,16)
     def add_tower(self,data,x,y):
         Town.add_building(self,data,x,y)
         self.grid[x][y-2] = False
     def on_enter(self):
         bg = spyral.Image(filename="images/town/odowd_shire.png")
+        self.add_clue(bg)
         self.paint_numbers(bg)
         self.camera.set_background(bg)
