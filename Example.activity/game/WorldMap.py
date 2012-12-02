@@ -20,23 +20,8 @@ FONT_SIZE = 37
 CITY_POSNS = [("Touheyville", (400, 400)),
               ("Hong Kong", (1010, 500)),
               ("O'Dowd Shire", (675, 762))]
-COLORS = {"city_name": (255, 255, 255)}
+COLORS = {"city_name": (155, 255, 255)}
 font = pygame.font.Font(None, FONT_SIZE)
-
-
-class Pet(spyral.Sprite):
-    '''
-    The marker that shows the user where they are on the map
-    '''
-    def __init__(self, scene):
-        super(Pet, self).__init__()
-        self.scene = scene
-
-        self.image = spyral.Image(filename="basketball_images/Tan_Side_Cat.png") # @TODO: make this dynamic
-        
-        self.anchor = "center"
-        self.pos = CITY_POSNS[self.scene.curr_city][1]
-
 
 class CityName(spyral.Sprite):
     def __init__(self, scene):
@@ -65,7 +50,7 @@ class CityName(spyral.Sprite):
 
 
 class WorldMap(spyral.Scene):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, pet, *args, **kwargs):
         super(WorldMap, self).__init__(*args, **kwargs)
         
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT))
@@ -79,12 +64,13 @@ class WorldMap(spyral.Scene):
         self.city_name = CityName(self)
         self.group.add(self.city_name)
 
-        self.pet = Pet(self)
+        self.pet = pet
+        self.pet.pos = CITY_POSNS[self.curr_city][1]
         self.group.add(self.pet)
 
 
     def on_enter(self):
-        background = spyral.Image(filename="world_images/world.png")
+        background = spyral.Image(filename="images/world/world.png")
         self.camera.set_background(background)
 
         

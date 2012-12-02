@@ -1,4 +1,4 @@
 import spyral
-import PetSelectionAndMainMenu
+import PetSelection
 def main():
-    spyral.director.push(PetSelectionAndMainMenu.PetSelection())
+    spyral.director.push(PetSelection.PetSelection())

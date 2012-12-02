@@ -64,7 +64,7 @@ class Ball(spyral.Sprite):
 
         self.hangtime = 80
 
-        self.image = spyral.Image(filename="basketball_images/basketball.png")
+        self.image = spyral.Image(filename="images/basketball/basketball.png")
         
         self.vel_y = 0;
         
