@@ -4,12 +4,12 @@ import random
 
 WIDTH = 1200
 HEIGHT = 900
-UPPER_BOUND = 300
+UPPER_BOUND = 600
 LANE_WIDTH = (HEIGHT-UPPER_BOUND)/3
 LINE_SIZE = [25,5]
 LINE_COLOR = [255,255,0,255]
-FONT1 = pygame.font.SysFont(None,40)
-FONT2 = pygame.font.SysFont(None,24)
+FONT1 = pygame.font.SysFont(None,60)
+FONT2 = pygame.font.SysFont(None,36)
 
 class LineList:
     def __init__(self,racingmain,y,between,counterFrac):
@@ -115,16 +115,10 @@ class TurboMeter(spyral.Sprite):
         self.render()
         TurboText(self)
     def render(self):
-        """
-        self.image = spyral.Image(size = [25,80])
-        self.anchor = 'topright'
-        self.image.fill([255,0,0,255])
-        self.image.draw_rect([0,255,0,255],[0,80-self.turbo*80/self.maxTurbo],[25,80])
-        self.pos = [WIDTH-10,10]"""
-        self.image = spyral.Image(size = [100,24])
+        self.image = spyral.Image(size = [200,48])
         self.anchor = 'topright'
         self.image.fill([153,153,153,255])
-        self.image.draw_rect(self.get_color(),[self.turbo*100/self.maxTurbo-100,0],[100,24])
+        self.image.draw_rect(self.get_color(),[self.turbo*200/self.maxTurbo-200,0],[200,48])
         self.pos = [WIDTH-10,10]
     def get_color(self):
         ratio = self.turbo/self.maxTurbo
@@ -181,11 +175,11 @@ class TurboText(spyral.Sprite):
             return 3
         return 4
     def render(self):
-        self.image = spyral.Image(size = [100,24])
+        self.image = spyral.Image(size = [200,48])
         text = self.texts[self.state]
-        self.image._surf.blit(text,[50-text.get_width()*.5,12-text.get_height()*.5])
+        self.image._surf.blit(text,[100-text.get_width()*.5,24-text.get_height()*.5])
         if self.state==1:
-            self.image.draw_rect([0,255,255,128],[0,0],[99,23],2)
+            self.image.draw_rect([0,255,255,128],[0,0],[199,47],2)
     def update(self,dt):
         state2 = self.getState()
         if not(state2==self.state):
@@ -234,20 +228,20 @@ class Question(spyral.Sprite):
                                   inorder[i]==right,self.dist+random.randint(500,1500))
             self.answers.append(answer)        
     def render(self):
-        self.image = spyral.Image(size = [300,30])
+        self.image = spyral.Image(size = [500,60])
         self.anchor = 'center'
         surf = FONT1.render(self.num1.__str__()+" "+self.oper+" "+
                            self.num2.__str__()+" = ?",
                            True,[255,255,255,255])
-        self.image._surf.blit(surf,[150-surf.get_width()*.5,
-                                    15-surf.get_height()*.5])
+        self.image._surf.blit(surf,[250-surf.get_width()*.5,
+                                    30-surf.get_height()*.5])
     def renderGuess(self,correct):
         right = 0
         if self.oper == "+":
             right = self.num1+self.num2
         if self.oper == "-":
             right = self.num1-self.num2
-        self.image = spyral.Image(size = [300,30])
+        self.image = spyral.Image(size = [500,60])
         self.anchor = 'center'
         color = [255,0,0,255]
         if correct:
@@ -255,8 +249,8 @@ class Question(spyral.Sprite):
         surf = FONT1.render(self.num1.__str__()+" "+self.oper+" "+
                            self.num2.__str__()+" = "+right.__str__(),
                            True,color)
-        self.image._surf.blit(surf,[150-surf.get_width()*.5,
-                                    15-surf.get_height()*.5])
+        self.image._surf.blit(surf,[250-surf.get_width()*.5,
+                                    30-surf.get_height()*.5])
     def update(self,dt):
         pass
 
@@ -274,12 +268,12 @@ class RacingAnswer(spyral.Sprite):
     def render(self):
         self.render2([255,0,0,128],[0,0,0,128])
     def render2(self,col1,col2):
-        self.image = spyral.Image(size = [32,24])
+        self.image = spyral.Image(size = [54,36])
         self.image.fill(col1)
         self.anchor = 'midleft'
         surf = FONT2.render(self.num.__str__(),True,col2)
-        self.image._surf.blit(surf,[16-surf.get_width()*.5,
-                                    12-surf.get_height()*.5])
+        self.image._surf.blit(surf,[27-surf.get_width()*.5,
+                                    18-surf.get_height()*.5])
     def update(self,dt):
         if self.stage=='far':
             if self.question.main.distance>=self.dist-200:
@@ -369,7 +363,7 @@ class RacingMain(spyral.Scene):
             self.car.render2(self.turbometer.active)
         self.speed*=self.slow
         self.distance+=self.speed*dt
-        if self.distance>=WIDTH+2000*self.questionNum:
+        if self.distance>=WIDTH+3000*self.questionNum:
             for ans in self.question.answers:
                 self.group.remove(ans)
             self.group.remove(self.question)
