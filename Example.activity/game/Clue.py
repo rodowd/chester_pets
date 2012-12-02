@@ -7,6 +7,8 @@ class Clue:
         towns = ["Hong Kong","Touheyville","O'dowd Shire"]
         towns.remove(last_town)
         self.town = towns[random.randint(0,1)]
+        if last_town=="Start":
+            self.town = "Touheyville"
         self.number = random.randint(30,46)
         if self.town=="O'dowd Shire":
             self.number = random.randint(30,45)
