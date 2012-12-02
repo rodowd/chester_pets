@@ -37,17 +37,31 @@ class WalkingPet(spyral.Sprite):
             self.images[i*2].rotate(i*90)
             self.images[i*2+1].rotate(i*90)
     def get_move1(self):
-        moves = ["cat_move1_tan.png",
-                 "dog_move1_tan.png",
-                 "bird_move_tan.png",
-                 "dragon_move_tan.png"]
-        return "images/pets/"+moves[self.mapgrid.pet.pet_type]
+        moves = ["cat_move1_",
+                 "dog_move1_",
+                 "bird_move_",
+                 "dragon_move_"]
+        colors = ["tan",
+                  "red",
+                  "blue",
+                  "green",
+                  "magenta",
+                  "cyan",
+                  "yellow"]
+        return "images/pets/"+moves[self.mapgrid.pet.pet_type]+colors[self.mapgrid.pet.color]+".png"
     def get_move2(self):
-        moves = ["cat_move2_tan.png",
-                 "dog_move2_tan.png",
-                 "bird_move_tan.png",
-                 "dragon_move_tan.png"]
-        return "images/pets/"+moves[self.mapgrid.pet.pet_type]
+        moves = ["cat_move2_",
+                 "dog_move2_",
+                 "bird_move_",
+                 "dragon_move_"]
+        colors = ["tan",
+                  "red",
+                  "blue",
+                  "green",
+                  "magenta",
+                  "cyan",
+                  "yellow"]
+        return "images/pets/"+moves[self.mapgrid.pet.pet_type]+colors[self.mapgrid.pet.color]+".png"
     def render(self):
         i = 6
         if self.facing == "up":
