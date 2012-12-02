@@ -1,7 +1,9 @@
 import spyral
+import pygame
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
+NUMBER_FONT = pygame.font.SysFont(None,20)
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
@@ -21,14 +23,16 @@ class WalkingPet(spyral.Sprite):
         self.changed_room = False
         self.render()
     def set_moving_images(self):
-        self.images = [spyral.Image(filename = "images/pets/cat_move1_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move2_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move1_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move2_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move1_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move2_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move1_tan.png"),
-                       spyral.Image(filename = "images/pets/cat_move2_tan.png")]
+        move1 = "images/pets/cat_move1_tan.png"
+        move2 = "images/pets/cat_move2_tan.png"
+        self.images = [spyral.Image(filename = move1),
+                       spyral.Image(filename = move2),
+                       spyral.Image(filename = move1),
+                       spyral.Image(filename = move2),
+                       spyral.Image(filename = move1),
+                       spyral.Image(filename = move2),
+                       spyral.Image(filename = move1),
+                       spyral.Image(filename = move2)]
         for i in range(4):
             self.images[i*2].rotate(i*90)
             self.images[i*2+1].rotate(i*90)
@@ -171,7 +175,7 @@ class Room(MapGrid):
                 self.grid[x+7][17-y] = False
                 self.grid[16-x][17-y] = False
     def on_enter(self):
-        bg = spyral.Image(filename="world_images/TheROOM.png")
+        bg = spyral.Image(filename = "images/town/the_room.png")
         self.camera.set_background(bg)
         
 
@@ -201,7 +205,7 @@ class Lobby(MapGrid):
             self.grid[3*i+2][8] = shapes[i]
             self.grid[3*i+3][8] = shapes[i]
     def on_enter(self):
-        bg = spyral.Image(filename="world_images/Lobby.png")
+        bg = spyral.Image(filename="images/town/Lobby.png")
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
@@ -315,5 +319,25 @@ class HongKong(Town):
         self.grid[3][16] = True
         
     def on_enter(self):
-        bg = spyral.Image(filename="world_images/HongKong.png")
+        bg = spyral.Image(filename="images/town/hong_kong.png")
+        for y in range(18):
+            for x in range(24):
+                if not(isinstance(self.grid[x][y],bool)):
+                    surf = NUMBER_FONT.render(self.grid[x][y][0].__str__(),True,[255,255,0,255])
+                    bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
+        self.camera.set_background(bg)
+
+class Touheyville(Town):
+    def __init__(self):
+        Town.__init__(self)
+    def add_tall_building(self,data,x,y):
+        Town.add_building(self,data,x,y)
+        self.grid[x-1][y-3] = False
+        self.grid[x][y-3] = False
+        self.grid[x+1][y-3] = False
+        self.grid[x-1][y-2] = False
+        self.grid[x+1][y-2] = False
+        self.grid[x][y-2] = False
+    def on_enter(self):
+        bg = spyral.Image(filename="images/town/hong_kong.png")
         self.camera.set_background(bg)
