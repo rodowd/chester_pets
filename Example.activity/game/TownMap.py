@@ -4,7 +4,7 @@ import pygame
 TM_WIDTH = 1200
 TM_HEIGHT = 900
 NUMBER_FONT = pygame.font.SysFont(None,30)
-CLUE_FONT = pygame.font.SysFont(None,24)
+CLUE_FONT = pygame.font.SysFont(None,30)
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
@@ -189,9 +189,9 @@ class MapGrid(spyral.Scene):
     def add_clue(self,bg):
         clue = self.pet.get_clue()
         surf = CLUE_FONT.render(clue.town,True,[255,255,0,255])
-        bg._surf.blit(surf,[100-surf.get_width()/2,40])
-        surf = CLUE_FONT.render(clue.number_clue,True,[255,255,0,255])
         bg._surf.blit(surf,[100-surf.get_width()/2,80])
+        surf = CLUE_FONT.render(clue.number_clue,True,[255,255,0,255])
+        bg._surf.blit(surf,[100-surf.get_width()/2,110])
         
 class Room(MapGrid):
     def __init__(self,pet,shape):
@@ -426,6 +426,42 @@ class OdowdShire(Town):
         self.add_tower([55,standard_shapes],10,16)
         self.add_tower([56,standard_shapes],15,16)
         self.add_building([57,standard_shapes],19,16)
+        for y in range(11):
+            self.grid[0][17-y] = False
+        for y in range(3):
+            self.grid[1][10+y] = False
+            self.grid[2][9+y] = False
+            self.grid[12][9+y] = False
+            self.grid[13][8+y] = False
+            self.grid[14][7+y] = False
+            self.grid[15][7+y] = False
+            self.grid[16][8+y] = False
+            self.grid[17][9+y] = False
+            self.grid[18][10+y] = False
+        self.grid[16][11] = False
+        for y in range(2):
+            self.grid[4][9+y] = False
+            self.grid[5][10+y] = False
+            self.grid[y+1][17] = False
+            self.grid[6][11+y] = False
+            self.grid[7][12+y] = False
+            self.grid[8][11+y] = False
+            self.grid[10][11+y] = False
+            self.grid[11][10+y] = False
+            self.grid[20][12+y] = False
+            self.grid[21][12+y] = False
+        for x in range(2):
+            for y in range(6):
+                self.grid[23-x][17-y] = False
+        for y in range(3):
+            for x in range(3-y):
+                self.grid[x+4][y+1] = False
+        for x in range(20):
+            self.grid[23-x][0] = False
+        for x in range(5):
+            self.grid[23-x][1] = False
+        for y in range(4):
+            self.grid[23][y+2] = False
     def add_tower(self,data,x,y):
         Town.add_building(self,data,x,y)
         self.grid[x][y-2] = False
