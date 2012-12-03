@@ -483,10 +483,6 @@ class Basketball(spyral.Scene):
         """
         self.group.update(dt)
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                spyral.director.pop()
-                self.pet.get_last_posn()
-                return
             if event['type'] == 'MOUSEBUTTONDOWN':
                 pos = event['pos']
                 self.scoreboard.get_input(pos)
@@ -562,10 +558,6 @@ class BasketballVictory(spyral.Scene):
 
     def update(self,dt):
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                spyral.director.pop()
-                self.pet.get_last_posn()
-                return
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 27 or event['key'] == 13:
                     # esc or enter

@@ -151,9 +151,9 @@ class WalkingPet(spyral.Sprite):
             
 
 class MapGrid(spyral.Scene):
-    def __init__(self,pet):
+    def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
-        self.pet = pet
+        self.pet = passed_in_pet
         self.camera = self.parent_camera.make_child(virtual_size = (TM_WIDTH,TM_HEIGHT))
         self.group = spyral.Group(self.camera)
         self.up = False
@@ -163,15 +163,20 @@ class MapGrid(spyral.Scene):
         self.walking_pet = WalkingPet(self,11,17,0,0)
         self.grid = [[True for y in range(18)] for x in range(24)]
         self.clue = ClueSprite(self.group,self.pet)
+        self.pet = passed_in_pet
+
+
     def out_of_bounds(self,x,y):
         return x<0 or x>=24 or y<0 or y>=18
+
+
     def render(self):
         self.group.draw()
+
+
     def update(self,dt):
         self.group.update(dt)
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                spyral.director.pop()
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 273:
                     self.up = True
@@ -192,12 +197,13 @@ class MapGrid(spyral.Scene):
                     self.left = False
         if self.out_of_bounds(self.walking_pet.grid_x,self.walking_pet.grid_y):
             spyral.director.pop()
+            self.pet.get_last_posn()
 
 class ClueSprite(spyral.Sprite):
-    def __init__(self,group,pet):
-        spyral.Sprite.__init__(self,group)
+    def __init__(self, group, passed_in_pet):
+        spyral.Sprite.__init__(self, group)
         self.group.add(self)
-        self.pet = pet
+        self.pet = passed_in_pet
         self.clue = self.pet.get_clue()
         self.anchor = 'topleft'
         self.pos = [0,0]
@@ -237,8 +243,8 @@ class ClueSprite(spyral.Sprite):
         
         
 class Room(MapGrid):
-    def __init__(self,pet,shape,number):
-        MapGrid.__init__(self,pet)
+    def __init__(self, passed_in_pet, shape, number):
+        MapGrid.__init__(self, passed_in_pet)
         self.shape = shape
         self.number = number
         for y in range(6):
@@ -287,8 +293,8 @@ class Room(MapGrid):
         
 
 class Lobby(MapGrid):
-    def __init__(self,pet,number,shapes):
-        MapGrid.__init__(self,pet)
+    def __init__(self, passed_in_pet, number, shapes):
+        MapGrid.__init__(self, passed_in_pet)
         self.number = number
         self.shapes = shapes
         for y in range(8):
@@ -335,8 +341,8 @@ class Lobby(MapGrid):
                 
 
 class Town(MapGrid):
-    def __init__(self,pet):
-        MapGrid.__init__(self,pet)
+    def __init__(self, passed_in_pet):
+        MapGrid.__init__(self, passed_in_pet)
         for x in range(4):
             for y in range(7):
                 self.grid[x][y] = False
@@ -372,8 +378,8 @@ class Town(MapGrid):
                     bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
 
 class HongKong(Town):
-    def __init__(self,pet):
-        Town.__init__(self,pet)
+    def __init__(self, passed_in_pet):
+        Town.__init__(self, passed_in_pet)
         for x in range(4):
             for y in range(3):
                 self.grid[x+9][y] = False
@@ -421,8 +427,8 @@ class HongKong(Town):
         self.camera.set_background(bg)
 
 class Touheyville(Town):
-    def __init__(self,pet):
-        Town.__init__(self,pet)
+    def __init__(self, passed_in_pet):
+        Town.__init__(self, passed_in_pet)
         standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_building([21,standard_shapes],2,8)
         self.add_building([22,standard_shapes],4,11)
@@ -476,8 +482,8 @@ class Touheyville(Town):
         self.camera.set_background(bg)
 
 class ODowdShire(Town):
-    def __init__(self,pet):
-        Town.__init__(self,pet)
+    def __init__(self, passed_in_pet):
+        Town.__init__(self, passed_in_pet)
         standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_tower([41,standard_shapes],9,3)
         self.add_tower([42,standard_shapes],13,2)

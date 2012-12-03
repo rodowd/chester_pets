@@ -77,9 +77,6 @@ class Bake(Scene):
     def update(self, dt):
         self.group.update(dt)
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                spyral.director.pop()
-                return
             if event['type'] == 'KEYDOWN':
                 if event['ascii'] == 's':
                     spyral.director.pop()

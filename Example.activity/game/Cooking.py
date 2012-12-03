@@ -140,13 +140,13 @@ class Cooking(spyral.Scene):
                       random_tool("cup"),
                       random_tool("pint")]
         # @TODO: magic numbers below
-        self.ingredients = [Ingredient(self.group, "flour", "images/cooking/flour.png", 230, 10),
-                            Ingredient(self.group, "sugar", "images/cooking/sugar.png", 230, 170),
-                            Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 230, 330),
-                            Ingredient(self.group, "water", "images/cooking/water.png", 350, 10),
-                            Ingredient(self.group, "eggs", "images/cooking/eggs.png", 350, 170),
-                            Ingredient(self.group, "butter", "images/cooking/butter.png", 350, 330)]
-        recipeSprite = self.addImage("images/cooking/recipe_scroll.png",112,125)
+        self.ingredients = [Ingredient(self.group, "flour", "images/cooking/flour.png", 431, 19),
+                            Ingredient(self.group, "sugar", "images/cooking/sugar.png", 431, 319),
+                            Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 431, 619),
+                            Ingredient(self.group, "water", "images/cooking/water.png", 656, 19),
+                            Ingredient(self.group, "eggs", "images/cooking/eggs.png", 656, 319),
+                            Ingredient(self.group, "butter", "images/cooking/butter.png", 656, 619)]
+        recipeSprite = self.addImage("images/cooking/recipe_scroll.png", 210, 234)
         self.emptyBG = spyral.Sprite(self.group)
         self.emptyBG.image = spyral.Image(size=[WIDTH,HEIGHT])
         self.group.add(self.emptyBG)
@@ -184,7 +184,7 @@ class Cooking(spyral.Scene):
             y = 150*(i%3)+130
             self.addText(string,x,y)
         self.toolSelect = 0
-        self.pointer1 = self.addImage("images/cooking/pointer.png", 65, 330) # @TODO: magic numbers everywhere!
+        self.pointer1 = self.addImage("images/cooking/pointer.png", 65, 330)
         self.ingredSelect = 0
         self.pointer3 = self.addImage("images/cooking/pointer.png", 545, 250)
         self.group.remove(self.pointer3)
@@ -278,9 +278,6 @@ class Cooking(spyral.Scene):
             spyral.director.push(nom_nom.Bake())
             return
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                spyral.director.pop() # Happens when someone asks the OS to close the program
-                return
             if event['type'] == 'KEYDOWN':
                 if event['key']>=273 and event['key']<=276:
                     self.movePointer(event['key'])

@@ -88,7 +88,6 @@ class Pet(spyral.Sprite):
 
         self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
         self.pos = self.previous_posns.pop()
-
         
 
     def get_pet_types(self):
@@ -207,6 +206,5 @@ class PetSelection(Scene):
                     self.next_type()
                 elif event['key'] == 13:
                     # enter
-                    self.pet.previous_posns.append(self.pet.pos)
                     spyral.director.push(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))
