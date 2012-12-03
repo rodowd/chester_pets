@@ -483,6 +483,7 @@ class Basketball(spyral.Scene):
                 self.scoreboard.get_input(pos)
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 27:
+                    # esc
                     spyral.director.pop()
                 self.scoreboard.type_key(event['unicode'])
 
@@ -492,6 +493,9 @@ class Basketball(spyral.Scene):
         
         if self.run_num == 3:
             if self.num_shots == 5:
+                spyral.director.pop()
+                spyral.director.push(CrosswordVictory())
+                return
                 print "You made %d out of %d shots!" % (self.score, self.num_shots) # @TODO: print to scoreboard
                 time.sleep(4)
                 spyral.director.pop()
@@ -530,3 +534,32 @@ class Basketball(spyral.Scene):
         
 
         self.run_num += 1
+
+
+class BasketballVictory(spyral.Scene):
+    def __init__(self):
+        spyral.Scene.__init__(self)
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
+        self.group = spyral.Group(self.camera)
+
+
+    def on_enter(self):
+        bg = spyral.Image(size=(WIDTH, HEIGHT))
+        bg.fill(BG_COLOR)
+        font = pygame.font.SysFont(None,80)
+        surf = font.render("YOU DEFEATED",True,[255,255,0,255])
+        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
+        self.camera.set_background(bg)
+
+
+    def update(self,dt):
+        for event in self.event_handler.get():
+            if event['type'] == 'QUIT':
+                # @TODO: pop off everything in director
+                spyral.director.pop()
+                return
+            if event['type'] == 'KEYDOWN':
+                if event['key'] == 27 or event['key'] == 13:
+                    # esc or enter
+                    spyral.director.pop()
+                    return

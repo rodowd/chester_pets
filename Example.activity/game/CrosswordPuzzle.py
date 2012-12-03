@@ -469,6 +469,8 @@ class CrosswordVictory(spyral.Scene):
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
+
+
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill(BG_COLOR)
@@ -476,12 +478,16 @@ class CrosswordVictory(spyral.Scene):
         surf = font.render("YOU DEFEATED",True,[255,255,0,255])
         bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
         self.camera.set_background(bg)
+
+
     def update(self,dt):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.director.pop()  # Happens when someone asks the OS to close the program
+                # @TODO: pop off everything in director
+                spyral.director.pop()
                 return
             if event['type'] == 'KEYDOWN':
-                if event['key'] == 27 or event['key']==13:
+                if event['key'] == 27 or event['key'] == 13:
+                    # esc or enter
                     spyral.director.pop()
                     return
