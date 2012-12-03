@@ -59,7 +59,7 @@ class Recipe:
     def sameRecipe(self,other):
         for i in range(len(self.measures)):
             if not(other.get_frac_tsp(other.measures[i]).sameFrac(self.get_frac_tsp(self.measures[i]))):
-                print self.ingredients[i],": ",self.measures[i]," vs. ",other.ingredients[i],": ",other.measures[i]
+                #print self.ingredients[i],": ",self.measures[i]," vs. ",other.ingredients[i],": ",other.measures[i]
                 return False
         return True
     def __str__(self):
@@ -67,6 +67,24 @@ class Recipe:
         for i in range(len(self.measures)):
             string+=self.measures[i].__str__()+" of "+self.ingredients[i].__str__()+"\n"
         return string
+
+class BowlContents(spyral.Sprite):
+    def __init__(self,group,recipe):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self.recipe = recipe
+        self.font = pygame.font.SysFont(None,30)
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size=[400,400])
+        self.pos = [700,100]
+        string = self.recipe.__str__()
+        strings = string.split("\n")
+        for i in range(len(strings)):
+            surf = self.font.render(strings[i],True,[0,0,0,255])
+            self.image._surf.blit(surf,[0,40*i])
+    def update(self,dt):
+        pass
 
 class Ingredient(spyral.Sprite):
     def __init__(self,group,name,filename,x,y):
@@ -195,6 +213,7 @@ class Cooking(spyral.Scene):
         self.pet.x = 500
         self.pet.y = 500
         self.group.add(self.pet)
+        self.bowlcontents = BowlContents(self.group,self.bowl)
 
         
     def addText(self,string,x,y):
@@ -258,6 +277,7 @@ class Cooking(spyral.Scene):
             return
         if self.state==2:
             self.bowl.add(self.tools[self.toolSelect],self.ingredients[self.ingredSelect])
+            self.bowlcontents.render()
     def cancel(self):
         if self.state==0:
             return
