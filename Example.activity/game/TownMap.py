@@ -453,7 +453,7 @@ class Touheyville(Town):
         self.paint_numbers(bg)
         self.camera.set_background(bg)
 
-class OdowdShire(Town):
+class ODowdShire(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
         standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]

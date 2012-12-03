@@ -408,26 +408,37 @@ class RacingMain(spyral.Scene):
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':
                 if event['key']==273:
+                    # up arrow
                     self.car.up = True
                 if event['key']==274:
+                    # down arrow
                     self.car.down = True
                 if event['key']==275:
+                    # right arrow
                     self.car.right = True
                 if event['key']==276:
+                    # left arrow
                     self.car.left = True
                 if event['key']==32:
+                    # spacebar
                     self.toggleTurbo()
             if event['type'] == 'KEYUP':
                 if event['key']==273:
+                    # up arrow
                     self.car.up = False
                 if event['key']==274:
+                    # down arrow
                     self.car.down = False
                 if event['key']==275:
+                    # right arrow
                     self.car.right = False
                 if event['key']==276:
+                    # left arrow
                     self.car.left = False
+
+
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
-        bg.fill([0,0,0,255])
-        bg.draw_rect([100,100,100,255],[0,UPPER_BOUND],[WIDTH,HEIGHT])
+        bg.fill([0, 0, 0, 255]) # @TODO: magic
+        bg.draw_rect([100, 100, 100, 255], [0, UPPER_BOUND], [WIDTH, HEIGHT]) # @TODO: magic
         self.camera.set_background(bg)

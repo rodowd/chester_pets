@@ -100,6 +100,7 @@ class Nom(Scene):
 
         self.eatIndex = 0
 
+        self.pet = passed_in_pet
         # @TODO: eat cookie here; make sure passed_in_pet eats it
 
 
@@ -111,3 +112,17 @@ class Nom(Scene):
                 
     def render(self):
         self.group.draw()
+
+
+    def update(self,dt):
+        for event in self.event_handler.get():
+            if event['type'] == 'QUIT':
+                # @TODO: pop off everything in director
+                spyral.director.pop()
+                return
+            if event['type'] == 'KEYDOWN':
+                if event['key'] == 27 or event['key'] == 13:
+                    # esc or enter
+                    spyral.director.pop()
+                    self.pet.get_last_posn()
+                    return

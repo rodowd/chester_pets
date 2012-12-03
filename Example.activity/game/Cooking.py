@@ -282,10 +282,6 @@ class Cooking(spyral.Scene):
                 spyral.director.pop() # Happens when someone asks the OS to close the program
                 return
             if event['type'] == 'KEYDOWN':
-                if event['key']==27:
-                    spyral.director.pop()
-                    spyral.director.push(nom_nom.Bake())
-                    return
                 if event['key']>=273 and event['key']<=276:
                     self.movePointer(event['key'])
                 if event['key']==13:

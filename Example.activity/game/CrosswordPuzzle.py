@@ -327,6 +327,8 @@ class HintAndAnswer(spyral.Sprite):
         self.anchor = 'topleft'
         self.hint = None
         self.setHint(hint)
+
+
     def setHint(self,hint):
         if self.hint==hint:
             return
@@ -336,18 +338,24 @@ class HintAndAnswer(spyral.Sprite):
         for i in range(len(hint[3])):
             self.answer += "_ "
         self.render()
+
+
     def typeKey(self,letter):
         if self.answerIndex==len(self.answer):
             return
         self.answer = self.answer[0:self.answerIndex]+letter+self.answer[self.answerIndex+2:]
         self.answerIndex+=1
         self.render()
+
+
     def deleteKey(self):
         if self.answerIndex==0:
             return
         self.answer = self.answer[0:self.answerIndex-1]+"_ "+self.answer[self.answerIndex:]
         self.answerIndex-=1
         self.render()
+
+
     def render(self):
         self.image = spyral.Image(size = [WIDTH,50])
         surf = self.font.render(self.hint[4],True,[0,0,0,255])
@@ -416,6 +424,8 @@ class CrosswordMain(spyral.Scene):
         self.alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
         self.pet = passed_in_pet
+        self.pet.x = 1100
+        self.pet.y = 700
         self.group.add(self.pet)
 
     
@@ -435,11 +445,9 @@ class CrosswordMain(spyral.Scene):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
                 spyral.director.pop()  # Happens when someone asks the OS to close the program
+                self.pet.get_last_posn()
                 return
             if event['type'] == 'KEYDOWN':
-                if event['key'] == 27:
-                    spyral.director.pop()
-                    return
                 if event['key']==274 or event['key']==275 or event['key']==9:
                     self.hintNum = (self.hintNum+1)%len(self.hints)
                     while self.hintDone[self.hintNum]:
@@ -491,4 +499,5 @@ class CrosswordVictory(spyral.Scene):
                 if event['key'] == 27 or event['key'] == 13:
                     # esc or enter
                     spyral.director.pop()
+                    self.pet.get_last_posn()
                     return

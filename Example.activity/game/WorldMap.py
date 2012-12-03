@@ -94,11 +94,7 @@ class WorldMap(spyral.Scene):
                 spyral.director.pop()
                 return
             if event['type'] == 'KEYDOWN':
-                if event['key'] == 27:
-                    # esc
-                    spyral.director.pop()
-                    return
-                elif event['key'] == 276 or event['key'] == 274:
+                if event['key'] == 276 or event['key'] == 274:
                     # left arrow
                     self.curr_city -= 1
                     self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
@@ -109,20 +105,26 @@ class WorldMap(spyral.Scene):
                 elif event['key'] == 13:
                     # enter key
                     new_dest = CITY_POSNS[self.curr_city % 3][0]
-                    if self.pet.destination==new_dest:
-                        if new_dest=="Touheyville":
+                    if self.pet.destination == new_dest:
+                        if new_dest == "Touheyville":
+                            self.pet.previous_posns.append(self.pet.pos)
                             spyral.director.push(TownMap.Touheyville(self.pet))
-                        elif new_dest=="Hong Kong":
+                        elif new_dest == "Hong Kong":
+                            self.pet.previous_posns.append(self.pet.pos)
                             spyral.director.push(TownMap.HongKong(self.pet))
                         else:
-                            spyral.director.push(TownMap.OdowdShire(self.pet))
+                            self.pet.previous_posns.append(self.pet.pos)
+                            spyral.director.push(TownMap.ODowdShire(self.pet))
                         return
                     self.pet.destination = new_dest
                     spyral.director.push(Racing.RacingMain(self.pet))
                 # @TODO: rest is for debug; delete
                 elif event['ascii'] == 'q':
+                    self.pet.previous_posns.append(self.pet.pos)
                     spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
                 elif event['ascii'] == 'w':
+                    self.pet.previous_posns.append(self.pet.pos)
                     spyral.director.push(Basketball.Basketball(self.pet))
                 elif event['ascii'] == 'e':
+                    self.pet.previous_posns.append(self.pet.pos)
                     spyral.director.push(Cooking.Cooking(self.pet))

@@ -29,6 +29,7 @@ from spyral.scene import Scene
 import WorldMap
 import TownMap
 import Clue
+import random
 
 WIDTH = 1200
 HEIGHT = 900
@@ -59,6 +60,8 @@ class Pet(spyral.Sprite):
         self.anchor = "center"
         self.money = 100
 
+        self.previous_posns = []
+
         self.selection_x = 600
         self.selection_y = 450
 
@@ -67,7 +70,7 @@ class Pet(spyral.Sprite):
             self.clues.append(Clue.Clue(self.clues[i].town))
         self.current_clue = 0
         
-        games = ["Crossword","Basketball","Cooking"]
+        games = ["Crossword", "Basketball", "Cooking"]
         self.minigames = []
         for i in range(30):
             self.minigames.append(games[random.randint(0,0)])
@@ -77,7 +80,25 @@ class Pet(spyral.Sprite):
         self.destination = "Touheyville"
 
         self.set_pet()
+
+
+    def get_last_posn(self):
+        if len(self.previous_posns) == 0:
+            return
+
+        self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
+        self.pos = self.previous_posns.pop()
+
         
+
+    def get_pet_types(self):
+        return PET_TYPES
+
+
+    def get_pet_colors(self):
+        return PET_COLORS
+
+
     def get_game(self):
         return self.minigames[self.current_clue]
         
@@ -186,5 +207,6 @@ class PetSelection(Scene):
                     self.next_type()
                 elif event['key'] == 13:
                     # enter
+                    self.pet.previous_posns.append(self.pet.pos)
                     spyral.director.push(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))

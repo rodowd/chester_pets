@@ -16,10 +16,10 @@ __doc__ = ''' This basketball game teaches the concept of the coordinate
 import spyral
 import pygame
 import random
-import time
 
 WIDTH = 1200
 HEIGHT = 900
+BG_COLOR = (100, 100, 100)
 COORD_WIDTH = WIDTH * .7
 COORD_HEIGHT = HEIGHT * .8
 PAD_LEFT = (WIDTH - COORD_WIDTH) * .3
@@ -420,9 +420,9 @@ class Basketball(spyral.Scene):
         self.group.add(self.shot_point)
 
         self.pet = passed_in_pet
-        #pet_type = self.pet.split("_")[0] # @TODO: split the filepath; may have to add as Pet attribute
-        pet_type = "cat"
-        self.pet.image = spyral.Image(filename="images/pets/%s_big_tan.png" % pet_type) # @TODO: make color dynamic
+        self.pet.image = spyral.Image(filename="images/pets/%s_side_%s.png" %
+                            (self.pet.get_pet_types()[self.pet.pet_type],
+                            self.pet.get_pet_colors()[self.pet.color]))
         self.pet.anchor = "center"
         self.pet.x = 1100 # @TODO: magic
         self.pet.y = 700 # @TODO: magic
@@ -482,9 +482,6 @@ class Basketball(spyral.Scene):
                 pos = event['pos']
                 self.scoreboard.get_input(pos)
             if event['type'] == 'KEYDOWN':
-                if event['key'] == 27:
-                    # esc
-                    spyral.director.pop()
                 self.scoreboard.type_key(event['unicode'])
 
         if self.waiting_for_input:
@@ -494,11 +491,7 @@ class Basketball(spyral.Scene):
         if self.run_num == 3:
             if self.num_shots == 5:
                 spyral.director.pop()
-                spyral.director.push(CrosswordVictory())
-                return
-                print "You made %d out of %d shots!" % (self.score, self.num_shots) # @TODO: print to scoreboard
-                time.sleep(4)
-                spyral.director.pop()
+                spyral.director.push(BasketballVictory(self.pet, self.score, self.num_shots))
                 return
 
             self.num_shots+=1
@@ -537,8 +530,14 @@ class Basketball(spyral.Scene):
 
 
 class BasketballVictory(spyral.Scene):
-    def __init__(self):
+    def __init__(self, passed_in_pet, score, num_shots):
         spyral.Scene.__init__(self)
+
+        self.pet = passed_in_pet
+
+        self.score = score
+        self.num_shots = num_shots
+
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
 
@@ -546,8 +545,8 @@ class BasketballVictory(spyral.Scene):
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH, HEIGHT))
         bg.fill(BG_COLOR)
-        font = pygame.font.SysFont(None,80)
-        surf = font.render("YOU DEFEATED",True,[255,255,0,255])
+        font = pygame.font.SysFont(None, 80)
+        surf = font.render("You made %d out of %d shots!" % (self.score, self.num_shots), True, [255,255,0,255])
         bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
         self.camera.set_background(bg)
 
@@ -562,4 +561,5 @@ class BasketballVictory(spyral.Scene):
                 if event['key'] == 27 or event['key'] == 13:
                     # esc or enter
                     spyral.director.pop()
+                    self.pet.get_last_posn()
                     return
