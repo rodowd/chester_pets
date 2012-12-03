@@ -21,21 +21,21 @@ class Clue:
         a = random.randint(2,7)
         b = random.randint(1,a-1)
         if clue==1:
-            nums = [a*i for i in range(5)]
+            nums = [a*i for i in range(6)]
         elif clue==2:
-            nums = [-a*i for i in range(5)]
+            nums = [-a*i for i in range(6)]
         elif clue==3:
-            nums = [0,a,a+b,2*a+b,2*a+2*b]
+            nums = [0,a,a+b,2*a+b,2*a+2*b,3*a+2*b]
         else:
-            nums = [0,a,a-b,2*a-b,2*a-2*b]
+            nums = [0,a,a-b,2*a-b,2*a-2*b,3*a-2*b]
         self.find_place(nums)
     def find_place(self,nums):
-        place = random.randint(1,3)
+        place = random.randint(1,4)
         add = self.number-nums[place]
         self.number_clue = ""
-        for i in range(5):
+        for i in range(6):
             if i==place:
-                self.number_clue+="?"
+                self.number_clue+=" _ "
             else:
                 self.number_clue+=(nums[i]+add).__str__()
             self.number_clue+=","
