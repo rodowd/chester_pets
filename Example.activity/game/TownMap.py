@@ -191,7 +191,7 @@ class MapGrid(spyral.Scene):
         surf = CLUE_FONT.render(clue.town,True,[255,255,0,255])
         bg._surf.blit(surf,[100-surf.get_width()/2,80])
         surf = CLUE_FONT.render(clue.number_clue,True,[255,255,0,255])
-        bg._surf.blit(surf,[100-surf.get_width()/2,110])
+        bg._surf.blit(surf,[100-surf.get_width()/2,150])
         
 class Room(MapGrid):
     def __init__(self,pet,shape):
@@ -317,24 +317,24 @@ class HongKong(Town):
             self.grid[20][x+5] = True
         self.grid[23][8] = False
         standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
-        self.add_building([20,standard_shapes],6,2)
-        self.add_building([20,standard_shapes],10,2)
-        self.add_building([20,standard_shapes],6,5)
-        self.add_building([20,standard_shapes],10,5)
-        self.add_building([20,standard_shapes],14,4)
-        self.add_building([20,standard_shapes],14,7)
-        self.add_building([20,standard_shapes],20,4)
-        self.add_building([20,standard_shapes],2,9)
-        self.add_building([20,standard_shapes],6,9)
-        self.add_building([20,standard_shapes],10,9)
-        self.add_building([20,standard_shapes],19,9)
-        self.add_building([20,standard_shapes],14,10)
-        self.add_building([20,standard_shapes],5,13)
-        self.add_building([20,standard_shapes],9,13)
-        self.add_building([20,standard_shapes],13,13)
-        self.add_building([20,standard_shapes],18,12)
-        self.add_building([20,standard_shapes],17,15)
-        self.add_building([20,standard_shapes],8,16)
+        self.add_building([62,standard_shapes],6,2)
+        self.add_building([66,standard_shapes],10,2)
+        self.add_building([63,standard_shapes],6,5)
+        self.add_building([67,standard_shapes],10,5)
+        self.add_building([71,standard_shapes],14,4)
+        self.add_building([72,standard_shapes],14,7)
+        self.add_building([75,standard_shapes],20,4)
+        self.add_building([61,standard_shapes],2,9)
+        self.add_building([64,standard_shapes],6,9)
+        self.add_building([68,standard_shapes],10,9)
+        self.add_building([76,standard_shapes],19,9)
+        self.add_building([73,standard_shapes],14,10)
+        self.add_building([65,standard_shapes],5,13)
+        self.add_building([69,standard_shapes],9,13)
+        self.add_building([74,standard_shapes],13,13)
+        self.add_building([77,standard_shapes],18,12)
+        self.add_building([78,standard_shapes],17,15)
+        self.add_building([70,standard_shapes],8,16)
         for i in range(5):
             for i2 in range(i+1):
                 self.grid[23-i2][i+13] = False
