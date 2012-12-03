@@ -12,6 +12,8 @@ class Clue:
         self.number = random.randint(21,38)
         if self.town=="O'Dowd Shire":
             self.number = random.randint(41,57)
+        if self.town=="Hong Kong":
+            self.number+=40
         self.set_number_clue()
         self.shape = SHAPES[random.randint(0,6)]
         self.set_shape_clue()
