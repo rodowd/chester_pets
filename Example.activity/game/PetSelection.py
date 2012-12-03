@@ -66,6 +66,8 @@ class Pet(spyral.Sprite):
             self.clues.append(Clue.Clue(self.clues[i].town))
         self.current_clue = 0
 
+        self.destination = "Touheyville"
+
         self.set_pet()
 
     def get_clue(self):
