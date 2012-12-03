@@ -541,6 +541,8 @@ class BasketballVictory(spyral.Scene):
 
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
+        if self.score>=4:
+            self.pet.current_clue+=1
 
 
     def on_enter(self):
