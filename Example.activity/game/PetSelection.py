@@ -66,6 +66,13 @@ class Pet(spyral.Sprite):
         for i in range(29):
             self.clues.append(Clue.Clue(self.clues[i].town))
         self.current_clue = 0
+        
+        games = ["Crossword","Basketball","Cooking"]
+        self.minigames = []
+        for i in range(30):
+            self.minigames.append(games[random.randint(0,0)])
+            # @TODO: Change this to (0,2)
+
 
         self.destination = "Touheyville"
 
