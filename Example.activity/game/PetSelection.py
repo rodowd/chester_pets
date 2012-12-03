@@ -78,7 +78,9 @@ class Pet(spyral.Sprite):
 
         self.set_pet()
         
-
+    def get_game(self):
+        return self.minigames[self.current_clue]
+        
     def get_clue(self):
         return self.clues[self.current_clue]
     
