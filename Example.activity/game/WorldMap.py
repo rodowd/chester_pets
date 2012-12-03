@@ -92,6 +92,7 @@ class WorldMap(spyral.Scene):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
                 spyral.director.pop()
+                self.pet.get_last_posn()
                 return
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 276 or event['key'] == 274:

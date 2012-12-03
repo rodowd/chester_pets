@@ -473,11 +473,13 @@ class CrosswordMain(spyral.Scene):
                 self.grid.setHint(self.currentHint())
 
 class CrosswordVictory(spyral.Scene):
-    def __init__(self,pet):#change to (self,head,body,etc.)
+    def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
-        pet.current_clue+=1
+
+        self.pet = passed_in_pet
+        self.pet.current_clue += 1
 
 
     def on_enter(self):
