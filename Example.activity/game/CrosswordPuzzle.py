@@ -4,8 +4,8 @@ import random
 
 WIDTH = 1200
 HEIGHT = 900
-BLOCK_SIZE = 20
-LETTERFONT = 20
+BLOCK_SIZE = 42
+LETTERFONT = 42
 BG_COLOR = (100, 100, 100)
 
 def readWords(filename):
@@ -16,6 +16,8 @@ def readWords(filename):
     strings = f.readlines()
     words = [getWord(s) for s in strings]
     return words
+
+
 def getWord(string):
     """
     splits up the line from the file and uses its info to create
@@ -26,6 +28,7 @@ def getWord(string):
     s2 = string.split(":")
     s3 = s2[1].split(";")
     return Word(s2[0],s3)
+
 
 class Word:
     """
@@ -44,6 +47,7 @@ class Word:
             return self.string
         i = random.randint(0,len(self.definitions)-1)
         return self.definitions[i]
+
 
 class Crossword:
     """
