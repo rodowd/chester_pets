@@ -388,7 +388,7 @@ class HongKong(Town):
             self.grid[23-x][7] = False
             self.grid[20][x+5] = True
         self.grid[23][8] = False
-        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_building([62,standard_shapes],6,2)
         self.add_building([66,standard_shapes],10,2)
         self.add_building([63,standard_shapes],6,5)
@@ -423,7 +423,7 @@ class HongKong(Town):
 class Touheyville(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
-        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_building([21,standard_shapes],2,8)
         self.add_building([22,standard_shapes],4,11)
         self.add_building([23,standard_shapes],4,14)
@@ -478,7 +478,7 @@ class Touheyville(Town):
 class ODowdShire(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
-        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_tower([41,standard_shapes],9,3)
         self.add_tower([42,standard_shapes],13,2)
         self.add_building([43,standard_shapes],17,2)
