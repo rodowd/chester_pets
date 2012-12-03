@@ -367,7 +367,7 @@ class RacingMain(spyral.Scene):
 
 
     def update(self,dt):
-        if self.distance >= 9000: # @TODO: magic
+        if self.distance >= 16000: # @TODO: magic
             # game over
             # @TODO: wait
             # @TODO: show end screen
@@ -394,7 +394,7 @@ class RacingMain(spyral.Scene):
             self.car.render2(self.turbometer.active)
         self.speed*=self.slow
         self.distance+=self.speed*dt
-        if self.distance>=WIDTH+3000*self.questionNum:
+        if self.distance>=WIDTH+3000*self.questionNum and self.questionNum<5:
             for ans in self.question.answers:
                 self.group.remove(ans)
             self.group.remove(self.question)
