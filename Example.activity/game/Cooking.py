@@ -52,6 +52,9 @@ class Recipe:
         if measure.tool=="cup":
             return f.mult(48)
         return f.mult(96)
+    def empty(self):
+        for m in self.measures:
+            m.frac = Fraction(0,1)
     def add(self, measure, ingred):
         for i in range(len(self.ingredients)):
             if self.ingredients[i]==ingred:
@@ -305,6 +308,9 @@ class Cooking(spyral.Scene):
                     self.accept()
                 if event['key']==8:
                     self.cancel()
+                if event['key']==27:
+                    self.bowl.empty()
+                    self.bowlcontents.render()
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill([255,64,64,255])
