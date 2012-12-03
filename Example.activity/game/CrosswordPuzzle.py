@@ -4,8 +4,8 @@ import random
 
 WIDTH = 1200
 HEIGHT = 900
-BLOCK_SIZE = 42
-LETTERFONT = 42
+BLOCK_SIZE = 38
+LETTERFONT = 38
 BG_COLOR = (100, 100, 100)
 
 def readWords(filename):
@@ -361,7 +361,7 @@ class HintAndAnswer(spyral.Sprite):
 
 
     def render(self):
-        self.image = spyral.Image(size = [WIDTH,50])
+        self.image = spyral.Image(size = [WIDTH,80])
         surf = self.font.render(self.hint[4],True,[0,0,0,255])
         self.image._surf.blit(surf,[2,0])
         surf = self.font.render(self.answer,True,[0,0,0,255])
