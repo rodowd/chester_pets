@@ -32,7 +32,8 @@ import Clue
 
 WIDTH = 1200
 HEIGHT = 900
-FONT_SIZE = 56
+TITLE_FONT_SIZE = 72
+OTHER_FONT_SIZE = 48
 BG_COLOR = (100, 100, 100)
 FG_COLOR = (255, 255, 255)
 MY_COLOR = (255, 0, 0)
@@ -58,8 +59,8 @@ class Pet(spyral.Sprite):
         self.anchor = "center"
         self.money = 100
 
-        self.x = 230 # @TODO: magic
-        self.y = 200 # @TODO: magic
+        self.selection_x = 600
+        self.selection_y = 450
 
         self.clues = [Clue.Clue("Start")]
         for i in range(29):
@@ -69,6 +70,7 @@ class Pet(spyral.Sprite):
         self.destination = "Touheyville"
 
         self.set_pet()
+        
 
     def get_clue(self):
         return self.clues[self.current_clue]
@@ -81,6 +83,8 @@ class Pet(spyral.Sprite):
 
     def set_pet(self):
         self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
+        self.x = self.selection_x
+        self.y = self.selection_y
 
 
 class TextSprite(Sprite):
@@ -105,26 +109,44 @@ class TextSprite(Sprite):
         
 class PetSelection(Scene):
     def __init__(self):
+        line_space = 50
+        instructions_x_posn = 600
+        instructions_y_posn = 700
+        
         Scene.__init__(self)
         self.camera = self.parent_camera.make_child((WIDTH, HEIGHT))
         self.group = spyral.Group(self.camera)
 
-        font = pygame.font.SysFont(None, FONT_SIZE)
+        title_font = pygame.font.SysFont(None, TITLE_FONT_SIZE)
+        other_font = pygame.font.SysFont(None, OTHER_FONT_SIZE)
 
         self.pet = Pet(self)
         self.group.add(self.pet)
 
-        instructions = TextSprite(self.group, font)
-        instructions.anchor = 'midbottom'
-        instructions.x = 450
-        instructions.y = 600
-        instructions.render("i: color  t: type  s: select")
-
-        heading = TextSprite(self.group, font)
+        heading = TextSprite(self.group, title_font)
         heading.anchor = 'midbottom'
-        heading.x = 450
-        heading.y = 70
+        heading.x = 600
+        heading.y = 100
         heading.render("CHESTER PETS")      
+
+        color_instructions = TextSprite(self.group, other_font)
+        color_instructions.anchor = 'midbottom'
+        color_instructions.x = instructions_x_posn
+        color_instructions.y = instructions_y_posn + line_space
+        color_instructions.render("Press 'c' to cycle through colors.")
+        
+        type_instructions = TextSprite(self.group, other_font)
+        type_instructions.anchor = 'midbottom'
+        type_instructions.x = instructions_x_posn
+        type_instructions.y = instructions_y_posn + (2 * line_space)
+        type_instructions.render("Press 't' to cycle through types of pets.")
+
+        enter_instructions = TextSprite(self.group, other_font)
+        enter_instructions.anchor = 'midbottom'
+        enter_instructions.x = instructions_x_posn
+        enter_instructions.y = instructions_y_posn + (3 * line_space)
+        enter_instructions.render("Press 'Enter' when you are finished.") 
+
 
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH, HEIGHT))
@@ -149,11 +171,11 @@ class PetSelection(Scene):
                 spyral.director.pop()
                 return
             if event['type'] == 'KEYDOWN':
-                if event['ascii'] == 'i':
+                if event['ascii'] == 'c':
                     self.next_color()
                 elif event['ascii'] =='t':
                     self.next_type()
-                elif event['ascii'] == 's':
+                elif event['key'] == 13:
+                    # enter
                     spyral.director.push(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))
-        self.group.update(dt)

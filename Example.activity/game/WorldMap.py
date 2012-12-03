@@ -120,12 +120,9 @@ class WorldMap(spyral.Scene):
                     self.pet.destination = new_dest
                     spyral.director.push(Racing.RacingMain(self.pet))
                 # @TODO: rest is for debug; delete
-                elif event['key'] == 113:
-                    # q
+                elif event['ascii'] == 'q':
                     spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
-                elif event['key'] == 119:
-                    # w
+                elif event['ascii'] == 'w':
                     spyral.director.push(Basketball.Basketball(self.pet))
-                elif event['key'] == 101:
-                    # e
+                elif event['ascii'] == 'e':
                     spyral.director.push(Cooking.Cooking(self.pet))
