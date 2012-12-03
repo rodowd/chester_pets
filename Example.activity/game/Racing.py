@@ -1,6 +1,7 @@
 import pygame
 import spyral
 import random
+import TownMap
 
 WIDTH = 1200
 HEIGHT = 900
@@ -366,13 +367,19 @@ class RacingMain(spyral.Scene):
 
 
     def update(self,dt):
-        if self.distance > 10000: # @TODO: magic
+        if self.distance >= 9000: # @TODO: magic
             # game over
             # @TODO: wait
             # @TODO: show end screen
             self.pet.money += (100 - int(self.timer)) # @TODO: 100 is magic
             print self.pet.money
             spyral.director.pop()
+            if self.pet.destination == "Touheyville":
+                spyral.director.push(TownMap.Touheyville(self.pet))
+            elif self.pet.destination == "Hong Kong":
+                spyral.director.push(TownMap.HongKong(self.pet))
+            else:
+                spyral.director.push(TownMap.OdowdShire(self.pet))
             return
         self.timer+=dt
         self.speed = self.normalspeed
@@ -399,13 +406,7 @@ class RacingMain(spyral.Scene):
         self.group.remove(self.car)
         self.group.add(self.car)
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                spyral.director.pop()  # Happens when someone asks the OS to close the program
-                return
             if event['type'] == 'KEYDOWN':
-                if event['key'] == 27:
-                    spyral.director.pop()
-                    return
                 if event['key']==273:
                     self.car.up = True
                 if event['key']==274:
