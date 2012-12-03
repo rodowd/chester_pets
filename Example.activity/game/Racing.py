@@ -5,8 +5,8 @@ import TownMap
 
 WIDTH = 1200
 HEIGHT = 900
-UPPER_BOUND = 600
-LANE_WIDTH = (HEIGHT-UPPER_BOUND)/3
+UPPER_BOUND = 400
+LANE_WIDTH = (HEIGHT - UPPER_BOUND) / 3
 LINE_SIZE = [25,5]
 LINE_COLOR = [255,255,0,255]
 FONT1 = pygame.font.SysFont(None,60)
@@ -379,7 +379,7 @@ class RacingMain(spyral.Scene):
             elif self.pet.destination == "Hong Kong":
                 spyral.director.push(TownMap.HongKong(self.pet))
             else:
-                spyral.director.push(TownMap.OdowdShire(self.pet))
+                spyral.director.push(TownMap.ODowdShire(self.pet))
             return
         self.timer+=dt
         self.speed = self.normalspeed

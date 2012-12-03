@@ -430,6 +430,11 @@ class Basketball(spyral.Scene):
 
 
     def reset(self):
+        if self.num_shots == 5:
+            spyral.director.pop()
+            spyral.director.push(BasketballVictory(self.pet, self.score, self.num_shots))
+            return
+
         for hoop in self.hoops:
             self.group.remove(hoop)
 
@@ -446,6 +451,9 @@ class Basketball(spyral.Scene):
 
         self.x_input = ""
         self.y_input = ""
+
+        self.scoreboard.highlighted_coord = "x"
+        self.scoreboard.redraw_all_pieces()
 
         self.run_num = 1
 
@@ -490,20 +498,14 @@ class Basketball(spyral.Scene):
             return
         
         if self.run_num == 3:
-            if self.num_shots == 5:
-                spyral.director.pop()
-                spyral.director.push(BasketballVictory(self.pet, self.score, self.num_shots))
-                return
-
             self.num_shots+=1
+
             for hoop in self.hoops:
                 if not hoop.is_target:
                     continue
                 if int(self.x_input) == hoop.x_coord and int(self.y_input) == hoop.y_coord:
-                    print "You got a basket!" # @TODO: print to scoreboard
+                    # player scored a basket
                     self.score += 1
-                else:
-                    print "You missed the basket!" # @TODO: print to scoreboard
 
         elif self.run_num > 3 and self.user_has_shot:
             self.hide_hoops()
@@ -550,7 +552,7 @@ class BasketballVictory(spyral.Scene):
         bg.fill(BG_COLOR)
         font = pygame.font.SysFont(None, 80)
         surf = font.render("You made %d out of %d shots!" % (self.score, self.num_shots), True, [255,255,0,255])
-        earnings = (self.score / self.num_shots) * 100
+        earnings = (self.score / float(self.num_shots)) * 100
         self.pet.money += earnings
         surf2 = font.render("That earns you %d Chester points!" % (earnings), True, [255,255,0,255])
         bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5])

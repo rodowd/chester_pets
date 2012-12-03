@@ -449,7 +449,7 @@ class Touheyville(Town):
         self.grid[x+1][y-2] = False
         self.grid[x][y-2] = False
     def on_enter(self):
-        bg = spyral.Image(filename="images/town/Touheyville.png")
+        bg = spyral.Image(filename="images/town/touheyville.png")
         self.paint_numbers(bg)
         self.camera.set_background(bg)
 

@@ -116,11 +116,6 @@ class Nom(Scene):
 
     def update(self,dt):
         for event in self.event_handler.get():
-            if event['type'] == 'QUIT':
-                # @TODO: pop off everything in director
-                spyral.director.pop()
-                self.pet.get_last_posn()
-                return
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 27 or event['key'] == 13:
                     # esc or enter
