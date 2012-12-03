@@ -289,9 +289,9 @@ class RacingAnswer(spyral.Sprite):
             self.x = self.question.main.distance-self.dist
             if self.question.main.car.get_rect().collide_rect(self.get_rect()):
                 if self.correct:
-                    self.question.main.turbometer.refill(2)
+                    self.question.main.turbometer.refill(3)
                 else:
-                    self.question.main.setSlow(.2)
+                    self.question.main.setSlow(0)
                 self.question.renderGuess(self.correct)
                 for ans in self.question.answers:
                     self.question.main.group.remove(ans)
