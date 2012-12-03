@@ -1,5 +1,8 @@
 import spyral
 import pygame
+import Basketball
+import CrosswordPuzzle
+import Cooking
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
@@ -194,9 +197,10 @@ class MapGrid(spyral.Scene):
         bg._surf.blit(surf,[100-surf.get_width()/2,150])
         
 class Room(MapGrid):
-    def __init__(self,pet,shape):
+    def __init__(self,pet,shape,number):
         MapGrid.__init__(self,pet)
         self.shape = shape
+        self.number = number
         for y in range(6):
             for x in range(24):
                 self.grid[x][y] = False
@@ -208,10 +212,42 @@ class Room(MapGrid):
             for y in range(3):
                 self.grid[x+7][17-y] = False
                 self.grid[16-x][17-y] = False
+        self.grid[11][6] = "Chest"
+        self.grid[11][7] = "Chest"
+        self.grid[12][6] = "Chest"
+        self.grid[12][7] = "Chest"
     def on_enter(self):
         bg = spyral.Image(filename = "images/town/the_room.png")
         self.add_clue(bg)
         self.camera.set_background(bg)
+    def update(self,dt):
+        MapGrid.update(self,dt)
+        x = self.walking_pet.grid_x
+        y = self.walking_pet.grid_y
+        if self.out_of_bounds(x,y):
+            return
+        if not(self.walking_pet.changed_room):
+            if not(isinstance(self.grid[x][y],bool)):
+                if not(self.number==self.pet.get_clue().number and
+                       self.shape==self.pet.get_clue().shape):
+                    print "POOOOOP"
+                    self.walking_pet.changed_room = True
+                    self.walking_pet.facing = "down"
+                    return
+                if self.pet.get_game()=="Basketball":
+                    spyral.director.push(Basketball.Basketball(self.pet))
+                elif self.pet.get_game()=="Crossword":
+                    spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
+                else:
+                    spyral.director.push(Cooking.Cooking(self.pet))
+                self.walking_pet.changed_room = True
+                self.walking_pet.facing = "down"
+                self.up = False
+                self.down = False
+                self.right = False
+                self.left = False
+                self.walking_pet.render()
+                return
         
 
 class Lobby(MapGrid):
@@ -239,6 +275,7 @@ class Lobby(MapGrid):
         for i in range(7):
             self.grid[3*i+2][8] = shapes[i]
             self.grid[3*i+3][8] = shapes[i]
+        print self.pet.get_clue().shape
     def on_enter(self):
         bg = spyral.Image(filename="images/town/Lobby.png")
         self.add_clue(bg)
@@ -251,7 +288,7 @@ class Lobby(MapGrid):
             return
         if not(self.walking_pet.changed_room):
             if not(isinstance(self.grid[x][y],bool)):
-                spyral.director.push(Room(self.pet,self.grid[x][y]))
+                spyral.director.push(Room(self.pet,self.grid[x][y],self.number))
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
