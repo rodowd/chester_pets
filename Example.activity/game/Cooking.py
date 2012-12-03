@@ -140,13 +140,13 @@ class Cooking(spyral.Scene):
                       random_tool("cup"),
                       random_tool("pint")]
         # @TODO: magic numbers below
-        self.ingredients = [Ingredient(self.group, "flour", "images/cooking/flour.png", 431, 19),
-                            Ingredient(self.group, "sugar", "images/cooking/sugar.png", 431, 319),
-                            Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 431, 619),
-                            Ingredient(self.group, "water", "images/cooking/water.png", 656, 19),
-                            Ingredient(self.group, "eggs", "images/cooking/eggs.png", 656, 319),
-                            Ingredient(self.group, "butter", "images/cooking/butter.png", 656, 619)]
-        recipeSprite = self.addImage("images/cooking/recipe_scroll.png", 210, 234)
+        self.ingredients = [Ingredient(self.group, "flour", "images/cooking/flour.png", 230, 10),
+                            Ingredient(self.group, "sugar", "images/cooking/sugar.png", 230, 170),
+                            Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 230, 330),
+                            Ingredient(self.group, "water", "images/cooking/water.png", 350, 10),
+                            Ingredient(self.group, "eggs", "images/cooking/eggs.png", 350, 170),
+                            Ingredient(self.group, "butter", "images/cooking/butter.png", 350, 330)]
+        recipeSprite = self.addImage("images/cooking/recipe_scroll.png", 112, 125)
         self.emptyBG = spyral.Sprite(self.group)
         self.emptyBG.image = spyral.Image(size=[WIDTH,HEIGHT])
         self.group.add(self.emptyBG)
