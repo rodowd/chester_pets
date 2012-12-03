@@ -208,6 +208,28 @@ class ClueSprite(spyral.Sprite):
         self.image._surf.blit(surf,[100-surf.get_width()/2,80])
         surf = CLUE_FONT.render(self.clue.number_clue,True,[255,255,0,255])
         self.image._surf.blit(surf,[100-surf.get_width()/2,150])
+        for i in range(len(self.clue.shape_clue)):
+            shape = self.clue.shape_clue[i]
+            image = self.get_shape_image(shape)
+            self.image._surf.blit(image._surf,[25*i+25,230])
+    def get_shape_image(self,shape):
+        if shape=="Circle":
+            return spyral.Image(filename = "images/town/circle.png")
+        if shape=="Square":
+            return spyral.Image(filename = "images/town/square.png")
+        if shape=="Diamond":
+            return spyral.Image(filename = "images/town/diamond.png")
+        if shape=="Triangle1":
+            return spyral.Image(filename = "images/town/triangle_up.png")
+        if shape=="Triangle2":
+            return spyral.Image(filename = "images/town/triangle_right.png")
+        if shape=="Triangle3":
+            return spyral.Image(filename = "images/town/triangle_left.png")
+        if shape=="Triangle4":
+            return spyral.Image(filename = "images/town/triangle_down.png")
+        image = spyral.Image(size = [20,20])
+        image.draw_rect([255,255,0,255],[0,19],[20,2])
+        return image
     def update(self,dt):
         if not(self.clue==self.pet.get_clue()):
             self.clue = self.pet.get_clue()
@@ -289,9 +311,9 @@ class Lobby(MapGrid):
         for i in range(7):
             self.grid[3*i+2][8] = shapes[i]
             self.grid[3*i+3][8] = shapes[i]
-        print self.pet.get_clue().shape
+        print self.pet.get_clue().number,self.pet.get_clue().shape
     def on_enter(self):
-        bg = spyral.Image(filename="images/town/LobbyHONGKONG.png")
+        bg = spyral.Image(filename="images/town/lobby_hong_kong.png")
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
@@ -366,7 +388,7 @@ class HongKong(Town):
             self.grid[23-x][7] = False
             self.grid[20][x+5] = True
         self.grid[23][8] = False
-        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_building([62,standard_shapes],6,2)
         self.add_building([66,standard_shapes],10,2)
         self.add_building([63,standard_shapes],6,5)
@@ -401,7 +423,7 @@ class HongKong(Town):
 class Touheyville(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
-        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_building([21,standard_shapes],2,8)
         self.add_building([22,standard_shapes],4,11)
         self.add_building([23,standard_shapes],4,14)
@@ -456,7 +478,7 @@ class Touheyville(Town):
 class ODowdShire(Town):
     def __init__(self,pet):
         Town.__init__(self,pet)
-        standard_shapes = ["Square","Circle","Triangle","Triangle2","Triangle3","Triangle4","Diamond"]
+        standard_shapes = ["Square","Circle","Triangle1","Triangle2","Triangle3","Triangle4","Diamond"]
         self.add_tower([41,standard_shapes],9,3)
         self.add_tower([42,standard_shapes],13,2)
         self.add_building([43,standard_shapes],17,2)
