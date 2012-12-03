@@ -13,6 +13,7 @@ import Racing
 import Basketball # @TODO: for debug; delete
 import CrosswordPuzzle # @TODO: for debug; delete
 import Cooking # @TODO: for debug; delete
+import TownMap
 
 WIDTH = 1200
 HEIGHT = 900
@@ -107,6 +108,16 @@ class WorldMap(spyral.Scene):
                     self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
                 elif event['key'] == 13:
                     # enter key
+                    new_dest = CITY_POSNS[self.curr_city % 3][0]
+                    if self.pet.destination==new_dest:
+                        if new_dest=="Touheyville":
+                            spyral.director.push(TownMap.Touheyville(self.pet))
+                        elif new_dest=="Hong Kong":
+                            spyral.director.push(TownMap.HongKong(self.pet))
+                        else:
+                            spyral.director.push(TownMap.OdowdShire(self.pet))
+                        return
+                    self.pet.destination = new_dest
                     spyral.director.push(Racing.RacingMain(self.pet))
                 # @TODO: rest is for debug; delete
                 elif event['key'] == 113:
