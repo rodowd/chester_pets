@@ -489,8 +489,8 @@ class Basketball(spyral.Scene):
             # don't shoot basketball
             return
         
-        if self.run_num == 3:
-            if self.num_shots == 5:
+        if self.run_num == 1:
+            if self.num_shots == 6:
                 spyral.director.pop()
                 spyral.director.push(BasketballVictory(self.pet, self.score, self.num_shots))
                 return
