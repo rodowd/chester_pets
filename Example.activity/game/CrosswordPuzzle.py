@@ -459,23 +459,24 @@ class CrosswordMain(spyral.Scene):
                         self.hintDone[self.hintNum] = True
                         if self.answergrid.letters==self.grid.letters:
                             spyral.director.pop()
-                            spyral.director.push(CrosswordVictory())
+                            spyral.director.push(CrosswordVictory(self.pet))
                             return
                 self.hintAndAnswer.setHint(self.currentHint())
                 self.grid.setHint(self.currentHint())
 
 class CrosswordVictory(spyral.Scene):
-    def __init__(self):#change to (self,head,body,etc.)
+    def __init__(self,pet):#change to (self,head,body,etc.)
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
+        pet.current_clue+=1
 
 
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill(BG_COLOR)
         font = pygame.font.SysFont(None,80)
-        surf = font.render("YOU DEFEATED",True,[255,255,0,255])
+        surf = font.render("YOU DID IT!!!",True,[255,255,0,255])
         bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
         self.camera.set_background(bg)
 

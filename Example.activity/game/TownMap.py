@@ -146,6 +146,8 @@ class WalkingPet(spyral.Sprite):
                 self.moving = False
             if self.moving or not(oldfacing==self.facing):
                 self.render()
+
+
             
 
 class MapGrid(spyral.Scene):
@@ -160,6 +162,7 @@ class MapGrid(spyral.Scene):
         self.down = False
         self.walking_pet = WalkingPet(self,11,17,0,0)
         self.grid = [[True for y in range(18)] for x in range(24)]
+        self.clue = ClueSprite(self.group,self.pet)
     def out_of_bounds(self,x,y):
         return x<0 or x>=24 or y<0 or y>=18
     def render(self):
@@ -189,12 +192,27 @@ class MapGrid(spyral.Scene):
                     self.left = False
         if self.out_of_bounds(self.walking_pet.grid_x,self.walking_pet.grid_y):
             spyral.director.pop()
-    def add_clue(self,bg):
-        clue = self.pet.get_clue()
-        surf = CLUE_FONT.render(clue.town,True,[255,255,0,255])
-        bg._surf.blit(surf,[100-surf.get_width()/2,80])
-        surf = CLUE_FONT.render(clue.number_clue,True,[255,255,0,255])
-        bg._surf.blit(surf,[100-surf.get_width()/2,150])
+
+class ClueSprite(spyral.Sprite):
+    def __init__(self,group,pet):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self.pet = pet
+        self.clue = self.pet.get_clue()
+        self.anchor = 'topleft'
+        self.pos = [0,0]
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size=[200,350])
+        surf = CLUE_FONT.render(self.clue.town,True,[255,255,0,255])
+        self.image._surf.blit(surf,[100-surf.get_width()/2,80])
+        surf = CLUE_FONT.render(self.clue.number_clue,True,[255,255,0,255])
+        self.image._surf.blit(surf,[100-surf.get_width()/2,150])
+    def update(self,dt):
+        if not(self.clue==self.pet.get_clue()):
+            self.clue = self.pet.get_clue()
+            self.render()
+        
         
 class Room(MapGrid):
     def __init__(self,pet,shape,number):
@@ -218,7 +236,6 @@ class Room(MapGrid):
         self.grid[12][7] = "Chest"
     def on_enter(self):
         bg = spyral.Image(filename = "images/town/the_room.png")
-        self.add_clue(bg)
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
@@ -230,9 +247,6 @@ class Room(MapGrid):
             if not(isinstance(self.grid[x][y],bool)):
                 if not(self.number==self.pet.get_clue().number and
                        self.shape==self.pet.get_clue().shape):
-                    print "POOOOOP"
-                    self.walking_pet.changed_room = True
-                    self.walking_pet.facing = "down"
                     return
                 if self.pet.get_game()=="Basketball":
                     spyral.director.push(Basketball.Basketball(self.pet))
@@ -278,7 +292,6 @@ class Lobby(MapGrid):
         print self.pet.get_clue().shape
     def on_enter(self):
         bg = spyral.Image(filename="images/town/Lobby.png")
-        self.add_clue(bg)
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
@@ -382,7 +395,6 @@ class HongKong(Town):
         
     def on_enter(self):
         bg = spyral.Image(filename="images/town/hong_kong.png")
-        self.add_clue(bg)
         self.paint_numbers(bg)
         self.camera.set_background(bg)
 
@@ -438,7 +450,6 @@ class Touheyville(Town):
         self.grid[x][y-2] = False
     def on_enter(self):
         bg = spyral.Image(filename="images/town/Touheyville.png")
-        self.add_clue(bg)
         self.paint_numbers(bg)
         self.camera.set_background(bg)
 
@@ -504,6 +515,5 @@ class OdowdShire(Town):
         self.grid[x][y-2] = False
     def on_enter(self):
         bg = spyral.Image(filename="images/town/odowd_shire.png")
-        self.add_clue(bg)
         self.paint_numbers(bg)
         self.camera.set_background(bg)
