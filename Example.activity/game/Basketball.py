@@ -477,6 +477,7 @@ class Basketball(spyral.Scene):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
                 spyral.director.pop()
+                self.pet.get_last_posn()
                 return
             if event['type'] == 'MOUSEBUTTONDOWN':
                 pos = event['pos']
@@ -547,15 +548,19 @@ class BasketballVictory(spyral.Scene):
         bg.fill(BG_COLOR)
         font = pygame.font.SysFont(None, 80)
         surf = font.render("You made %d out of %d shots!" % (self.score, self.num_shots), True, [255,255,0,255])
-        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
+        earnings = (self.score / self.num_shots) * 100
+        self.pet.money += earnings
+        surf2 = font.render("That earns you %d Chester points!" % (earnings), True, [255,255,0,255])
+        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5])
+        bg._surf.blit(surf2,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5 + 50])
         self.camera.set_background(bg)
 
 
     def update(self,dt):
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                # @TODO: pop off everything in director
                 spyral.director.pop()
+                self.pet.get_last_posn()
                 return
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 27 or event['key'] == 13:

@@ -91,8 +91,11 @@ class WorldMap(spyral.Scene):
         self.group.update(dt)
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
+                # pop once for WorldMap
                 spyral.director.pop()
-                self.pet.get_last_posn()
+                # pop twice for PetSelection (couldn't pop before because it
+                # was the only thing on the stack)
+                spyral.director.pop()
                 return
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 276 or event['key'] == 274:
