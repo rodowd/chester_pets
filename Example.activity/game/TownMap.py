@@ -8,6 +8,7 @@ TM_WIDTH = 1200
 TM_HEIGHT = 900
 NUMBER_FONT = pygame.font.SysFont(None,30)
 CLUE_FONT = pygame.font.SysFont(None,30)
+MOVE_DELAY = .3
 
 class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
@@ -74,7 +75,7 @@ class WalkingPet(spyral.Sprite):
             i = 2
         if self.facing == "down":
             i = 4
-        if self.moved<=.2 and self.moved>0:
+        if self.moved<=MOVE_DELAY/2 and self.moved>0:
             self.image = self.images[i+1]
         else:
             self.image = self.images[i]
@@ -102,8 +103,8 @@ class WalkingPet(spyral.Sprite):
             x = 1
         elif self.moving=="left":
             x = -1
-        self.x = self.grid_x*50+x*125*self.moved-self.pivot_x
-        self.y = self.grid_y*50+y*125*self.moved-self.pivot_y
+        self.x = self.grid_x*50+x*50*self.moved/MOVE_DELAY-self.pivot_x
+        self.y = self.grid_y*50+y*50*self.moved/MOVE_DELAY-self.pivot_y
     def is_valid_move(self):
         if not(self.moving):
             return True
@@ -125,7 +126,7 @@ class WalkingPet(spyral.Sprite):
     def update(self,dt):
         if self.moving:
             self.moved+=dt
-            if self.moved>=.4:
+            if self.moved>=MOVE_DELAY:
                 self.finish_move()
             else:
                 self.set_position()
