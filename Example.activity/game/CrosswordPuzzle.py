@@ -367,7 +367,7 @@ class HintAndAnswer(spyral.Sprite):
         surf = self.font.render(self.hint[4],True,[0,0,0,255])
         self.image._surf.blit(surf,[2,0])
         surf = self.font.render(self.answer,True,[0,0,0,255])
-        self.image._surf.blit(surf,[2,30])
+        self.image._surf.blit(surf,[22,28])
 
 class AnswerGrid(spyral.Sprite):
     def __init__(self,group,font,size):
@@ -440,13 +440,13 @@ class CrosswordMain(spyral.Scene):
         bg = spyral.Image(filename = "images/crossword_puzzle/background.png")
         font = pygame.font.SysFont(None,30)
         surf = font.render("Arrow Keys/Tab Key: Select a different part of the crossword.",True,[0,0,0,255])
-        bg._surf.blit(surf,[60,800])
+        bg._surf.blit(surf,[60,760])
         surf = font.render("Letter Keys: Type in the answer",True,[0,0,0,255])
-        bg._surf.blit(surf,[60,820])
+        bg._surf.blit(surf,[60,780])
         surf = font.render("Backspace: Delete a letter you typed.",True,[0,0,0,255])
-        bg._surf.blit(surf,[60,840])
+        bg._surf.blit(surf,[60,800])
         surf = font.render("Enter: If you have the right answer, put it into the puzzle.",True,[0,0,0,255])
-        bg._surf.blit(surf,[60,860])
+        bg._surf.blit(surf,[60,820])
         self.camera.set_background(bg)
         
     def render(self):
