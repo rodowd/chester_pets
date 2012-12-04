@@ -267,23 +267,22 @@ class RacingAnswer(spyral.Sprite):
         self.stage = 'far'
         self.render()
     def render(self):
-        self.render2([255,0,0,128],[0,0,0,128])
-    def render2(self,col1,col2):
-        self.image = spyral.Image(size = [54,36])
-        self.image.fill(col1)
+        self.render2("images/racing/box_not_active.png",[0,0,0,128])
+    def render2(self,name,col):
+        self.image = spyral.Image(filename = name)
         self.anchor = 'midleft'
-        surf = FONT2.render(self.num.__str__(),True,col2)
+        surf = FONT2.render(self.num.__str__(),True,col)
         self.image._surf.blit(surf,[27-surf.get_width()*.5,
-                                    18-surf.get_height()*.5])
+                                    33-surf.get_height()*.5])
     def update(self,dt):
         if self.stage=='far':
             if self.question.main.distance>=self.dist-200:
                 self.stage = 'close'
-                self.render2([255,255,0,128],[0,0,0,128])
+                self.render2("images/racing/box_active.png",[0,0,0,128])
         elif self.stage=='close':
             if self.question.main.distance>=self.dist:
                 self.stage = 'here'
-                self.render2([0,255,0,255],[0,0,0,255])
+                self.render2("images/racing/box_active.png",[0,0,0,255])
                 self.x = self.question.main.distance-self.dist
         else:
             self.x = self.question.main.distance-self.dist
