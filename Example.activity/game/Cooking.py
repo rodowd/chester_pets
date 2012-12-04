@@ -298,7 +298,8 @@ class Cooking(spyral.Scene):
         if self.bowl.sameRecipe(self.recipe):
             print "YOU GOT THE CORRECT RECIPE!!!"
             spyral.director.pop()
-            spyral.director.push(nom_nom.Bake())
+            spyral.director.push(CookingVictory(self.pet))
+            #spyral.director.push(nom_nom.Bake())
             return
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':
@@ -314,5 +315,38 @@ class Cooking(spyral.Scene):
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
         bg.fill([255,64,64,255])
+        font = pygame.font.SysFont(None,40)
+        surf = font.render("Arrow Keys: Move pointer.",True,[0,0,0,255])
+        bg._surf.blit(surf,[10,600])
+        surf = font.render("Enter Key: Select Tool/Ingredient or add to the bowl.",True,[0,0,0,255])
+        bg._surf.blit(surf,[10,650])
+        surf = font.render("Backspace: Go back to tool or ingredient selection.",True,[0,0,0,255])
+        bg._surf.blit(surf,[10,700])
+        surf = font.render("Escape: Empty all contents of the bowl.",True,[0,0,0,255])
+        bg._surf.blit(surf,[10,750])
         self.camera.set_background(bg)
     
+class CookingVictory(spyral.Scene):
+    def __init__(self,passed_in_pet):
+        spyral.Scene.__init__(self)
+        self.pet = passed_in_pet
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH,HEIGHT),layers = ['__default__','tool'])
+        self.group = spyral.Group(self.camera)
+        self.pet.current_clue+=1
+    
+    def on_enter(self):
+        bg = spyral.Image(size=(WIDTH,HEIGHT))
+        bg.fill([255,64,64,255])
+        font = pygame.font.SysFont(None,80)
+        surf = font.render("DELICIOUS!!!",True,[255,255,0,255])
+        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
+        self.camera.set_background(bg)
+
+    def update(self,dt):
+        for event in self.event_handler.get():
+            if event['type'] == 'KEYDOWN':
+                if event['key'] == 27 or event['key'] == 13:
+                    # esc or enter
+                    spyral.director.pop()
+                    self.pet.get_last_posn()
+                    return
