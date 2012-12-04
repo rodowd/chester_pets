@@ -438,7 +438,6 @@ class RacingMain(spyral.Scene):
 
 
     def on_enter(self):
-        bg = spyral.Image(size=(WIDTH,HEIGHT))
-        bg.fill([0, 0, 0, 255]) # @TODO: magic
-        bg.draw_rect([100, 100, 100, 255], [0, UPPER_BOUND], [WIDTH, HEIGHT]) # @TODO: magic
-        self.camera.set_background(bg)
+        background = spyral.Image(filename="images/racing/background.png")
+        background.draw_rect([100, 100, 100, 255], [0, UPPER_BOUND], [WIDTH, HEIGHT]) # @TODO: magic
+        self.camera.set_background(background)
