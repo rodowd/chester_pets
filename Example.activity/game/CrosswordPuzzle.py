@@ -7,6 +7,7 @@ HEIGHT = 900
 BLOCK_SIZE = 38
 LETTERFONT = 38
 BG_COLOR = (100, 100, 100)
+PUZZLE_POS = [120,60]
 
 def readWords(filename):
     """
@@ -285,6 +286,7 @@ class PuzzleGrid(spyral.Sprite):
         self.grid = [[not(cross.lettergrid[x][y]=='') for y in range(cross.size)]
                      for x in range(cross.size)]
         self.letters = 0
+        self.pos = PUZZLE_POS
         for y in range(cross.size):
             for x in range(cross.size):
                 if self.grid[x][y]:
@@ -311,7 +313,7 @@ class PuzzleGrid(spyral.Sprite):
             self.image.draw_rect(color,[(x+i*dx)*BLOCK_SIZE+1,(y+i*dy)*BLOCK_SIZE+1],
                                  [BLOCK_SIZE-1,BLOCK_SIZE-1])
     def render(self):
-        self.image = spyral.Image(size=[self.gridsize*BLOCK_SIZE+1,self.gridsize*BLOCK_SIZE+1])
+        self.image = spyral.Image(size=[self.gridsize*BLOCK_SIZE+1,self.gridsize*BLOCK_SIZE+2])
         for y in range(self.gridsize):
             for x in range(self.gridsize):
                 if self.grid[x][y]:
@@ -323,11 +325,11 @@ class PuzzleGrid(spyral.Sprite):
         pass
 
 class HintAndAnswer(spyral.Sprite):
-    def __init__(self,group,font,size,hint):
+    def __init__(self,group,size,hint):
         spyral.Sprite.__init__(self,group)
         self.group.add(self)
-        self.font = font
-        self.pos = [0,BLOCK_SIZE*(size+1)]
+        self.font = pygame.font.SysFont(None,30)
+        self.pos = [60,700]
         self.anchor = 'topleft'
         self.hint = None
         self.setHint(hint)
@@ -361,11 +363,11 @@ class HintAndAnswer(spyral.Sprite):
 
 
     def render(self):
-        self.image = spyral.Image(size = [WIDTH,80])
+        self.image = spyral.Image(size = [WIDTH,60])
         surf = self.font.render(self.hint[4],True,[0,0,0,255])
         self.image._surf.blit(surf,[2,0])
         surf = self.font.render(self.answer,True,[0,0,0,255])
-        self.image._surf.blit(surf,[2,40])
+        self.image._surf.blit(surf,[2,30])
 
 class AnswerGrid(spyral.Sprite):
     def __init__(self,group,font,size):
@@ -375,6 +377,7 @@ class AnswerGrid(spyral.Sprite):
         self.gridsize = size
         self.grid = [['' for y in range(size)] for x in range(size)]
         self.letters = 0
+        self.pos = PUZZLE_POS
         self.render()
     def setAnswer(self,hint):
         changed = False
@@ -419,7 +422,7 @@ class CrosswordMain(spyral.Scene):
         #for hint in cross.hints:
          #   print hint[0],hint[1],hint[2],hint[3],hint[4]
         self.grid.setHint(cross.hints[0])
-        self.hintAndAnswer = HintAndAnswer(self.group,self.font,cross.size,cross.hints[0])
+        self.hintAndAnswer = HintAndAnswer(self.group,cross.size,cross.hints[0])
         self.answergrid = AnswerGrid(self.group,self.font,cross.size)
         self.hintNum = 0
         self.hints = cross.hints
@@ -434,17 +437,16 @@ class CrosswordMain(spyral.Scene):
 
     
     def on_enter(self):
-        bg = spyral.Image(size=(WIDTH,HEIGHT))
-        bg.fill(BG_COLOR)
-        font = pygame.font.SysFont(None,40)
+        bg = spyral.Image(filename = "images/crossword_puzzle/background.png")
+        font = pygame.font.SysFont(None,30)
         surf = font.render("Arrow Keys/Tab Key: Select a different part of the crossword.",True,[0,0,0,255])
-        bg._surf.blit(surf,[10,700])
+        bg._surf.blit(surf,[60,800])
         surf = font.render("Letter Keys: Type in the answer",True,[0,0,0,255])
-        bg._surf.blit(surf,[10,750])
+        bg._surf.blit(surf,[60,820])
         surf = font.render("Backspace: Delete a letter you typed.",True,[0,0,0,255])
-        bg._surf.blit(surf,[10,800])
+        bg._surf.blit(surf,[60,840])
         surf = font.render("Enter: If you have the right answer, put it into the puzzle.",True,[0,0,0,255])
-        bg._surf.blit(surf,[10,850])
+        bg._surf.blit(surf,[60,860])
         self.camera.set_background(bg)
         
     def render(self):
