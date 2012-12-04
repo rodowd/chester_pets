@@ -73,7 +73,7 @@ class Pet(spyral.Sprite):
         games = ["Crossword", "Basketball", "Cooking"]
         self.minigames = []
         for i in range(30):
-            self.minigames.append(games[random.randint(0,1)])
+            self.minigames.append(games[random.randint(0,2)])
             # @TODO: Change this to (0,2)
 
 
