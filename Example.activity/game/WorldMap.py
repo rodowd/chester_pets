@@ -126,6 +126,7 @@ class WorldMap(spyral.Scene):
                             spyral.director.push(TownMap.ODowdShire(self.pet))
                         return
                     self.pet.destination = new_dest
+                    self.reset_pos = self.pet.pos
                     spyral.director.push(Racing.RacingMain(self.pet))
                 # @TODO: rest is for debug; delete
                 elif event['ascii'] == 'q':
