@@ -71,6 +71,7 @@ class WorldMap(spyral.Scene):
         self.pet = passed_in_pet
         self.pet.pos = CITY_POSNS[self.curr_city][1]
         self.group.add(self.pet)
+        self.reset_pos = False
 
 
     def on_enter(self):
@@ -89,6 +90,9 @@ class WorldMap(spyral.Scene):
         of time which has passed since the last time update was called.
         """
         self.group.update(dt)
+        if self.reset_pos:
+            self.pet.pos = self.reset_pos
+            self.reset_pos = False
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
                 # pop once for WorldMap
@@ -110,6 +114,7 @@ class WorldMap(spyral.Scene):
                     # enter key
                     new_dest = CITY_POSNS[self.curr_city % 3][0]
                     if self.pet.destination == new_dest:
+                        self.reset_pos = self.pet.pos
                         if new_dest == "Touheyville":
                             self.pet.previous_posns.append(self.pet.pos)
                             spyral.director.push(TownMap.Touheyville(self.pet))
