@@ -178,20 +178,23 @@ class PetSelection(Scene):
 
 
     def on_enter(self):
-        bg = spyral.Image(size=(WIDTH, HEIGHT))
-        bg.fill(BG_COLOR)
+        bg = spyral.Image(filename="images/main_backgrounds/pet_selection.png")
         self.camera.set_background(bg)
+
                 
     def render(self):
         self.group.draw()
+
         
     def next_color(self):
         self.pet.color = (self.pet.color + 1) % len(PET_COLORS)
         self.pet.set_pet()
 
+
     def next_type(self):
         self.pet.pet_type = (self.pet.pet_type + 1) % len(PET_TYPES)
         self.pet.set_pet()
+
         
     def update(self, dt):
         self.group.update(dt)
@@ -207,4 +210,4 @@ class PetSelection(Scene):
                 elif event['key'] == 13:
                     # enter
                     spyral.director.push(WorldMap.WorldMap(self.pet))
-                    spyral.director.push(TownMap.Touheyville(self.pet))
+                    spyral.director.push(TownMap.HongKong(self.pet))

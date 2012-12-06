@@ -10,7 +10,6 @@ __doc__ = ''' # @TODO: '''
 import pygame
 import random
 import spyral
-import nom_nom
 
 UNIT_CONV = [3, 16, 2]
 UNIT_CONV_2 = [1, 3, 48, 96]
@@ -344,6 +343,10 @@ class CookingVictory(spyral.Scene):
 
     def update(self,dt):
         for event in self.event_handler.get():
+            if event['type'] == 'QUIT':
+                spyral.director.pop()
+                self.pet.get_last_posn()
+                return
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 27 or event['key'] == 13:
                     # esc or enter

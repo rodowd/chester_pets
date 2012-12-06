@@ -337,24 +337,6 @@ class Scoreboard(spyral.Sprite):
             return
 
 
-    def get_input(self, posn):
-        print posn[0], posn[1]
-        if self.x_input_rect.collide_point(posn):
-            # user clicked inside of x input box
-            self.highlighted_coord = "x"
-            self.scene.x_input = ""
-            self.redraw_all_pieces() # in case highlighting has changed
-        if self.y_input_rect.collide_point(posn):
-            # user clicked inside of y input box
-            self.highlighted_coord = "y"
-            self.scene.y_input = ""
-            self.redraw_all_pieces() # in case highlighting has changed
-        if self.submit_input_rect.collide_point(posn):
-            if self.scene.x_input == "" or self.scene.y_input == "":
-                return
-            self.scene.waiting_for_input = False
-
-
     def type_key(self, key):
         if key in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
             # user entered an int
@@ -414,6 +396,7 @@ class Basketball(spyral.Scene):
         self.num_shots = 0
 
         self.scoreboard = Scoreboard(self)
+        self.scoreboard.highlighted_coord = "x"
         self.group.add(self.scoreboard)
         
         self.shot_point = ShotPoint(self)
@@ -483,11 +466,28 @@ class Basketball(spyral.Scene):
         """
         self.group.update(dt)
         for event in self.event_handler.get():
-            if event['type'] == 'MOUSEBUTTONDOWN':
-                pos = event['pos']
-                self.scoreboard.get_input(pos)
-            if event['type'] == 'KEYDOWN':
+            if event['type'] == 'QUIT':
+                spyral.director.pop()
+                self.pet.get_last_posn()
+                return
+            elif event['type'] == 'KEYDOWN':
                 self.scoreboard.type_key(event['unicode'])
+                if event['ascii'] == 'x':
+                    self.scoreboard.highlighted_coord = 'x'
+                    self.x_input = ""
+                    self.scoreboard.redraw_all_pieces() # in case highlighting has changed
+                    return
+                elif event['ascii'] == 'y':
+                    self.scoreboard.highlighted_coord = 'y'
+                    self.y_input = ""
+                    self.scoreboard.redraw_all_pieces() # in case highlighting has changed
+                    return
+                elif event['key'] == 13:
+                    # enter
+                    if self.x_input == "" or self.y_input == "":
+                        return
+                    self.waiting_for_input = False
+                    return
 
         if self.waiting_for_input:
             # don't shoot basketball

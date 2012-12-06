@@ -459,7 +459,7 @@ class CrosswordMain(spyral.Scene):
         self.group.update(dt)
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.director.pop()  # Happens when someone asks the OS to close the program
+                spyral.director.pop()
                 self.pet.get_last_posn()
                 return
             if event['type'] == 'KEYDOWN':
