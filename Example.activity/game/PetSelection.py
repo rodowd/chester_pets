@@ -210,4 +210,4 @@ class PetSelection(Scene):
                 elif event['key'] == 13:
                     # enter
                     spyral.director.push(WorldMap.WorldMap(self.pet))
-                    spyral.director.push(TownMap.HongKong(self.pet))
+                    spyral.director.push(TownMap.Touheyville(self.pet))
