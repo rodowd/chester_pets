@@ -52,9 +52,11 @@ class Recipe:
         if measure.tool=="cup":
             return f.mult(48)
         return f.mult(96)
-    def empty(self):
-        for m in self.measures:
-            m.frac = Fraction(0,1)
+    def empty(self,other):
+        for i in range(6):
+            m = self.measures[i]
+            if not(m.frac.sameFrac(other.measures[i].frac)):
+                m.frac = Fraction(0,1)
     def add(self, measure, ingred):
         for i in range(len(self.ingredients)):
             if self.ingredients[i]==ingred:
@@ -72,10 +74,11 @@ class Recipe:
         return string
 
 class BowlContents(spyral.Sprite):
-    def __init__(self,group,recipe):
+    def __init__(self,group,recipe,recipe2):
         spyral.Sprite.__init__(self,group)
         self.group.add(self)
         self.recipe = recipe
+        self.target_fracs = [m.frac for m in recipe2.measures]
         self.font = pygame.font.SysFont(None,30)
         self.render()
     def render(self):
@@ -83,8 +86,11 @@ class BowlContents(spyral.Sprite):
         self.pos = [700,100]
         string = self.recipe.__str__()
         strings = string.split("\n")
-        for i in range(len(strings)):
-            surf = self.font.render(strings[i],True,[0,0,0,255])
+        for i in range(6):
+            col = [0,0,0,255]
+            if self.target_fracs[i].sameFrac(self.recipe.measures[i].frac):
+                col = [64,255,64,255]
+            surf = self.font.render(strings[i],True,col)
             self.image._surf.blit(surf,[0,40*i])
     def update(self,dt):
         pass
@@ -216,7 +222,7 @@ class Cooking(spyral.Scene):
         self.pet.x = 500
         self.pet.y = 500
         self.group.add(self.pet)
-        self.bowlcontents = BowlContents(self.group,self.bowl)
+        self.bowlcontents = BowlContents(self.group,self.bowl,self.recipe)
 
         
     def addText(self,string,x,y):
@@ -310,7 +316,7 @@ class Cooking(spyral.Scene):
                 if event['key']==8:
                     self.cancel()
                 if event['key']==27:
-                    self.bowl.empty()
+                    self.bowl.empty(self.recipe)
                     self.bowlcontents.render()
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH,HEIGHT))
@@ -322,7 +328,7 @@ class Cooking(spyral.Scene):
         bg._surf.blit(surf,[10,650])
         surf = font.render("Backspace: Go back to tool or ingredient selection.",True,[0,0,0,255])
         bg._surf.blit(surf,[10,700])
-        surf = font.render("Escape: Empty all contents of the bowl.",True,[0,0,0,255])
+        surf = font.render("Escape: Remove unfinished ingredients from the bowl.",True,[0,0,0,255])
         bg._surf.blit(surf,[10,750])
         self.camera.set_background(bg)
     
