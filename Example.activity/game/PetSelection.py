@@ -152,12 +152,6 @@ class PetSelection(Scene):
         self.pet = Pet(self)
         self.group.add(self.pet)
 
-        heading = TextSprite(self.group, title_font)
-        heading.anchor = 'midbottom'
-        heading.x = 600
-        heading.y = 100
-        heading.render("CHESTER PETS")      
-
         color_instructions = TextSprite(self.group, other_font)
         color_instructions.anchor = 'midbottom'
         color_instructions.x = instructions_x_posn
