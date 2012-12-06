@@ -369,6 +369,27 @@ class HintAndAnswer(spyral.Sprite):
         surf = self.font.render(self.answer,True,[0,0,0,255])
         self.image._surf.blit(surf,[22,28])
 
+class WordBank(spyral.Sprite):
+    def __init__(self,group,hints):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        hintlist = [hint for hint in hints]
+        self.words = []
+        while len(hintlist)>0:
+            n = len(hintlist)
+            i = random.randint(0,n-1)
+            self.words.append(hintlist[i][3])
+            hintlist.remove(hintlist[i])
+        self.pos = [790,50]
+        self.font = pygame.font.SysFont(None,30)
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size = [300,HEIGHT-100])
+        for i in range(len(self.words)):
+            surf = self.font.render(self.words[i],True,[0,0,0,255])
+            self.image._surf.blit(surf,[150-surf.get_width()/2,30*i+20])
+        
+
 class AnswerGrid(spyral.Sprite):
     def __init__(self,group,font,size):
         spyral.Sprite.__init__(self,group)
@@ -410,17 +431,16 @@ class CrosswordMain(spyral.Scene):
     """
     this will be the actual scene that the crossword is run on.
     """
-    def __init__(self, passed_in_pet):#change to (self,head,body,etc.)
+    def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
         self.group = spyral.Group(self.camera)
         words = readWords("wordlist.txt")
-        self.words = [word for word in words]
         cross = Crossword(15,words)
         self.font = pygame.font.SysFont(None,LETTERFONT)
         self.grid = PuzzleGrid(cross,self.group)
-        #for hint in cross.hints:
-         #   print hint[0],hint[1],hint[2],hint[3],hint[4]
+#        for hint in cross.hints:
+#            print hint[0],hint[1],hint[2],hint[3],hint[4]
         self.grid.setHint(cross.hints[0])
         self.hintAndAnswer = HintAndAnswer(self.group,cross.size,cross.hints[0])
         self.answergrid = AnswerGrid(self.group,self.font,cross.size)
@@ -429,10 +449,10 @@ class CrosswordMain(spyral.Scene):
         self.hintDone = [False for hint in self.hints]
         self.answergrid._set_layer("top")
         self.alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
+        WordBank(self.group,cross.hints)
         self.pet = passed_in_pet
-        self.pet.x = 1100
-        self.pet.y = 700
+        self.pet.x = 950
+        self.pet.y = 750
         self.group.add(self.pet)
 
     
