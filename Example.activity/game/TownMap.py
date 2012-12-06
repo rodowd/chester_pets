@@ -44,8 +44,8 @@ class WalkingPet(spyral.Sprite):
     def get_move1(self):
         moves = ["cat_move1_",
                  "dog_move1_",
-                 "bird_move_",
-                 "dragon_move_"]
+                 "bird_move1_",
+                 "dragon_move1_"]
         colors = ["tan",
                   "red",
                   "blue",
@@ -57,8 +57,8 @@ class WalkingPet(spyral.Sprite):
     def get_move2(self):
         moves = ["cat_move2_",
                  "dog_move2_",
-                 "bird_move_",
-                 "dragon_move_"]
+                 "bird_move2_",
+                 "dragon_move2_"]
         colors = ["tan",
                   "red",
                   "blue",
