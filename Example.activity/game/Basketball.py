@@ -31,6 +31,10 @@ NUM_Y_POINTS = 8.0
 SCOREBOARD_PERCENTAGE = .8
 SCOREBOARD_HEIGHT = 200
 FONT_SIZE = 37
+GRAVITY = 500.0
+SHOT_TIME = 3.0
+BALL_X1 = 1040.0
+BALL_Y1 = 700.0
 
 COLORS = {"background": (240, 219, 81),
           "basketball": (255, 174, 0),
@@ -65,13 +69,22 @@ class Ball(spyral.Sprite):
 
         self.image = spyral.Image(filename="images/basketball/basketball.png")
         
-        self.vel_y = 0;
+        self.vel_y = 0
+        self.vel_x = 0
         
         self.anchor = "center"
+        self.timer = 0
+        self.scored = False
 
+    def shoot_up(self, X, Y, scored, dt):
+        self.timer = 0
+        self.scored = scored
+        x = (X / NUM_X_POINTS) * COORD_WIDTH + PAD_LEFT
+        y = HEIGHT - ((Y / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
 
-    def shoot_up(self, dt):
-        self.vel_y = self.ball_speed_up
+        self.vel_x = (x-BALL_X1)/SHOT_TIME
+        self.vel_y = (y-BALL_Y1)/SHOT_TIME-GRAVITY*SHOT_TIME/2
+        
 
 
     def shoot_down(self, dt, x_coord):
@@ -80,7 +93,16 @@ class Ball(spyral.Sprite):
 
 
     def update(self, dt):
-        self.y += dt * self.vel_y
+        if self.vel_y<0:
+            self.timer += dt
+            t = self.timer
+            xt = t
+            if self.scored:
+                xt = min(t,SHOT_TIME)
+            self.pos = [self.vel_x*xt+BALL_X1,
+                        self.vel_y*t+BALL_Y1+GRAVITY*t*t/2]
+        else:
+            self.y += dt * self.vel_y
         pass
 
 
@@ -101,7 +123,7 @@ class Hoop(spyral.Sprite):
         self.anchor = "center"
         self.x = (self.x_coord / NUM_X_POINTS) * COORD_WIDTH + PAD_LEFT
         self.y = HEIGHT - ((self.y_coord / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
-
+        print self.x,self.y
 
 def get_hoops(scene):
     hoops = []
@@ -339,14 +361,20 @@ class Scoreboard(spyral.Sprite):
 
     def type_key(self, key):
         if key in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-            # user entered an int
-            if key == "\b":
-                # enter has been pressed
-                return
+            # user entered an int]
             if self.highlighted_coord == "x":
                 self.scene.x_input += key
             elif self.highlighted_coord == "y":
                 self.scene.y_input += key
+        if key == " ":
+            print "poop"
+            if self.highlighted_coord == "x":
+                self.highlighted_coord = "y"
+                self.scene.y_input = ""
+            else:
+                self.highlighted_coord = "x"
+                self.scene.x_input = ""
+            self.redraw_all_pieces()
 
 class Basketball(spyral.Scene):
     def __init__(self, passed_in_pet, *args, **kwargs):
@@ -364,7 +392,7 @@ class Basketball(spyral.Scene):
                 self.points.append(Point(self, i, j))
 
         self.up_ball = Ball(self)
-        self.up_ball.pos = (COORD_WIDTH/2 + PAD_LEFT, HEIGHT)
+        self.up_ball.pos = (BALL_X1,BALL_Y1)
         self.up_ball._set_layer("under")
         self.down_ball = Ball(self)
         self.down_ball.image = spyral.Image(filename="images/basketball/basketball.png")
@@ -427,7 +455,7 @@ class Basketball(spyral.Scene):
         for hoop in self.hoops:
             self.group.add(hoop)
 
-        self.up_ball.pos = (COORD_WIDTH/2 + PAD_LEFT, HEIGHT)
+        self.up_ball.pos = (BALL_X1, BALL_Y1)
         self.down_ball.pos = (WIDTH/2, -self.down_ball.image._surf.get_height())
         self.up_ball.vel_y = 0
         self.down_ball.vel_y = 0
@@ -475,19 +503,19 @@ class Basketball(spyral.Scene):
                 if event['ascii'] == 'x':
                     self.scoreboard.highlighted_coord = 'x'
                     self.x_input = ""
-                    self.scoreboard.redraw_all_pieces() # in case highlighting has changed
-                    return
+                    self.scoreboard.redraw_all_pieces()
+                    return 
                 elif event['ascii'] == 'y':
                     self.scoreboard.highlighted_coord = 'y'
                     self.y_input = ""
-                    self.scoreboard.redraw_all_pieces() # in case highlighting has changed
+                    self.scoreboard.redraw_all_pieces()
                     return
                 elif event['key'] == 13:
-                    # enter
                     if self.x_input == "" or self.y_input == "":
                         return
                     self.waiting_for_input = False
                     return
+                
 
         if self.waiting_for_input:
             # don't shoot basketball
@@ -505,24 +533,16 @@ class Basketball(spyral.Scene):
 
         elif self.run_num > 3 and self.user_has_shot:
             self.hide_hoops()
-            self.up_ball.shoot_up(dt)
+            scored = True
+            for hoop in self.hoops:
+                if hoop.is_target:
+                    scored = (int(self.x_input) == hoop.x_coord
+                              and int(self.y_input) == hoop.y_coord)
+            self.up_ball.shoot_up(int(self.x_input),int(self.y_input),scored,dt)
             self.user_has_shot = False
 
-        elif self.up_ball.pos[1] < (-1 * self.up_ball.image._surf.get_height()) - self.up_ball.hangtime:
-            # @TODO: optimize {
-            self.down_ball.shoot_down(dt, int(self.x_input)) # @TODO: only needs to be called once
-            for hoop in self.hoops: # @TODO: for loop not necessary for every update
-                if not hoop.is_target:
-                    continue
-                if int(self.x_input) == hoop.x_coord and int(self.y_input) == hoop.y_coord:
-                    if (self.down_ball.y > (hoop.y - self.down_ball.ball_slow_range) and
-                                self.down_ball.y < (hoop.y + self.down_ball.ball_slow_range)):
-                        self.down_ball.vel_y = self.down_ball.ball_speed_slow
-                    else:
-                        self.down_ball.vel_y = self.down_ball.ball_speed_fast
-            # @TODO: }
-            if self.down_ball.pos[1] > (HEIGHT + self.down_ball.image._surf.get_height()) - self.down_ball.hangtime:
-                self.reset()
+        elif self.up_ball.pos[1] > HEIGHT+200:
+            self.reset()
         
 
         self.run_num += 1
