@@ -35,7 +35,7 @@ HEIGHT = 900
 TITLE_FONT_SIZE = 72
 OTHER_FONT_SIZE = 48
 BG_COLOR = (100, 100, 100)
-FG_COLOR = (255, 255, 255)
+FG_COLOR = (0, 0, 0)
 MY_COLOR = (255, 0, 0)
 
 PET_TYPES = ["cat", "dog", "bird", "dragon"]
@@ -163,13 +163,12 @@ class PetSelection(Scene):
     def __init__(self):
         line_space = 50
         instructions_x_posn = 600
-        instructions_y_posn = 700
+        instructions_y_posn = 570
         
         Scene.__init__(self)
         self.camera = self.parent_camera.make_child((WIDTH, HEIGHT))
         self.group = spyral.Group(self.camera)
 
-        title_font = pygame.font.SysFont(None, TITLE_FONT_SIZE)
         other_font = pygame.font.SysFont(None, OTHER_FONT_SIZE)
 
         self.pet = Pet(self)
