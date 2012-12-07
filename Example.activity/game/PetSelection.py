@@ -123,7 +123,7 @@ class Pet(spyral.Sprite):
         if self.hat:
             if name=="nom1" or name=="nom2":
                 name = "big"
-            string = ("images/pets/hats/%s_%s_"+name+".png") % (self.hat,PET_TYPES[self.pet_type])
+            string = ("images/pets/accessories/hats/%s_%s_"+name+".png") % (self.hat,PET_TYPES[self.pet_type])
             hat_image = spyral.Image(filename = string)
             self.image._surf.blit(hat_image._surf,[0,0])
 

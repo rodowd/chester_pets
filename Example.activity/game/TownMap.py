@@ -52,7 +52,7 @@ class WalkingPet(spyral.Sprite):
     def get_hat(self):
         pets = ["cat","dog","bird","dragon"]
         pet = self.mapgrid.pet
-        return "images/pets/hats/"+pet.hat+"_"+pets[pet.pet_type]+"_move.png"
+        return "images/pets/accessories/hats/"+pet.hat+"_"+pets[pet.pet_type]+"_move.png"
     def get_move1(self):
         moves = ["cat_move1_",
                  "dog_move1_",
