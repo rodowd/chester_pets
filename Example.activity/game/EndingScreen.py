@@ -8,7 +8,6 @@ CISC 374
 __doc__ = ''' # @TODO: '''
 
 import spyral
-import TownMap
 import Credits
 
 WIDTH = 1200
@@ -22,10 +21,9 @@ class EndingScreen(spyral.Scene):
         # We have to give our camera to the group so it knows where to draw
         self.group = spyral.Group(self.camera)
 
-        self.credits_have_been_shown = False;
+        self.group.add(passed_in_pet)
 
-        self.town = TownMap.Town(passed_in_pet)
-        self.town.walking_pet.render()
+        self.credits_have_been_shown = False;
 
 
     def on_enter(self):
@@ -46,9 +44,9 @@ class EndingScreen(spyral.Scene):
         self.group.update(dt)
         for event in self.event_handler.get():
             if event['type'] == 'QUIT':
-                spyral.director.replace()
+                spyral.director.pop()
                 return
             if event['type'] == 'KEYDOWN':
                 # press any key to continue...
-                spyral.director.push(Credits.Credits())
+                spyral.director.replace(Credits.Credits())
                 return

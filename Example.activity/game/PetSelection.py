@@ -29,8 +29,6 @@ import WorldMap
 import TownMap
 import Clue
 import IntroScreen
-import EndingScreen
-import random
 
 WIDTH = 1200
 HEIGHT = 900
@@ -67,13 +65,13 @@ class Pet(spyral.Sprite):
         self.selection_x = 600
         self.selection_y = 450
 
-        self.clues = [Clue.Clue("Start")]
-        for i in range(3):
-            self.clues.append(Clue.Clue(self.clues[i].town))
-        self.current_clue = 0
-        
-        self.minigames = ["Crossword", "Basketball", "Cooking","Ending"]
+        self.minigames = ["Crossword", "Basketball", "Cooking", "Ending"]
 
+        self.clues = [Clue.Clue("Start")]
+        for i in range(3): # @TODO: magic
+            self.clues.append(Clue.Clue(self.clues[i].town))
+        self.current_clue = 3
+        
         self.destination = "Touheyville"
 
         self.vehicle = Vehicle("car",[200,50,300,300])
@@ -234,4 +232,3 @@ class PetSelection(Scene):
                     spyral.director.replace(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))
                     spyral.director.push(IntroScreen.IntroScreen())
-                    spyral.director.push(EndingScreen.EndingScreen(self.pet))

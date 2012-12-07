@@ -41,5 +41,5 @@ class Credits(spyral.Scene):
                 return
             if event['type'] == 'KEYDOWN':
                 # press any key to continue...
-                spyral.director.pop()
+                spyral.director._stack = []
                 return

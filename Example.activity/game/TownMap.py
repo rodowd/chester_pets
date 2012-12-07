@@ -5,6 +5,7 @@ import CrosswordPuzzle
 import Cooking
 import random
 import PetSelection
+import EndingScreen
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
@@ -304,10 +305,10 @@ class Room(MapGrid):
                 elif self.pet.get_game()=="Cooking":
                     spyral.director.push(Cooking.Cooking(self.pet))
                 else:
-                    pass
-                #TODO
-                #TODO    PUSH THE ENDING SCREEN HERE
-                #TODO
+                    # next "game" is ending screen
+                    spyral.director.replace(EndingScreen.EndingScreen(self.walking_pet))
+                    return
+
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
