@@ -431,9 +431,7 @@ class Basketball(spyral.Scene):
         self.group.add(self.shot_point)
 
         self.pet = passed_in_pet
-        self.pet.image = spyral.Image(filename="images/pets/%s_side_%s.png" %
-                            (self.pet.get_pet_types()[self.pet.pet_type],
-                            self.pet.get_pet_colors()[self.pet.color]))
+        self.pet.set_pet_image("side")
         self.pet.anchor = "center"
         self.pet.x = 1100 # @TODO: magic
         self.pet.y = 700 # @TODO: magic
