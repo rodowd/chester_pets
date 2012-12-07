@@ -4,6 +4,7 @@ import Basketball
 import CrosswordPuzzle
 import Cooking
 import random
+import PetSelection
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
@@ -373,6 +374,8 @@ class Store(MapGrid):
                 self.grid[16-x][17-y] = False
         self.grid[9][8] = "Hat"
         self.grid[10][8] = "Hat"
+        self.grid[13][8] = "Motor"
+        self.grid[14][8] = "Motor"
     def update(self,dt):
         MapGrid.update(self,dt)
         x = self.walking_pet.grid_x
@@ -383,6 +386,8 @@ class Store(MapGrid):
             if not(isinstance(self.grid[x][y],bool)):
                 if self.grid[x][y]=="Hat":
                     spyral.director.push(HatShop(self.pet))
+                else:
+                    spyral.director.push(MotorShop(self.pet))
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
@@ -447,7 +452,6 @@ class Shop(spyral.Scene):
                     self.pressEnter()
                 if event['key'] == 27:
                     self.leaveShop()
-                
 
 class PriceSprite(spyral.Sprite):
     def __init__(self,group,cost):
@@ -467,13 +471,58 @@ class PriceSprite(spyral.Sprite):
         self.cost = cost
         self.render()
 
+class MotorShop(Shop):
+    def __init__(self,passed_in_pet):
+        Shop.__init__(self,passed_in_pet)
+        self.old_vehicle = self.pet.vehicle
+        self.vehicles = [PetSelection.Vehicle("car",[200,50,300,300]),
+                         PetSelection.Vehicle("motorcycle_blue",[230,40,360,260]),
+                         PetSelection.Vehicle("motorcycle_dark",[230,40,360,260]),
+                         PetSelection.Vehicle("motorcycle_green",[230,40,360,260]),
+                         PetSelection.Vehicle("motorcycle_pink",[230,40,360,260]),
+                         PetSelection.Vehicle("motorcycle_red",[230,40,360,260]),
+                         PetSelection.Vehicle("motorcycle_yellow",[230,40,360,260]),
+                         PetSelection.Vehicle("sport_blue",[210,60,220,280]),
+                         PetSelection.Vehicle("sport_dark",[210,60,220,280]),
+                         PetSelection.Vehicle("sport_green",[210,60,220,280]),
+                         PetSelection.Vehicle("shoe",[180,60,360,360])]
+        self.cost = [random.randint(150,450) for x in self.vehicles]
+        self.car_index = 0
+        self.costsprite = PriceSprite(self.group,self.cost[0])
+        self.update_vehicle()
+    def update_vehicle(self):
+        self.group.remove(self.pet.vehicle)
+        self.pet.vehicle = self.vehicles[self.car_index]
+        self.group.add(self.pet.vehicle)
+        if self.pet.vehicle == self.old_vehicle:
+            self.costsprite.change_cost("Already Have")
+        else:
+            self.costsprite.change_cost(self.cost[self.car_index])
+    def cycleLeft(self):
+        self.car_index = (self.car_index-1)%len(self.vehicles)
+        self.update_vehicle()
+    def cycleRight(self):
+        self.car_index = (self.car_index+1)%len(self.vehicles)
+        self.update_vehicle()
+    def pressEnter(self):
+        if self.old_vehicle == self.pet.vehicle:
+            return
+        if self.pet.money >= self.cost[self.car_index]:
+            self.pet.money -= self.cost[self.car_index]
+            self.old_vehicle = self.pet.vehicle
+            self.update_vehicle()
+    def leaveShop(self):
+        self.pet.vehicle = self.old_vehicle
+        spyral.director.pop()
+        
+                 
 class HatShop(Shop):
     def __init__(self,passed_in_pet):
         Shop.__init__(self,passed_in_pet)
         self.group.add(self.pet)
         self.pet.pos = [TM_WIDTH/2,TM_HEIGHT/2]
         self.oldHat = self.pet.hat
-        self.hats = [False,"top","rice_white","rice_black"]
+        self.hats = [False,"cap","top","rice_white","rice_black"]
         self.cost = [random.randint(50,150) for x in self.hats]
         self.cost[0] = 0
         self.hat_index = 1
