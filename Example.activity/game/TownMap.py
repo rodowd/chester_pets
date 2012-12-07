@@ -38,9 +38,19 @@ class WalkingPet(spyral.Sprite):
                        spyral.Image(filename = move2),
                        spyral.Image(filename = move1),
                        spyral.Image(filename = move2)]
+        hat = False
+        if self.mapgrid.pet.hat:
+            hat = spyral.Image(filename = self.get_hat())
         for i in range(4):
+            if hat:
+                self.images[i*2]._surf.blit(hat._surf,[0,0])
+                self.images[i*2+1]._surf.blit(hat._surf,[0,0])
             self.images[i*2].rotate(i*90)
             self.images[i*2+1].rotate(i*90)
+    def get_hat(self):
+        pets = ["cat","dog","bird","dragon"]
+        pet = self.mapgrid.pet
+        return "images/pets/hats/"+pet.hat+"_"+pets[pet.pet_type]+"_move.png"
     def get_move1(self):
         moves = ["cat_move1_",
                  "dog_move1_",
