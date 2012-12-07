@@ -28,6 +28,7 @@ from spyral.scene import Scene
 import WorldMap
 import TownMap
 import Clue
+import IntroScreen
 import random
 
 WIDTH = 1200
@@ -238,3 +239,4 @@ class PetSelection(Scene):
                     # enter
                     spyral.director.push(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))
+                    spyral.director.push(IntroScreen.IntroScreen())
