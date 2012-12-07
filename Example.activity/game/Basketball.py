@@ -35,6 +35,8 @@ GRAVITY = 500.0
 SHOT_TIME = 3.0
 BALL_X1 = 1040.0
 BALL_Y1 = 700.0
+POINTS_PER_BASKET = 20
+NUM_SHOTS = 5
 
 COLORS = {"point": (40, 200, 100),#(55, 55, 255),
           "green": (40, 200, 100),
@@ -49,12 +51,9 @@ font = pygame.font.Font(None, FONT_SIZE)
 
 class Ball(spyral.Sprite):
     '''
-    The basketballs that go up and down
+    The basketball
     '''
     def __init__(self, scene):
-        '''
-        # @TODO: 
-        '''
         super(Ball, self).__init__()
         self.scene = scene
 
@@ -73,8 +72,9 @@ class Ball(spyral.Sprite):
         self.anchor = "center"
         self.timer = 0
         self.scored = False
+        
 
-    def shoot_up(self, X, Y, scored, dt):
+    def shoot(self, X, Y, scored, dt):
         self.timer = 0
         self.scored = scored
         x = (X / NUM_X_POINTS) * COORD_WIDTH + PAD_LEFT
@@ -84,21 +84,15 @@ class Ball(spyral.Sprite):
         self.vel_y = (y-BALL_Y1)/SHOT_TIME-GRAVITY*SHOT_TIME/2
         
 
-
-    def shoot_down(self, dt, x_coord):
-        self.vel_y = self.ball_speed_fast
-        self.x = ((x_coord / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
-
-
     def update(self, dt):
-        if self.vel_y<0:
+        if self.vel_y < 0:
             self.timer += dt
             t = self.timer
             xt = t
             if self.scored:
-                xt = min(t,SHOT_TIME)
-            self.pos = [self.vel_x*xt+BALL_X1,
-                        self.vel_y*t+BALL_Y1+GRAVITY*t*t/2]
+                xt = min(t, SHOT_TIME)
+            self.pos = [self.vel_x * xt + BALL_X1,
+                        self.vel_y * t + BALL_Y1 + GRAVITY * t * (t / 2)]
         else:
             self.y += dt * self.vel_y
         pass
@@ -120,8 +114,8 @@ class Hoop(spyral.Sprite):
 
         self.anchor = "center"
         self.x = (self.x_coord / NUM_X_POINTS) * COORD_WIDTH + PAD_LEFT
-        self.y = HEIGHT - ((self.y_coord / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
-        print self.x,self.y
+        self.y = (HEIGHT - ((self.y_coord / NUM_Y_POINTS) * COORD_HEIGHT) -
+                                    PAD_BOTTOM)
 
 def get_hoops(scene):
     hoops = []
@@ -158,7 +152,7 @@ class Graph(spyral.Sprite):
         y_label_offset = 20
 
         # x-axis
-        x_axis_end_point_xposn = PAD_LEFT + COORD_WIDTH + 70 # @TODO: magic
+        x_axis_end_point_xposn = PAD_LEFT + COORD_WIDTH + 70
         x_axis_end_point_yposn = PAD_TOP + COORD_HEIGHT
         pygame.draw.line(self.image._surf,
                          COLORS["axes"],
@@ -169,13 +163,15 @@ class Graph(spyral.Sprite):
         pygame.draw.line(self.image._surf,
                          COLORS["axes"],
                          (x_axis_end_point_xposn, x_axis_end_point_yposn),
-                         (x_axis_end_point_xposn - arrow_dim, x_axis_end_point_yposn - arrow_dim),
+                         (x_axis_end_point_xposn - arrow_dim,
+                                x_axis_end_point_yposn - arrow_dim),
                          axis_thickness)
         # axis arrow
         pygame.draw.line(self.image._surf,
                          COLORS["axes"],
                          (x_axis_end_point_xposn, x_axis_end_point_yposn),
-                         (x_axis_end_point_xposn - arrow_dim, x_axis_end_point_yposn + arrow_dim),
+                         (x_axis_end_point_xposn - arrow_dim,
+                                x_axis_end_point_yposn + arrow_dim),
                          axis_thickness)
 
         # y-axis
@@ -190,13 +186,15 @@ class Graph(spyral.Sprite):
         pygame.draw.line(self.image._surf,
                          COLORS["axes"],
                          (y_axis_end_point_xposn, y_axis_end_point_yposn),
-                         (y_axis_end_point_xposn - arrow_dim, y_axis_end_point_yposn + arrow_dim),
+                         (y_axis_end_point_xposn - arrow_dim,
+                                y_axis_end_point_yposn + arrow_dim),
                          axis_thickness)
         # axis arrow
         pygame.draw.line(self.image._surf,
                          COLORS["axes"],
                          (y_axis_end_point_xposn, y_axis_end_point_yposn),
-                         (y_axis_end_point_xposn + arrow_dim, y_axis_end_point_yposn + arrow_dim),
+                         (y_axis_end_point_xposn + arrow_dim,
+                                y_axis_end_point_yposn + arrow_dim),
                          axis_thickness)
         
         # x-axis labels
@@ -211,10 +209,6 @@ class Graph(spyral.Sprite):
             temp_surface = font.render(str(i), True, COLORS["green"])
             self.image._surf.blit(temp_surface, (PAD_LEFT - x_label_offset, y))
 
-        #self.image.draw_rect(COLORS["graph_outline"],
-                                    #(PAD_LEFT, PAD_TOP),
-                                    #(COORD_WIDTH, COORD_HEIGHT),
-                                    #border_width=2)
 
 class Grid(spyral.Sprite):
     def __init__(self, scene):
@@ -227,7 +221,8 @@ class Grid(spyral.Sprite):
             for j in range(int(NUM_Y_POINTS + 1)):
                 self.image._surf.blit(Point(self, i, j).image._surf,
                     ((((i / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT),
-                    (HEIGHT - ((j / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM)))
+                    (HEIGHT - ((j / NUM_Y_POINTS) * COORD_HEIGHT) -
+                            PAD_BOTTOM)))
 
 
 class Point(spyral.Sprite):
@@ -238,7 +233,9 @@ class Point(spyral.Sprite):
         point_radius = 2
 
         self.image = spyral.Image(size=(point_radius*2, point_radius*2))
-        self.image.draw_circle(COLORS["green"], (point_radius, point_radius), point_radius)
+        self.image.draw_circle(COLORS["green"],
+                               (point_radius, point_radius),
+                               point_radius)
 
         self.anchor = "center"
         self.x = ((i / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
@@ -252,21 +249,33 @@ class ShotPoint(Point):
 
         self.point_radius = 12
 
-        self.image = spyral.Image(size=(self.point_radius*2, self.point_radius*2))
-        self.image.draw_circle(COLORS["shot_location"], (self.point_radius, self.point_radius), self.point_radius)
+        self.image = spyral.Image(size=(self.point_radius*2,
+                                        self.point_radius*2))
+        self.image.draw_circle(COLORS["shot_location"],
+                               (self.point_radius,
+                               self.point_radius),
+                               self.point_radius)
 
         self.anchor = "center"
 
     def update(self, dt):
         self.image = spyral.Image(size=(WIDTH, HEIGHT))
-        self.image = spyral.Image(size=(self.point_radius*2, self.point_radius*2))
-        self.image.draw_circle(COLORS["shot_location"], (self.point_radius, self.point_radius), self.point_radius)
-        if self.scene.x_input != "" and self.scene.y_input != "" and not self.scene.user_has_shot:
-            self.x = ((int(self.scene.x_input) / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
-            self.y = HEIGHT - ((int(self.scene.y_input) / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
+        self.image = spyral.Image(size=(self.point_radius*2,
+                                        self.point_radius*2))
+        self.image.draw_circle(COLORS["shot_location"],
+                               (self.point_radius,
+                               self.point_radius),
+                               self.point_radius)
+        if (self.scene.x_input != "" and
+                        self.scene.y_input != "" and
+                                    not self.scene.user_has_shot):
+            self.x = (((int(self.scene.x_input) / NUM_X_POINTS) *
+                                COORD_WIDTH) + PAD_LEFT)
+            self.y = (HEIGHT - ((int(self.scene.y_input) / NUM_Y_POINTS) *
+                                COORD_HEIGHT) - PAD_BOTTOM)
         else:
-            self.x = -100 # @TODO: ad hoc
-            self.y = -100 # @TODO: ad hoc
+            self.x = -100 # somewhere off the screen
+            self.y = -100 # somewhere off the screen
         
 
 class Scoreboard(spyral.Sprite):
@@ -280,22 +289,27 @@ class Scoreboard(spyral.Sprite):
         self.curr_x_input = ""
         self.curr_y_input = ""
 
-        self.score_posn = (1000, 100) # @TODO: magic
+        self.score_posn = (1000, 100)
 
-        self.inputs_text_posn = (1000, self.score_posn[1] + FONT_SIZE) # @TODO: magic
+        self.inputs_text_posn = (1000, self.score_posn[1] + FONT_SIZE)
 
-        self.x_input_posn = (self.inputs_text_posn[0] + 10, self.score_posn[1] + FONT_SIZE) # TODO: magic
-        self.y_input_posn = (self.inputs_text_posn[0] + 68, self.score_posn[1] + FONT_SIZE) # TODO: magic
+        self.x_input_posn = (self.inputs_text_posn[0] + 10,
+                                    self.score_posn[1] + FONT_SIZE)
+        self.y_input_posn = (self.inputs_text_posn[0] + 68,
+                                    self.score_posn[1] + FONT_SIZE)
 
-        self.submit_text_posn = (1000, self.y_input_posn[1] + FONT_SIZE) # @TODO: magic
-        self.submit_input_posn = (1000 + 15, self.y_input_posn[1] + FONT_SIZE) # @TODO: magic
+        self.submit_text_posn = (1000, self.y_input_posn[1] + FONT_SIZE)
+        self.submit_input_posn = (1000 + 15, self.y_input_posn[1] + FONT_SIZE)
 
-        self.input_rect_size = (45, 30) # @TODO: magic
-        self.submit_rect_size = (95, 30) # @TODO: magic
+        self.input_rect_size = (45, 30)
+        self.submit_rect_size = (95, 30)
 
-        self.x_input_rect = spyral.Rect(self.x_input_posn, self.input_rect_size)
-        self.y_input_rect = spyral.Rect(self.y_input_posn, self.input_rect_size)
-        self.submit_input_rect = spyral.Rect(self.submit_input_posn, self.submit_rect_size)
+        self.x_input_rect = spyral.Rect(self.x_input_posn,
+                                        self.input_rect_size)
+        self.y_input_rect = spyral.Rect(self.y_input_posn,
+                                        self.input_rect_size)
+        self.submit_input_rect = spyral.Rect(self.submit_input_posn,
+                                             self.submit_rect_size)
 
         self.highlighted_coord = "x"
 
@@ -306,47 +320,57 @@ class Scoreboard(spyral.Sprite):
         self.image = spyral.Image(size=(WIDTH, HEIGHT))
 
         self.image.draw_rect(COLORS["axes"],
-                                    (PAD_LEFT + COORD_WIDTH + ((1 - SCOREBOARD_PERCENTAGE) / 2.0)*PAD_RIGHT, PAD_TOP),
-                                    (SCOREBOARD_PERCENTAGE * PAD_RIGHT, SCOREBOARD_HEIGHT))
+                (PAD_LEFT + COORD_WIDTH + ((1 - SCOREBOARD_PERCENTAGE) / 2.0)
+                            * PAD_RIGHT, PAD_TOP),
+                (SCOREBOARD_PERCENTAGE * PAD_RIGHT, SCOREBOARD_HEIGHT))
 
         # draw input rects
         if self.highlighted_coord == "x":
             # draw x input rect
             self.image.draw_rect(COLORS["highlighted_fill"],
-                                        self.x_input_rect.__getattr__("topleft"),
-                                        self.input_rect_size)
+                                 self.x_input_rect.__getattr__("topleft"),
+                                 self.input_rect_size)
             # draw y input rect
             self.image.draw_rect(COLORS["not_highlighted_fill"],
-                                        self.y_input_rect.__getattr__("topleft"),
-                                        self.input_rect_size)
+                                 self.y_input_rect.__getattr__("topleft"),
+                                 self.input_rect_size)
         elif self.highlighted_coord == "y":
             # draw x input rect
             self.image.draw_rect(COLORS["not_highlighted_fill"],
-                                        self.x_input_rect.__getattr__("topleft"),
-                                        self.input_rect_size)
+                                 self.x_input_rect.__getattr__("topleft"),
+                                 self.input_rect_size)
             # draw y input rect
             self.image.draw_rect(COLORS["highlighted_fill"],
-                                        self.y_input_rect.__getattr__("topleft"),
-                                        self.input_rect_size)
+                                 self.y_input_rect.__getattr__("topleft"),
+                                 self.input_rect_size)
         # draw submit input rect
         self.image.draw_rect(COLORS["shoot_fill"],
-                                    self.submit_input_rect.__getattr__("topleft"),
-                                    self.submit_rect_size)
+                             self.submit_input_rect.__getattr__("topleft"),
+                             self.submit_rect_size)
 
         # score
-        temp_surface = font.render("Score: %x/%x" % (self.scene.score, self.scene.num_shots), True, COLORS["inputs"])
+        temp_surface = font.render("Score: %x/%x" %
+                                      (self.scene.score, self.scene.num_shots),
+                                   True,
+                                   COLORS["inputs"])
         self.image._surf.blit(temp_surface, self.score_posn)
 
         # parens
-        temp_surface = font.render("(       ,       )", True, COLORS["inputs"])
+        temp_surface = font.render("(       ,       )",
+                                   True,
+                                   COLORS["inputs"])
         self.image._surf.blit(temp_surface, self.inputs_text_posn)
 
         # x input
-        temp_surface = font.render("   %s" % self.scene.x_input, True, COLORS["inputs"])
+        temp_surface = font.render("   %s" % self.scene.x_input,
+                                   True,
+                                   COLORS["inputs"])
         self.image._surf.blit(temp_surface, self.inputs_text_posn)
 
         # y input
-        temp_surface = font.render("           %s" % self.scene.y_input, True, COLORS["inputs"])
+        temp_surface = font.render("           %s" % self.scene.y_input,
+                                   True,
+                                   COLORS["inputs"])
         self.image._surf.blit(temp_surface, self.inputs_text_posn)
 
         # submit input
@@ -377,15 +401,7 @@ class Scoreboard(spyral.Sprite):
                 self.scene.x_input += key
             elif self.highlighted_coord == "y":
                 self.scene.y_input += key
-        if key == " ":
-            print "poop"
-            if self.highlighted_coord == "x":
-                self.highlighted_coord = "y"
-                self.scene.y_input = ""
-            else:
-                self.highlighted_coord = "x"
-                self.scene.x_input = ""
-            self.redraw_all_pieces()
+
 
 class Basketball(spyral.Scene):
     def __init__(self, passed_in_pet, *args, **kwargs):
@@ -393,7 +409,9 @@ class Basketball(spyral.Scene):
         
         self.user_has_shot = True
         self.waiting_for_input = True
-        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT), layers=["under", "__default__"])
+        self.camera = self.parent_camera.make_child(virtual_size=
+                                    (WIDTH, HEIGHT),
+                                    layers=["under", "__default__", "victory"])
         
         self.hoops = get_hoops(self)
 
@@ -402,12 +420,6 @@ class Basketball(spyral.Scene):
         self.up_ball = Ball(self)
         self.up_ball.pos = (BALL_X1,BALL_Y1)
         self.up_ball._set_layer("under")
-        self.down_ball = Ball(self)
-        self.down_ball.image = spyral.Image(filename="images/basketball/basketball.png")
-        self.down_ball._set_layer("under")
-
-        # starts in middle, moved to correct posn later (before it drops)
-        self.down_ball.pos = (WIDTH/2, -self.down_ball.image._surf.get_height())
 
         self.x_input = ""
         self.y_input = ""
@@ -421,7 +433,6 @@ class Basketball(spyral.Scene):
             self.group.add(hoop)
 
         self.group.add(self.up_ball)
-        self.group.add(self.down_ball)
 
         self.graph = Graph(self)
         self.group.add(self.graph)
@@ -440,15 +451,14 @@ class Basketball(spyral.Scene):
         self.pet = passed_in_pet
         self.pet.set_pet_image("side")
         self.pet.anchor = "center"
-        self.pet.x = 1100 # @TODO: magic
-        self.pet.y = 700 # @TODO: magic
+        self.pet.x = 1100
+        self.pet.y = 700
         self.group.add(self.pet)
 
 
     def reset(self):
-        if self.num_shots == 5:
-            spyral.director.pop()
-            spyral.director.push(BasketballVictory(self.pet, self.score, self.num_shots))
+        if self.num_shots == NUM_SHOTS:
+            BasketballVictory(self.group, self.score, self.num_shots)
             return
 
         for hoop in self.hoops:
@@ -461,9 +471,7 @@ class Basketball(spyral.Scene):
             self.group.add(hoop)
 
         self.up_ball.pos = (BALL_X1, BALL_Y1)
-        self.down_ball.pos = (WIDTH/2, -self.down_ball.image._surf.get_height())
         self.up_ball.vel_y = 0
-        self.down_ball.vel_y = 0
 
         self.x_input = ""
         self.y_input = ""
@@ -479,15 +487,17 @@ class Basketball(spyral.Scene):
     def on_enter(self):
         background = spyral.Image(filename="images/basketball/background.png")
 
-        font = pygame.font.SysFont(None, 40) # @TODO:  magic
-        instructions = font.render("Press 'X' to enter x coordinate, 'Y' to enter y coordinate, and 'Enter' to shoot.", True, COLORS["green"])
+        font = pygame.font.SysFont(None, 40)
+        instructions = font.render("Press 'X' to enter x coordinate, 'Y' to "
+                                 "enter y coordinate, and 'Enter' to shoot.",
+                                 True,
+                                 COLORS["green"])
         background._surf.blit(instructions, (150, 835))
 
         self.camera.set_background(background)
 
         
     def render(self):
-        # Simply tell the group to draw
         self.group.draw()
 
 
@@ -496,6 +506,7 @@ class Basketball(spyral.Scene):
             if hoop.is_target:
                 continue
             self.group.remove(hoop)
+
 
     def update(self, dt):
         """
@@ -537,9 +548,11 @@ class Basketball(spyral.Scene):
             for hoop in self.hoops:
                 if not hoop.is_target:
                     continue
-                if int(self.x_input) == hoop.x_coord and int(self.y_input) == hoop.y_coord:
+                if (int(self.x_input) == hoop.x_coord and
+                                    int(self.y_input) == hoop.y_coord):
                     # player scored a basket
                     self.score += 1
+                    self.pet.money += POINTS_PER_BASKET
 
         elif self.run_num > 3 and self.user_has_shot:
             self.hide_hoops()
@@ -548,42 +561,46 @@ class Basketball(spyral.Scene):
                 if hoop.is_target:
                     scored = (int(self.x_input) == hoop.x_coord
                               and int(self.y_input) == hoop.y_coord)
-            self.up_ball.shoot_up(int(self.x_input),int(self.y_input),scored,dt)
+            self.up_ball.shoot(int(self.x_input),
+                               int(self.y_input),
+                               scored,
+                               dt)
             self.user_has_shot = False
 
-        elif self.up_ball.pos[1] > HEIGHT+200:
+        elif self.up_ball.pos[1] > (HEIGHT + 200):
             self.reset()
         
 
         self.run_num += 1
 
 
-class BasketballVictory(spyral.Scene):
-    def __init__(self, passed_in_pet, score, num_shots):
-        spyral.Scene.__init__(self)
-
-        self.pet = passed_in_pet
+class BasketballVictory(spyral.Sprite):
+    def __init__(self, group, score, num_shots):
+        spyral.Sprite.__init__(self, group)
+        self.group.add(self)
+        self._set_layer('victory')
+        self.pos = [(WIDTH / 2), (HEIGHT / 2)]
+        self.anchor = 'center'
 
         self.score = score
         self.num_shots = num_shots
 
-        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
-        self.group = spyral.Group(self.camera)
-        if self.score>=4:
-            self.pet.current_clue+=1
+        self.earnings = (self.score / float(self.num_shots)) * 100
 
 
-    def on_enter(self):
-        bg = spyral.Image(size=(WIDTH, HEIGHT))
-        bg.fill(BG_COLOR)
+    def render(self):
+        self.image = spyral.Image(size=(500, 300))
+        self.image.fill([128,128,128,255])
+        self.image.draw_rect([255,255,0,255],[0,0],[499,299],5)
+
         font = pygame.font.SysFont(None, 80)
         surf = font.render("You made %d out of %d shots!" % (self.score, self.num_shots), True, [255,255,0,255])
-        earnings = (self.score / float(self.num_shots)) * 100
-        self.pet.money += earnings
-        surf2 = font.render("That earns you %d Chester points!" % (earnings), True, [255,255,0,255])
-        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5])
-        bg._surf.blit(surf2,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5 + 50])
-        self.camera.set_background(bg)
+        self.image._surf.blit(surf,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5])
+        surf = font.render("Points awarded: " + self.points.__str__(),True,[0,255,0,255])
+        self.image._surf.blit(surf,[250-surf.get_width()/2,200-surf.get_height()/2])
+
+        if self.score >= 4:
+            self.pet.current_clue += 1
 
 
     def update(self,dt):

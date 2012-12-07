@@ -95,23 +95,16 @@ class Crossword:
         return hint1[0]<hint2[0]
     def create(self,words):
         self.insertFirstWord(words)
-        #print "==============================================================="
         while True:
             if len(words)==0:
                 return
             done = False
-            #print "---------------------------------"
             for x in range(8):
                 if not(done):
                     i = random.randint(0,len(words)-1)
                     done = self.addWordDown(words[i])
                     if done:
-            #            print "  Down:  ",x,words[i].string
                         words.remove(words[i])
-            #        else:
-            #            print "  Failed  ",words[i].string
-            #if not(done):
-            #    print "  Down:  no"
             if len(words)==0:
                 return
             done2 = False
@@ -120,12 +113,7 @@ class Crossword:
                     i = random.randint(0,len(words)-1)
                     done2 = self.addWordAcross(words[i])
                     if done2:
-            #            print "  Across:",x,words[i].string
                         words.remove(words[i])
-            #        else:
-            #            print "  Failed  ",words[i].string
-            #if not(done2):
-            #    print "  Across: no"
             if not(done) and  not(done2):
                 return
     def insertFirstWord(self,words):

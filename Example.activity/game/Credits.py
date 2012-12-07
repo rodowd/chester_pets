@@ -5,7 +5,7 @@ Ryan O'Dowd
 CISC 374
 '''
 
-__doc__ = ''' # @TODO: '''
+__doc__ = ''' A screen to display the credits '''
 
 import spyral
 
@@ -41,5 +41,5 @@ class Credits(spyral.Scene):
                 return
             if event['type'] == 'KEYDOWN':
                 # press any key to continue...
-                spyral.director._stack = []
+                spyral.director._stack = [] # @TODO: make this quit gracefully instead of erroring out
                 return

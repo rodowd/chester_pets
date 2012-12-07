@@ -5,15 +5,15 @@ CISC 374
 Fall 2012
 '''
 
-#TODO SWITCH DRAGON_NOM1 WITH DRAGON_NOM2
-
-__doc__ = ''' # @TODO: '''
+__doc__ = ''' The cooking minigame '''
 
 import pygame
 import random
 import spyral
 import nom_nom
 
+WIDTH = 1200
+HEIGHT = 900
 UNIT_CONV = [3, 16, 2]
 UNIT_CONV_2 = [1, 3, 48, 96]
 
@@ -155,8 +155,6 @@ def random_recipe(measures,ingredients):
         meas.append(Measurement(frac,measures[toolnum].tool))
     return Recipe(meas,ingredients)
 
-WIDTH = 1200
-HEIGHT = 900
 
 class Cooking(spyral.Scene):
     def __init__(self, passed_in_pet):
@@ -167,7 +165,6 @@ class Cooking(spyral.Scene):
                       random_tool("tbsp."),
                       random_tool("cup"),
                       random_tool("pint")]
-        # @TODO: magic numbers below
         self.ingredients = [Ingredient(self.group, "flour", "images/cooking/flour.png", 230, 10),
                             Ingredient(self.group, "sugar", "images/cooking/sugar.png", 230, 170),
                             Ingredient(self.group, "chocolate", "images/cooking/chocolate.png", 230, 330),
@@ -303,8 +300,8 @@ class Cooking(spyral.Scene):
             self.group.remove(self.pointer3)
     def update(self,dt):
         if self.bowl.sameRecipe(self.recipe):
-            spyral.director.pop()
-            spyral.director.push(nom_nom.Bake(self.pet))
+            self.pet.money += 100
+            spyral.director.replace(nom_nom.Bake(self.pet))
             return
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':

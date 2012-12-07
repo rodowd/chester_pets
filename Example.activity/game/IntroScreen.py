@@ -5,7 +5,7 @@ Ryan O'Dowd
 CISC 374
 '''
 
-__doc__ = ''' # @TODO: '''
+__doc__ = ''' A screen to introduce your objective '''
 
 import spyral
 

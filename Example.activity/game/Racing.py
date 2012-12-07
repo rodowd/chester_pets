@@ -371,7 +371,7 @@ class RacingVictory(spyral.Sprite):
         self.points = points
         self.render()
     def render(self):
-        self.image = spyral.Image(size = [500,300])
+        self.image = spyral.Image(size=(500, 300))
         self.image.fill([128,128,128,255])
         self.image.draw_rect([255,255,0,255],[0,0],[499,299],5)
         seconds = int(self.time%60)
@@ -384,6 +384,7 @@ class RacingVictory(spyral.Sprite):
         self.image._surf.blit(surf,[250-surf.get_width()/2,100-surf.get_height()/2])
         surf = FONT1.render("Points awarded: "+self.points.__str__(),True,[0,255,0,255])
         self.image._surf.blit(surf,[250-surf.get_width()/2,200-surf.get_height()/2])
+
 
 class RacingMain(spyral.Scene):
     def __init__(self, passed_in_pet):
@@ -430,7 +431,6 @@ class RacingMain(spyral.Scene):
             self.finished = True
             self.pet.money += (100 - int(self.timer))
             RacingVictory(self.group,int(self.timer),(100 - int(self.timer)))
-            print self.pet.money
         if self.distance-self.car.x >= FINISHLINE+1500:
             spyral.director.pop()
             if self.pet.destination == "Touheyville":

@@ -82,8 +82,9 @@ class Bake(Scene):
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 13:
-                    spyral.director.pop()
-                    spyral.director.push(Nom(self.pet))
+                    # enter is pressed
+                    spyral.director.replace(Nom(self.pet))
+                    return
 
 
 class Nom(Scene):
@@ -113,6 +114,11 @@ class Nom(Scene):
     def on_enter(self):
         bg = spyral.Image(size=(WIDTH, HEIGHT))
         bg.fill(BG_COLOR)
+
+        font = pygame.font.SysFont(None, 40)
+        congrats_surf = font.render("Congratulations!  You have earned 100 Chester points!", True, (255, 255, 0))
+        bg._surf.blit(congrats_surf, (240, 100))
+
         self.camera.set_background(bg)
 
                 
@@ -121,8 +127,8 @@ class Nom(Scene):
 
 
     def update(self,dt):
-        self.timer+=dt
-        if self.timer>1 and not(self.done):
+        self.timer += dt
+        if self.timer > 1 and not(self.done):
             self.pet.set_pet_image("nom2")
             self.done = True
         for event in self.event_handler.get():

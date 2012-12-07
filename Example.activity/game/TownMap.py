@@ -344,7 +344,6 @@ class Lobby(MapGrid):
         for i in range(7):
             self.grid[3*i+2][8] = shapes[i]
             self.grid[3*i+3][8] = shapes[i]
-        print self.pet.get_clue().number,self.pet.get_clue().shape
     def on_enter(self):
         bg = spyral.Image(filename="images/town/lobby_hong_kong.png")
         self.camera.set_background(bg)

@@ -68,9 +68,9 @@ class Pet(spyral.Sprite):
         self.minigames = ["Crossword", "Basketball", "Cooking", "Ending"]
 
         self.clues = [Clue.Clue("Start")]
-        for i in range(3): # @TODO: magic
+        for i in range(3):
             self.clues.append(Clue.Clue(self.clues[i].town))
-        self.current_clue = 3
+        self.current_clue = 0
         
         self.destination = "Touheyville"
 

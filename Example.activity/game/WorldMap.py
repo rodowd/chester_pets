@@ -5,7 +5,7 @@ Ryan O'Dowd
 CISC 374
 '''
 
-__doc__ = ''' # @TODO: '''
+__doc__ = ''' The central hub for getting to all of the towns '''
 
 import spyral
 import pygame
@@ -32,7 +32,7 @@ class CityName(spyral.Sprite):
         super(CityName, self).__init__()
         self.scene = scene
 
-        self.name_posn = (500, 50) # @TODO: magic
+        self.name_posn = (500, 50)
 
         self.draw_city_name()
 

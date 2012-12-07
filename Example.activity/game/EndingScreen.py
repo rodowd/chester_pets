@@ -5,7 +5,7 @@ Ryan O'Dowd
 CISC 374
 '''
 
-__doc__ = ''' # @TODO: '''
+__doc__ = ''' A screen to display a victory message '''
 
 import spyral
 import Credits
