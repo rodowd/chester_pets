@@ -391,8 +391,11 @@ class RacingMain(spyral.Scene):
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),
                                                     layers = ['__default__','on_road','over_road','hud','hud2','victory'])
         self.group = spyral.Group(self.camera)
-        self.normalspeed = 200
-        self.accel = 50
+        
+        self.pet = passed_in_pet
+
+        self.normalspeed = self.pet.vehicle.stats[0]
+        self.accel = self.pet.vehicle.stats[1]
         self.speed = self.normalspeed
         self.slow = 1
         self.distance = WIDTH
@@ -400,15 +403,12 @@ class RacingMain(spyral.Scene):
         self.questionNum = 1
         self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,200,6)
         self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,200,6.9)
-        self.car = Car(self.group,self.normalspeed,300,300,"car")
+        self.car = Car(self.group,self.normalspeed,self.pet.vehicle.stats[2],self.pet.vehicle.stats[3],self.pet.vehicle.name)
         self.turbometer = TurboMeter(self.group,10)
         self.question = Question(self,self.distance)
         self.timerSprite = TimerSprite(self)
         self.finished = False
         self.finishline = False
-
-        self.pet = passed_in_pet
-
 
     def setSlow(self,slow):
         self.slow = min(self.slow,slow)
