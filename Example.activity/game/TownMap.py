@@ -511,6 +511,9 @@ class MotorShop(Shop):
             self.pet.money -= self.cost[self.car_index]
             self.old_vehicle = self.pet.vehicle
             self.update_vehicle()
+    def on_enter(self):
+        bg = spyral.Image(filename = "images/town/motorshop.png")
+        self.camera.set_background(bg)
     def leaveShop(self):
         self.pet.vehicle = self.old_vehicle
         spyral.director.pop()
