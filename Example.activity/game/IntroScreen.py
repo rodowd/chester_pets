@@ -8,19 +8,9 @@ CISC 374
 __doc__ = ''' # @TODO: '''
 
 import spyral
-import pygame
 
 WIDTH = 1200
 HEIGHT = 900
-SCOREBOARD_PERCENTAGE = .8
-SCOREBOARD_HEIGHT = 200
-FONT_SIZE = 37
-
-CITY_POSNS = [("Touheyville", (400, 400)),
-              ("Hong Kong", (1010, 500)),
-              ("O'Dowd Shire", (675, 762))]
-COLORS = {"city_name": (155, 255, 255)}
-font = pygame.font.Font(None, FONT_SIZE)
 
 class IntroScreen(spyral.Scene):
     def __init__(self, *args, **kwargs):

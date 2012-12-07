@@ -29,6 +29,7 @@ import WorldMap
 import TownMap
 import Clue
 import IntroScreen
+import EndingScreen
 import random
 
 WIDTH = 1200
@@ -237,6 +238,7 @@ class PetSelection(Scene):
                     self.next_type()
                 elif event['key'] == 13:
                     # enter
-                    spyral.director.push(WorldMap.WorldMap(self.pet))
+                    spyral.director.replace(WorldMap.WorldMap(self.pet))
                     spyral.director.push(TownMap.Touheyville(self.pet))
                     spyral.director.push(IntroScreen.IntroScreen())
+                    spyral.director.push(EndingScreen.EndingScreen(self.pet))
