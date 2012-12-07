@@ -501,5 +501,7 @@ class RacingMain(spyral.Scene):
 
     def on_enter(self):
         background = spyral.Image(filename="images/racing/background.png")
-        background.draw_rect([100, 100, 100, 255], [0, UPPER_BOUND], [WIDTH, HEIGHT]) # @TODO: magic
+        background.draw_rect([100, 100, 100, 255], [0, UPPER_BOUND], [WIDTH, HEIGHT])
+        surf = FONT2.render("[Space Bar]",True,[0,0,0,255])
+        background._surf.blit(surf,[1018,65])
         self.camera.set_background(background)

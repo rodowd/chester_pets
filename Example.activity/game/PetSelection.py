@@ -68,17 +68,11 @@ class Pet(spyral.Sprite):
         self.selection_y = 450
 
         self.clues = [Clue.Clue("Start")]
-        for i in range(29):
+        for i in range(3):
             self.clues.append(Clue.Clue(self.clues[i].town))
         self.current_clue = 0
         
-        games = ["Crossword", "Basketball", "Cooking"]
-        self.minigames = []
-        for i in range(30):
-            self.minigames.append(games[random.randint(0,2)])
-
-        #REMOVE AUTO HAT
-        #self.hat = "rice_white"
+        self.minigames = ["Crossword", "Basketball", "Cooking","Ending"]
 
         self.destination = "Touheyville"
 
@@ -159,7 +153,6 @@ class TextSprite(Sprite):
         
     def render(self, text):
         surf = self.font.render(text, True, FG_COLOR).convert_alpha()
-        # This should be fixed up once the font system is in place
         class DumbImage(spyral.Image):
             def __init__(self):
                 self._surf = surf

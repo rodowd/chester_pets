@@ -426,6 +426,26 @@ class AnswerGrid(spyral.Sprite):
                     surf = self.font.render(self.grid[x][y],True,[0,0,0,255])
                     self.image._surf.blit(surf,[(x+.5)*BLOCK_SIZE-surf.get_width()/2+.5,
                                                 (y+.5)*BLOCK_SIZE-surf.get_height()/2+.5])
+
+
+class CrosswordVictory(spyral.Sprite):
+    def __init__(self,group):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self._set_layer('victory')
+        self.pos = [WIDTH/2, HEIGHT/2]
+        self.anchor = 'center'
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size = [500,300])
+        self.image.fill([128,128,128,255])
+        self.image.draw_rect([255,255,0,255],[0,0],[499,299],5)
+        font = pygame.font.SysFont(None,60)
+        surf = font.render("You solved the puzzle!!!",True,[0,255,0,255])
+        self.image._surf.blit(surf,[250-surf.get_width()/2,100-surf.get_height()/2])
+        surf = font.render("Points awarded: 100",True,[0,255,0,255])
+        self.image._surf.blit(surf,[250-surf.get_width()/2,200-surf.get_height()/2])
+
         
 class CrosswordMain(spyral.Scene):
     """
@@ -433,14 +453,12 @@ class CrosswordMain(spyral.Scene):
     """
     def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top","victory"])
         self.group = spyral.Group(self.camera)
         words = readWords("wordlist.txt")
         cross = Crossword(15,words)
         self.font = pygame.font.SysFont(None,LETTERFONT)
         self.grid = PuzzleGrid(cross,self.group)
-#        for hint in cross.hints:
-#            print hint[0],hint[1],hint[2],hint[3],hint[4]
         self.grid.setHint(cross.hints[0])
         self.hintAndAnswer = HintAndAnswer(self.group,cross.size,cross.hints[0])
         self.answergrid = AnswerGrid(self.group,self.font,cross.size)
@@ -454,6 +472,8 @@ class CrosswordMain(spyral.Scene):
         self.pet.x = 950
         self.pet.y = 750
         self.group.add(self.pet)
+
+        self.complete = False
 
     
     def on_enter(self):
@@ -483,6 +503,10 @@ class CrosswordMain(spyral.Scene):
                 self.pet.get_last_posn()
                 return
             if event['type'] == 'KEYDOWN':
+                if self.complete:
+                    if event['key']==13 or event['key']==27:
+                        spyral.director.pop()
+                    return
                 if event['key']==274 or event['key']==275 or event['key']==9:
                     self.hintNum = (self.hintNum+1)%len(self.hints)
                     while self.hintDone[self.hintNum]:
@@ -501,39 +525,9 @@ class CrosswordMain(spyral.Scene):
                         self.answergrid.setAnswer(self.currentHint())
                         self.hintDone[self.hintNum] = True
                         if self.answergrid.letters==self.grid.letters:
-                            spyral.director.pop()
-                            spyral.director.push(CrosswordVictory(self.pet))
-                            return
+                            self.complete = True
+                            CrosswordVictory(self.group)
+                            self.pet.money+=100
+                            self.pet.current_clue+=1
                 self.hintAndAnswer.setHint(self.currentHint())
                 self.grid.setHint(self.currentHint())
-
-class CrosswordVictory(spyral.Scene):
-    def __init__(self, passed_in_pet):
-        spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ["__default__","top"])
-        self.group = spyral.Group(self.camera)
-
-        self.pet = passed_in_pet
-        self.pet.current_clue += 1
-        self.pet.money += 100
-
-
-    def on_enter(self):
-        bg = spyral.Image(size=(WIDTH,HEIGHT))
-        bg.fill(BG_COLOR)
-        font = pygame.font.SysFont(None,80)
-        surf = font.render("YOU DID IT!!!",True,[255,255,0,255])
-        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5-40])
-        surf = font.render("You Earned 100 Chester Points!!!",True,[255,255,0,255])
-        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5+40])
-        self.camera.set_background(bg)
-
-
-    def update(self,dt):
-        for event in self.event_handler.get():
-            if event['type'] == 'KEYDOWN':
-                if event['key'] == 27 or event['key'] == 13:
-                    # esc or enter
-                    spyral.director.pop()
-                    self.pet.get_last_posn()
-                    return
