@@ -551,6 +551,9 @@ class HatShop(Shop):
             self.pet.money -= self.cost[self.hat_index]
             self.oldHat = self.pet.hat
             self.update_hat()
+    def on_enter(self):
+        bg = spyral.Image(filename = "images/town/hat_shop.png")
+        self.camera.set_background(bg)
     def leaveShop(self):
         self.pet.hat = self.oldHat
         self.pet.set_pet_image("big")
