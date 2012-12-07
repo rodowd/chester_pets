@@ -36,7 +36,7 @@ SHOT_TIME = 3.0
 BALL_X1 = 1040.0
 BALL_Y1 = 700.0
 POINTS_PER_BASKET = 20
-NUM_SHOTS = 1
+NUM_SHOTS = 5
 
 COLORS = {"point": (40, 200, 100),#(55, 55, 255),
           "green": (40, 200, 100),
