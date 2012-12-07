@@ -36,10 +36,8 @@ SHOT_TIME = 3.0
 BALL_X1 = 1040.0
 BALL_Y1 = 700.0
 
-COLORS = {"background": (240, 219, 81),
-          "basketball": (255, 174, 0),
-          "point": (55, 55, 255),
-          "labels": (55, 55, 255),
+COLORS = {"point": (40, 200, 100),#(55, 55, 255),
+          "green": (40, 200, 100),
           "inputs": (0, 0, 0),
           "axes": (55, 55, 255),
           "highlighted_fill": (255, 255, 153),
@@ -204,19 +202,32 @@ class Graph(spyral.Sprite):
         # x-axis labels
         for i in range(int(NUM_X_POINTS)+1):
             x = ((i / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
-            temp_surface = font.render(str(i), True, COLORS["labels"])
+            temp_surface = font.render(str(i), True, COLORS["green"])
             self.image._surf.blit(temp_surface, (x, (PAD_TOP + COORD_HEIGHT +
                                                         y_label_offset)))
         # y-axis labels
         for i in range(int(NUM_Y_POINTS)+1):
             y = HEIGHT - ((i / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM
-            temp_surface = font.render(str(i), True, COLORS["labels"])
+            temp_surface = font.render(str(i), True, COLORS["green"])
             self.image._surf.blit(temp_surface, (PAD_LEFT - x_label_offset, y))
 
         #self.image.draw_rect(COLORS["graph_outline"],
                                     #(PAD_LEFT, PAD_TOP),
                                     #(COORD_WIDTH, COORD_HEIGHT),
                                     #border_width=2)
+
+class Grid(spyral.Sprite):
+    def __init__(self, scene):
+        super(Grid, self).__init__()
+        self.scene = scene
+
+        self.image = spyral.Image(size=(WIDTH, HEIGHT));
+
+        for i in range(int(NUM_X_POINTS + 1)):
+            for j in range(int(NUM_Y_POINTS + 1)):
+                self.image._surf.blit(Point(self, i, j).image._surf,
+                    ((((i / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT),
+                    (HEIGHT - ((j / NUM_Y_POINTS) * COORD_HEIGHT) - PAD_BOTTOM)))
 
 
 class Point(spyral.Sprite):
@@ -227,7 +238,7 @@ class Point(spyral.Sprite):
         point_radius = 2
 
         self.image = spyral.Image(size=(point_radius*2, point_radius*2))
-        self.image.draw_circle(COLORS["point"], (point_radius, point_radius), point_radius)
+        self.image.draw_circle(COLORS["green"], (point_radius, point_radius), point_radius)
 
         self.anchor = "center"
         self.x = ((i / NUM_X_POINTS) * COORD_WIDTH) + PAD_LEFT
@@ -239,7 +250,7 @@ class ShotPoint(Point):
         super(Point, self).__init__()
         self.scene = scene
 
-        self.point_radius = 6
+        self.point_radius = 12
 
         self.image = spyral.Image(size=(self.point_radius*2, self.point_radius*2))
         self.image.draw_circle(COLORS["shot_location"], (self.point_radius, self.point_radius), self.point_radius)
@@ -386,10 +397,7 @@ class Basketball(spyral.Scene):
         
         self.hoops = get_hoops(self)
 
-        self.points = []
-        for i in range(int(NUM_X_POINTS + 1)):
-            for j in range(int(NUM_Y_POINTS + 1)):
-                self.points.append(Point(self, i, j))
+        self.grid = Grid(self)
 
         self.up_ball = Ball(self)
         self.up_ball.pos = (BALL_X1,BALL_Y1)
@@ -407,6 +415,8 @@ class Basketball(spyral.Scene):
         # We have to give our camera to the group so it knows where to draw
         self.group = spyral.Group(self.camera)
         # We can add the sprites to the group
+        self.group.add(self.grid)
+
         for hoop in self.hoops:
             self.group.add(hoop)
 
@@ -415,9 +425,6 @@ class Basketball(spyral.Scene):
 
         self.graph = Graph(self)
         self.group.add(self.graph)
-
-        for point in self.points:
-            self.group.add(point)
 
         self.run_num = 1
         self.score = 0
@@ -471,6 +478,11 @@ class Basketball(spyral.Scene):
 
     def on_enter(self):
         background = spyral.Image(filename="images/basketball/background.png")
+
+        font = pygame.font.SysFont(None, 40) # @TODO:  magic
+        instructions = font.render("Press 'X' to enter x coordinate, 'Y' to enter y coordinate, and 'Enter' to shoot.", True, COLORS["green"])
+        background._surf.blit(instructions, (150, 835))
+
         self.camera.set_background(background)
 
         
