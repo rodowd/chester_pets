@@ -55,6 +55,7 @@ class Pet(spyral.Sprite):
 
         self.color = 0
         self.pet_type = 0
+        self.hat = False
 
         self.anchor = "center"
         self.money = 100
@@ -73,8 +74,9 @@ class Pet(spyral.Sprite):
         self.minigames = []
         for i in range(30):
             self.minigames.append(games[random.randint(0,2)])
-            # @TODO: Change this to (0,2)
 
+        #REMOVE AUTO HAT
+        self.hat = "rice_white"
 
         self.destination = "Touheyville"
 
@@ -85,7 +87,8 @@ class Pet(spyral.Sprite):
         if len(self.previous_posns) == 0:
             return
 
-        self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
+        
+        self.set_pet_image("big")
         self.pos = self.previous_posns.pop()
         
 
@@ -110,13 +113,17 @@ class Pet(spyral.Sprite):
 
 
     def set_pet(self):
-        self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
+        self.set_pet_image("big")
         self.x = self.selection_x
         self.y = self.selection_y
 
     def set_pet_image(self,name):
         string = ("images/pets/%s_"+name+"_%s.png") % (PET_TYPES[self.pet_type], PET_COLORS[self.color])
         self.image = spyral.Image(filename = string)
+        if self.hat:
+            string = ("images/pets/hats/%s_%s_"+name+".png") % (self.hat,PET_TYPES[self.pet_type])
+            hat_image = spyral.Image(filename = string)
+            self.image._surf.blit(hat_image._surf,[0,0])
 
 
 class TextSprite(Sprite):
