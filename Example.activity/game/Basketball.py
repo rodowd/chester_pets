@@ -458,7 +458,9 @@ class Basketball(spyral.Scene):
 
 
     def reset(self):
-        if self.num_shots == NUM_SHOTS:
+        if self.num_shots == NUM_SHOTS:      
+            if self.score >= 4:
+                self.pet.current_clue += 1
             BasketballVictory(self.group, self.score, self.num_shots)
             self.finished = True
             return
@@ -593,8 +595,6 @@ class BasketballVictory(spyral.Sprite):
         self.num_shots = num_shots
 
         self.earnings = int((self.score / float(self.num_shots)) * 100)
-        if self.score >= 4:
-            self.pet.current_clue += 1
         self.render()
 
 
