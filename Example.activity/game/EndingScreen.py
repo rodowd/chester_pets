@@ -20,7 +20,10 @@ class EndingScreen(spyral.Scene):
         self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT))
         # We have to give our camera to the group so it knows where to draw
         self.group = spyral.Group(self.camera)
-
+        passed_in_pet.x = WIDTH/2-25
+        passed_in_pet.y = HEIGHT/2+25
+        passed_in_pet.facing = "up"
+        passed_in_pet.render()
         self.group.add(passed_in_pet)
 
         self.credits_have_been_shown = False;
