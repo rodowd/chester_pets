@@ -58,7 +58,7 @@ class Pet(spyral.Sprite):
         self.hat = False
 
         self.anchor = "center"
-        self.money = 100
+        self.money = 1000
 
         self.previous_posns = []
 
@@ -79,6 +79,8 @@ class Pet(spyral.Sprite):
         #self.hat = "rice_white"
 
         self.destination = "Touheyville"
+
+        self.vehicle = Vehicle("car",[200,50,300,300])
 
         self.set_pet()
 
@@ -128,16 +130,25 @@ class Pet(spyral.Sprite):
             self.image._surf.blit(hat_image._surf,[0,0])
 
 class Vehicle(spyral.Sprite):
-    def __init__(self,group,name,stats):
-        spyral.Sprite.__init__(self,group)
+    def __init__(self,name,stats):
+        spyral.Sprite.__init__(self)
         self.name = name
-        self.speed = stats[0]
-        self.accel = stats[1]
-        self.handle = stats[2]
-        self.turn = stats[3]
-        self.pos = [0,0]
+        self.stats = stats
+        self.pos = [WIDTH/2,HEIGHT-350]
         self.anchor = 'center'
         self.render()
+    def render(self):
+        self.image = spyral.Image(size = [500,500])
+        image = spyral.Image(filename = "images/racing/automobiles/"+self.name+".png")
+        self.image._surf.blit(image._surf,[250-image._surf.get_width()/2,100-image._surf.get_height()/2])
+        stat_names = ["Speed","Accel.","Handle","Turning"]
+        maxes = [400,100,600,600]
+        colors = [[255,0,0,255],[0,0,255,255],[255,255,0,255],[0,255,0,255]]
+        font = pygame.font.SysFont(None,40)
+        for i in range(4):
+            surf = font.render(stat_names[i],True,[0,0,0,255])
+            self.image._surf.blit(surf,[20,200+50*i])
+            self.image.draw_rect(colors[i],[150,195+50*i],[(300.0*self.stats[i])/maxes[i],35])
 
 class TextSprite(Sprite):
     def __init__(self, group, font):
