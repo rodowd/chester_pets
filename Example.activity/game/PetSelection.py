@@ -76,7 +76,7 @@ class Pet(spyral.Sprite):
             self.minigames.append(games[random.randint(0,2)])
 
         #REMOVE AUTO HAT
-        self.hat = "rice_white"
+        #self.hat = "rice_white"
 
         self.destination = "Touheyville"
 
@@ -121,10 +121,23 @@ class Pet(spyral.Sprite):
         string = ("images/pets/%s_"+name+"_%s.png") % (PET_TYPES[self.pet_type], PET_COLORS[self.color])
         self.image = spyral.Image(filename = string)
         if self.hat:
+            if name=="nom1" or name=="nom2":
+                name = "big"
             string = ("images/pets/hats/%s_%s_"+name+".png") % (self.hat,PET_TYPES[self.pet_type])
             hat_image = spyral.Image(filename = string)
             self.image._surf.blit(hat_image._surf,[0,0])
 
+class Vehicle(spyral.Sprite):
+    def __init__(self,group,name,stats):
+        spyral.Sprite.__init__(self,group)
+        self.name = name
+        self.speed = stats[0]
+        self.accel = stats[1]
+        self.handle = stats[2]
+        self.turn = stats[3]
+        self.pos = [0,0]
+        self.anchor = 'center'
+        self.render()
 
 class TextSprite(Sprite):
     def __init__(self, group, font):
