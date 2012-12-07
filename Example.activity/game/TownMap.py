@@ -3,6 +3,7 @@ import pygame
 import Basketball
 import CrosswordPuzzle
 import Cooking
+import random
 
 TM_WIDTH = 1200
 TM_HEIGHT = 900
@@ -14,6 +15,7 @@ class WalkingPet(spyral.Sprite):
     def __init__(self,mapgrid,x,y,pivot_x,pivot_y):
         spyral.Sprite.__init__(self,mapgrid.group)
         self.group.add(self)
+        self.hat = mapgrid.pet.hat
         self.mapgrid = mapgrid
         self.anchor = 'topleft'
         self.grid_x = x
@@ -134,6 +136,10 @@ class WalkingPet(spyral.Sprite):
             return False
         return True
     def update(self,dt):
+        if not(self.hat == self.mapgrid.pet.hat):
+            self.hat = self.mapgrid.pet.hat
+            self.set_moving_images()
+            self.render()
         if self.moving:
             self.moved+=dt
             if self.moved>=MOVE_DELAY:
@@ -349,7 +355,157 @@ class Lobby(MapGrid):
                 self.left = False
                 self.walking_pet.render()
                 return
+
+
+class Store(MapGrid):
+    def __init__(self,passed_in_pet):
+        MapGrid.__init__(self,passed_in_pet)
+        for x in range(7):
+            for y in range(17):
+                self.grid[x][y] = False
+                self.grid[23-x][y] = False
+        for y in range(9):
+            for x in range(10):
+                self.grid[x+7][y] = False
+        for x in range(3):
+            for y in range(3):
+                self.grid[x+7][17-y] = False
+                self.grid[16-x][17-y] = False
+        self.grid[9][8] = "Hat"
+        self.grid[10][8] = "Hat"
+    def update(self,dt):
+        MapGrid.update(self,dt)
+        x = self.walking_pet.grid_x
+        y = self.walking_pet.grid_y
+        if self.out_of_bounds(x,y):
+            return
+        if not(self.walking_pet.changed_room):
+            if not(isinstance(self.grid[x][y],bool)):
+                if self.grid[x][y]=="Hat":
+                    spyral.director.push(HatShop(self.pet))
+                self.walking_pet.changed_room = True
+                self.walking_pet.facing = "down"
+                self.up = False
+                self.down = False
+                self.right = False
+                self.left = False
+                self.walking_pet.render()
+                return
+    def on_enter(self):
+        bg = spyral.Image(filename="images/town/store.png")
+        self.camera.set_background(bg)    
+
+class MoneySprite(spyral.Sprite):
+    def __init__(self,group,pet):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self.pet = pet
+        self.money = pet.money
+        self.pos = [0,0]
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size = [600,100])
+        string = "Chester Points: "+self.money.__str__()
+        font = pygame.font.SysFont(None,60)
+        surf = font.render(string,True,[0,0,0,255])
+        self.image._surf.blit(surf,[25,50-surf.get_height()/2])
+    def update(self,dt):
+        if not(self.money == self.pet.money):
+            self.money = self.pet.money
+            self.render()
+
+class Shop(spyral.Scene):
+    def __init__(self,passed_in_pet):
+        spyral.Scene.__init__(self)
+        self.pet = passed_in_pet
+        self.camera = self.parent_camera.make_child(virtual_size = (TM_WIDTH,TM_HEIGHT))
+        self.group = spyral.Group(self.camera)
+        MoneySprite(self.group,self.pet)
+    def render(self):
+        self.group.draw()
+    def on_enter(self):
+        bg = spyral.Image(size = [TM_WIDTH,TM_HEIGHT])
+        bg.fill([192,192,0,255])
+        self.camera.set_background(bg)
+    def cycleLeft(self):
+        pass
+    def cycleRight(self):
+        pass
+    def pressEnter(self):
+        pass
+    def leaveShop(self):
+        pass
+    def update(self,dt):
+        self.group.update(dt)
+        for event in self.event_handler.get():
+            if event['type'] == 'KEYDOWN':
+                if event['key'] == 275:
+                    self.cycleRight()
+                if event['key'] == 276:
+                    self.cycleLeft()
+                if event['key'] == 13:
+                    self.pressEnter()
+                if event['key'] == 27:
+                    self.leaveShop()
                 
+
+class PriceSprite(spyral.Sprite):
+    def __init__(self,group,cost):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self.pos = [TM_WIDTH/2,TM_HEIGHT-100]
+        self.anchor = 'center'
+        self.cost = cost
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size=[500,100])
+        string = "Cost: "+self.cost.__str__()
+        font = pygame.font.SysFont(None,50)
+        surf = font.render(string,True,[0,0,0,255])
+        self.image._surf.blit(surf,[250-surf.get_width()/2,50-surf.get_height()/2])
+    def change_cost(self,cost):
+        self.cost = cost
+        self.render()
+
+class HatShop(Shop):
+    def __init__(self,passed_in_pet):
+        Shop.__init__(self,passed_in_pet)
+        self.group.add(self.pet)
+        self.pet.pos = [TM_WIDTH/2,TM_HEIGHT/2]
+        self.oldHat = self.pet.hat
+        self.hats = [False,"rice_white","rice_black"]
+        self.cost = [random.randint(50,150) for x in self.hats]
+        self.cost[0] = 0
+        self.hat_index = 1
+        self.costsprite = PriceSprite(self.group,self.cost[1])
+        self.update_hat()
+    def update_hat(self):
+        self.pet.hat = self.hats[self.hat_index]
+        self.pet.set_pet_image("big")
+        if self.pet.hat == self.oldHat:
+            self.costsprite.change_cost("Already Have")
+        else:
+            self.costsprite.change_cost(self.cost[self.hat_index])
+    def cycleLeft(self):
+        self.hat_index = (self.hat_index-1)%len(self.hats)
+        self.update_hat()
+    def cycleRight(self):
+        self.hat_index = (self.hat_index+1)%len(self.hats)
+        self.update_hat()
+    def pressEnter(self):
+        if self.oldHat == self.pet.hat:
+            return
+        if self.pet.money >= self.cost[self.hat_index]:
+            self.pet.money -= self.cost[self.hat_index]
+            self.oldHat = self.pet.hat
+            self.update_hat()
+    def leaveShop(self):
+        self.pet.hat = self.oldHat
+        self.pet.set_pet_image("big")
+        spyral.director.pop()
+        
+    
+        
 
 class Town(MapGrid):
     def __init__(self, passed_in_pet):
@@ -372,7 +528,11 @@ class Town(MapGrid):
             return
         if not(self.walking_pet.changed_room):
             if not(isinstance(self.grid[x][y],bool)):
-                spyral.director.push(Lobby(self.pet,self.grid[x][y][0],self.grid[x][y][1]))
+                next_room = self.grid[x][y]
+                if next_room == "$":
+                    spyral.director.push(Store(self.pet))
+                else:
+                    spyral.director.push(Lobby(self.pet,next_room[0],next_room[1]))
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
@@ -385,7 +545,12 @@ class Town(MapGrid):
         for y in range(18):
             for x in range(24):
                 if not(isinstance(self.grid[x][y],bool)):
-                    surf = NUMBER_FONT.render(self.grid[x][y][0].__str__(),True,[255,255,0,255])
+                    string = ""
+                    if self.grid[x][y]=="$":
+                        string = "$"
+                    else:
+                        string = self.grid[x][y][0].__str__()
+                    surf = NUMBER_FONT.render(string,True,[255,255,0,255])
                     bg._surf.blit(surf,[x*50+25-surf.get_width()/2,y*50+25-surf.get_height()/2])
 
 class HongKong(Town):
@@ -422,7 +587,7 @@ class HongKong(Town):
         self.add_building([69,standard_shapes],9,13)
         self.add_building([74,standard_shapes],13,13)
         self.add_building([77,standard_shapes],18,12)
-        self.add_building([78,standard_shapes],17,15)
+        self.add_building("$",17,15)
         self.add_building([70,standard_shapes],8,16)
         for i in range(5):
             for i2 in range(i+1):
@@ -458,7 +623,7 @@ class Touheyville(Town):
         self.add_building([35,standard_shapes],16,16)
         self.add_building([36,standard_shapes],20,7)
         self.add_building([37,standard_shapes],20,11)
-        self.add_building([38,standard_shapes],20,14)
+        self.add_building("$",20,14)
         for y in range(6):
             self.grid[0][17-y] = False
         self.grid[1][15] = False
@@ -512,7 +677,7 @@ class ODowdShire(Town):
         self.add_tower([54,standard_shapes],14,12)
         self.add_tower([55,standard_shapes],10,16)
         self.add_tower([56,standard_shapes],15,16)
-        self.add_building([57,standard_shapes],19,16)
+        self.add_building("$",19,16)
         for y in range(11):
             self.grid[0][17-y] = False
         for y in range(3):

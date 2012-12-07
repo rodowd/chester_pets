@@ -47,12 +47,13 @@ class Line(spyral.Sprite):
         
 
 class Car(spyral.Sprite):
-    def __init__(self,group,speed,handle,turn):
+    def __init__(self,group,speed,handle,turn,name):
         spyral.Sprite.__init__(self,group)
         self.handle = handle
         self._set_layer("over_road")
         self.speed = speed
         self.turn = turn
+        self.name = name
         self.vx = 0
         self.vy = 0
         self.left = False
@@ -62,10 +63,10 @@ class Car(spyral.Sprite):
         self.render()
         self.pos = (400,300)
     def render(self):
-        self.image = spyral.Image(filename="images/racing/car.png")
+        self.image = spyral.Image(filename="images/racing/"+self.name+".png")
     def render2(self,active):
         if active:
-            self.image = spyral.Image(filename="images/racing/car_turbo.png")
+            self.image = spyral.Image(filename="images/racing/"+self.name+"_turbo.png")
         else:
             self.render()
     def update(self,dt):
@@ -399,7 +400,7 @@ class RacingMain(spyral.Scene):
         self.questionNum = 1
         self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,200,6)
         self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,200,6.9)
-        self.car = Car(self.group,self.normalspeed,300,300)
+        self.car = Car(self.group,self.normalspeed,300,300,"car")
         self.turbometer = TurboMeter(self.group,10)
         self.question = Question(self,self.distance)
         self.timerSprite = TimerSprite(self)

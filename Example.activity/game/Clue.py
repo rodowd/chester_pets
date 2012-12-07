@@ -9,9 +9,9 @@ class Clue:
         self.town = towns[random.randint(0,1)]
         if last_town=="Start":
             self.town = "Touheyville"
-        self.number = random.randint(21,38)
+        self.number = random.randint(21,37)
         if self.town=="O'Dowd Shire":
-            self.number = random.randint(41,57)
+            self.number = random.randint(41,56)
         if self.town=="Hong Kong":
             self.number+=40
         self.set_number_clue()
@@ -61,5 +61,3 @@ class Clue:
         for shape in self.shape_clue:
             z+=shape+","
         return z
-
-print Clue("Hong Kong")
