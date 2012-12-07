@@ -301,8 +301,13 @@ class Room(MapGrid):
                     spyral.director.push(Basketball.Basketball(self.pet))
                 elif self.pet.get_game()=="Crossword":
                     spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
-                else:
+                elif self.pet.get_game()=="Cooking":
                     spyral.director.push(Cooking.Cooking(self.pet))
+                else:
+                    pass
+                #TODO
+                #TODO    PUSH THE ENDING SCREEN HERE
+                #TODO
                 self.walking_pet.changed_room = True
                 self.walking_pet.facing = "down"
                 self.up = False
