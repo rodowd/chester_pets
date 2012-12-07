@@ -11,6 +11,7 @@ LINE_SIZE = [25,5]
 LINE_COLOR = [255,255,0,255]
 FONT1 = pygame.font.SysFont(None,60)
 FONT2 = pygame.font.SysFont(None,36)
+FINISHLINE = 16000
 
 class LineList:
     def __init__(self,racingmain,y,between,counterFrac):
@@ -49,6 +50,7 @@ class Car(spyral.Sprite):
     def __init__(self,group,speed,handle,turn):
         spyral.Sprite.__init__(self,group)
         self.handle = handle
+        self._set_layer("over_road")
         self.speed = speed
         self.turn = turn
         self.vx = 0
@@ -328,12 +330,65 @@ class TimerSprite(spyral.Sprite):
         if not(time2==self.time):
             self.time = time2
             self.render()
-    
+
+class FinishLine(spyral.Sprite):
+    def __init__(self,main):
+        spyral.Sprite.__init__(self,main.group)
+        self.group.add(self)
+        self.main = main
+        self._set_layer("on_road")
+        self.pos = [0,0]
+        self.anchor = 'bottomright'
+        self.added = False
+        self.done = False
+        self.render()
+    def render(self):
+        self.image = spyral.Image(filename="images/racing/finish_line.png")
+    def update(self,dt):
+        if self.done:
+            return
+        if self.added:
+            if self.main.distance-FINISHLINE>WIDTH+100:
+                self.done = True
+                self.group.remove(self)
+                return
+            self.pos = [self.main.distance-FINISHLINE,HEIGHT]
+            return
+        if self.main.distance>FINISHLINE:
+            self.pos = [self.main.distance-FINISHLINE,HEIGHT]
+            self.added = True
+            
+            
+class RacingVictory(spyral.Sprite):
+    def __init__(self,group,time,points):
+        spyral.Sprite.__init__(self,group)
+        self.group.add(self)
+        self._set_layer('victory')
+        self.pos = [WIDTH/2, HEIGHT/2]
+        self.anchor = 'center'
+        self.time = time
+        self.points = points
+        self.render()
+    def render(self):
+        self.image = spyral.Image(size = [500,300])
+        self.image.fill([128,128,128,255])
+        self.image.draw_rect([255,255,0,255],[0,0],[499,299],5)
+        seconds = int(self.time%60)
+        minutes = int(self.time/60)
+        z = seconds.__str__()
+        if seconds<10:
+            z = "0"+z
+        z = minutes.__str__()+":"+z
+        surf = FONT1.render("Time: "+z,True,[0,255,0,255])
+        self.image._surf.blit(surf,[250-surf.get_width()/2,100-surf.get_height()/2])
+        surf = FONT1.render("Points awarded: "+self.points.__str__(),True,[0,255,0,255])
+        self.image._surf.blit(surf,[250-surf.get_width()/2,200-surf.get_height()/2])
 
 class RacingMain(spyral.Scene):
     def __init__(self, passed_in_pet):
         spyral.Scene.__init__(self)
-        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),layers = ['__default__','on_road','over_road','hud','hud2'])
+        self.camera = self.parent_camera.make_child(virtual_size = (WIDTH, HEIGHT),
+                                                    layers = ['__default__','on_road','over_road','hud','hud2','victory'])
         self.group = spyral.Group(self.camera)
         self.normalspeed = 200
         self.accel = 50
@@ -342,12 +397,14 @@ class RacingMain(spyral.Scene):
         self.distance = WIDTH
         self.timer = 0
         self.questionNum = 1
-        self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,100,6)
-        self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,100,6.9)
+        self.linelist1 = LineList(self,UPPER_BOUND+LANE_WIDTH,200,6)
+        self.linelist2 = LineList(self,UPPER_BOUND+LANE_WIDTH*2,200,6.9)
         self.car = Car(self.group,self.normalspeed,300,300)
         self.turbometer = TurboMeter(self.group,10)
         self.question = Question(self,self.distance)
         self.timerSprite = TimerSprite(self)
+        self.finished = False
+        self.finishline = False
 
         self.pet = passed_in_pet
 
@@ -366,12 +423,14 @@ class RacingMain(spyral.Scene):
 
 
     def update(self,dt):
-        if self.distance >= 16000: # @TODO: magic
-            # game over
-            # @TODO: wait
-            # @TODO: show end screen
-            self.pet.money += (100 - int(self.timer)) # @TODO: 100 is magic
+        if self.distance>=FINISHLINE and not(self.finishline):
+            self.finishline = FinishLine(self)
+        if not(self.finished) and self.distance-self.car.x >= FINISHLINE:
+            self.finished = True
+            self.pet.money += (100 - int(self.timer))
+            RacingVictory(self.group,int(self.timer),(100 - int(self.timer)))
             print self.pet.money
+        if self.distance-self.car.x >= FINISHLINE+1500:
             spyral.director.pop()
             if self.pet.destination == "Touheyville":
                 spyral.director.push(TownMap.Touheyville(self.pet))

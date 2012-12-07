@@ -12,7 +12,7 @@ from spyral.scene import Scene
 
 WIDTH = 1200
 HEIGHT = 900
-FONT_SIZE = 42
+FONT_SIZE = 60
 BG_COLOR = (100, 100, 100)
 FG_COLOR = (255, 255, 255)
 
@@ -39,28 +39,31 @@ class TextSprite(Sprite):
         Sprite.__del__(self)
         
 class Bake(Scene):
-    def __init__(self):
+    def __init__(self,passed_in_pet):
         Scene.__init__(self)
+        self.pet = passed_in_pet
         self.camera = self.parent_camera.make_child((WIDTH, HEIGHT))
         self.group = spyral.Group(self.camera)
 
         self.font = pygame.font.SysFont(None, FONT_SIZE)
 
-        self.oven_image = spyral.Image(filename="images/cooking/oven.png")
-        self.oven_image.x = 200
-        self.oven_image.y = 100
-        # @TODO: make sure oven gets drawn
+        self.oven = spyral.Sprite(self.group)
+        self.group.add(self.oven)
+        self.oven.image = spyral.Image(filename="images/cooking/oven.png")
+        self.oven.x = WIDTH/2
+        self.oven.y = HEIGHT/2
+        self.oven.anchor = 'center'
 
         instructions = TextSprite(self.group, self.font)
         instructions.anchor = 'midbottom'
-        instructions.x = 320
-        instructions.y = 470
-        instructions.render("s: taste")
+        instructions.x = WIDTH/2
+        instructions.y = HEIGHT-100
+        instructions.render("Press enter.")
 
         self.heading = TextSprite(self.group, self.font)
         self.heading.anchor = 'midbottom'
-        self.heading.x = 330
-        self.heading.y = 50
+        self.heading.x = WIDTH/2
+        self.heading.y = 100
         self.heading.render("BAKING")
 
 
@@ -78,14 +81,15 @@ class Bake(Scene):
         self.group.update(dt)
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':
-                if event['ascii'] == 's':
+                if event['key'] == 13:
                     spyral.director.pop()
-                    spyral.director.push(Nom())
+                    spyral.director.push(Nom(self.pet))
 
 
 class Nom(Scene):
     def __init__(self, passed_in_pet):
         Scene.__init__(self)
+        
         self.camera = self.parent_camera.make_child((WIDTH, HEIGHT))
         self.group = spyral.Group(self.camera)
 
@@ -98,7 +102,12 @@ class Nom(Scene):
         self.eatIndex = 0
 
         self.pet = passed_in_pet
-        # @TODO: eat cookie here; make sure passed_in_pet eats it
+        self.pet.pos = [WIDTH/2,HEIGHT/2]
+        self.pet.set_pet_image("nom1")
+        self.group.add(self.pet)
+        self.timer = 0
+        self.done = False
+        self.pet.current_clue+=1
 
 
     def on_enter(self):
@@ -112,6 +121,10 @@ class Nom(Scene):
 
 
     def update(self,dt):
+        self.timer+=dt
+        if self.timer>1 and not(self.done):
+            self.pet.set_pet_image("nom2")
+            self.done = True
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 27 or event['key'] == 13:
