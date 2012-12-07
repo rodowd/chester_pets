@@ -406,14 +406,21 @@ class MoneySprite(spyral.Sprite):
         self.group.add(self)
         self.pet = pet
         self.money = pet.money
-        self.pos = [0,0]
+        self.pos = [10,10]
         self.render()
     def render(self):
-        self.image = spyral.Image(size = [600,100])
+        self.image = spyral.Image(size = [600,300])
         string = "Chester Points: "+self.money.__str__()
         font = pygame.font.SysFont(None,60)
         surf = font.render(string,True,[0,0,0,255])
+        font = pygame.font.SysFont(None,30)
         self.image._surf.blit(surf,[25,50-surf.get_height()/2])
+        surf = font.render("Arrow Keys: Cycle through items.",True,[0,0,0,255])
+        self.image._surf.blit(surf,[25,100-surf.get_height()/2])
+        surf = font.render("Enter Key: Purchase item.",True,[0,0,0,255])
+        self.image._surf.blit(surf,[25,150-surf.get_height()/2])
+        surf = font.render("Escape Key: Leave shop.",True,[0,0,0,255])
+        self.image._surf.blit(surf,[25,200-surf.get_height()/2])
     def update(self,dt):
         if not(self.money == self.pet.money):
             self.money = self.pet.money
