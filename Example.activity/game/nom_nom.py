@@ -107,6 +107,7 @@ class Nom(Scene):
         self.group.add(self.pet)
         self.timer = 0
         self.done = False
+        self.pet.current_clue+=1
 
 
     def on_enter(self):
