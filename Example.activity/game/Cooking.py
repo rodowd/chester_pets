@@ -5,11 +5,14 @@ CISC 374
 Fall 2012
 '''
 
+#TODO SWITCH DRAGON_NOM1 WITH DRAGON_NOM2
+
 __doc__ = ''' # @TODO: '''
 
 import pygame
 import random
 import spyral
+import nom_nom
 
 UNIT_CONV = [3, 16, 2]
 UNIT_CONV_2 = [1, 3, 48, 96]
@@ -63,7 +66,6 @@ class Recipe:
     def sameRecipe(self,other):
         for i in range(len(self.measures)):
             if not(other.get_frac_tsp(other.measures[i]).sameFrac(self.get_frac_tsp(self.measures[i]))):
-                #print self.ingredients[i],": ",self.measures[i]," vs. ",other.ingredients[i],": ",other.measures[i]
                 return False
         return True
     def __str__(self):
@@ -301,10 +303,8 @@ class Cooking(spyral.Scene):
             self.group.remove(self.pointer3)
     def update(self,dt):
         if self.bowl.sameRecipe(self.recipe):
-            print "YOU GOT THE CORRECT RECIPE!!!"
             spyral.director.pop()
-            spyral.director.push(CookingVictory(self.pet))
-            #spyral.director.push(nom_nom.Bake())
+            spyral.director.push(nom_nom.Bake(self.pet))
             return
         for event in self.event_handler.get():
             if event['type'] == 'KEYDOWN':
@@ -330,7 +330,8 @@ class Cooking(spyral.Scene):
         surf = font.render("Escape: Remove unfinished ingredients from the bowl.",True,[0,0,0,255])
         bg._surf.blit(surf,[10,750])
         self.camera.set_background(bg)
-    
+
+"""
 class CookingVictory(spyral.Scene):
     def __init__(self,passed_in_pet):
         spyral.Scene.__init__(self)
@@ -359,3 +360,4 @@ class CookingVictory(spyral.Scene):
                     spyral.director.pop()
                     self.pet.get_last_posn()
                     return
+"""
