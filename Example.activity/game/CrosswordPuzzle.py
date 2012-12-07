@@ -515,6 +515,7 @@ class CrosswordVictory(spyral.Scene):
 
         self.pet = passed_in_pet
         self.pet.current_clue += 1
+        self.pet.money += 100
 
 
     def on_enter(self):
@@ -522,7 +523,9 @@ class CrosswordVictory(spyral.Scene):
         bg.fill(BG_COLOR)
         font = pygame.font.SysFont(None,80)
         surf = font.render("YOU DID IT!!!",True,[255,255,0,255])
-        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5])
+        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5-40])
+        surf = font.render("You Earned 100 Chester Points!!!",True,[255,255,0,255])
+        bg._surf.blit(surf,[(WIDTH-surg.get_width())*.5,(HEIGHT-surf.get_height())*.5+40])
         self.camera.set_background(bg)
 
 
