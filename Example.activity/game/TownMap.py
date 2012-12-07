@@ -473,7 +473,7 @@ class HatShop(Shop):
         self.group.add(self.pet)
         self.pet.pos = [TM_WIDTH/2,TM_HEIGHT/2]
         self.oldHat = self.pet.hat
-        self.hats = [False,"rice_white","rice_black"]
+        self.hats = [False,"top","rice_white","rice_black"]
         self.cost = [random.randint(50,150) for x in self.hats]
         self.cost[0] = 0
         self.hat_index = 1
