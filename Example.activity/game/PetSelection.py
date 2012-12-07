@@ -21,7 +21,6 @@ __doc__ = '''
               -Main Menu scene
           '''
 
-#import MainMenu # @TODO: delete
 import pygame
 import spyral
 from spyral.sprite import Sprite
@@ -114,6 +113,10 @@ class Pet(spyral.Sprite):
         self.image = spyral.Image(filename="images/pets/%s_big_%s.png" % (PET_TYPES[self.pet_type], PET_COLORS[self.color]))
         self.x = self.selection_x
         self.y = self.selection_y
+
+    def set_pet_image(self,name):
+        string = ("images/pets/%s_"+name+"_%s.png") % (PET_TYPES[self.pet_type], PET_COLORS[self.color])
+        self.image = spyral.Image(filename = string)
 
 
 class TextSprite(Sprite):
