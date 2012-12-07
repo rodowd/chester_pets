@@ -525,7 +525,7 @@ class CrosswordVictory(spyral.Scene):
         surf = font.render("YOU DID IT!!!",True,[255,255,0,255])
         bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5-40])
         surf = font.render("You Earned 100 Chester Points!!!",True,[255,255,0,255])
-        bg._surf.blit(surf,[(WIDTH-surg.get_width())*.5,(HEIGHT-surf.get_height())*.5+40])
+        bg._surf.blit(surf,[(WIDTH-surf.get_width())*.5,(HEIGHT-surf.get_height())*.5+40])
         self.camera.set_background(bg)
 
 
