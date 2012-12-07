@@ -36,7 +36,7 @@ SHOT_TIME = 3.0
 BALL_X1 = 1040.0
 BALL_Y1 = 700.0
 POINTS_PER_BASKET = 20
-NUM_SHOTS = 5
+NUM_SHOTS = 1
 
 COLORS = {"point": (40, 200, 100),#(55, 55, 255),
           "green": (40, 200, 100),
@@ -454,11 +454,13 @@ class Basketball(spyral.Scene):
         self.pet.x = 1100
         self.pet.y = 700
         self.group.add(self.pet)
+        self.finished = False
 
 
     def reset(self):
         if self.num_shots == NUM_SHOTS:
             BasketballVictory(self.group, self.score, self.num_shots)
+            self.finished = True
             return
 
         for hoop in self.hoops:
@@ -520,6 +522,9 @@ class Basketball(spyral.Scene):
                 self.pet.get_last_posn()
                 return
             elif event['type'] == 'KEYDOWN':
+                if self.finished:
+                    spyral.director.pop()
+                    return
                 self.scoreboard.type_key(event['unicode'])
                 if event['ascii'] == 'x':
                     self.scoreboard.highlighted_coord = 'x'
@@ -536,7 +541,9 @@ class Basketball(spyral.Scene):
                         return
                     self.waiting_for_input = False
                     return
-                
+        
+        if self.finished:
+            return
 
         if self.waiting_for_input:
             # don't shoot basketball
@@ -585,7 +592,10 @@ class BasketballVictory(spyral.Sprite):
         self.score = score
         self.num_shots = num_shots
 
-        self.earnings = (self.score / float(self.num_shots)) * 100
+        self.earnings = int((self.score / float(self.num_shots)) * 100)
+        if self.score >= 4:
+            self.pet.current_clue += 1
+        self.render()
 
 
     def render(self):
@@ -593,21 +603,9 @@ class BasketballVictory(spyral.Sprite):
         self.image.fill([128,128,128,255])
         self.image.draw_rect([255,255,0,255],[0,0],[499,299],5)
 
-        font = pygame.font.SysFont(None, 80)
-        surf = font.render("You made %d out of %d shots!" % (self.score, self.num_shots), True, [255,255,0,255])
-        self.image._surf.blit(surf,[(WIDTH-surf.get_width())*.5, (HEIGHT-surf.get_height())*.5])
-        surf = font.render("Points awarded: " + self.points.__str__(),True,[0,255,0,255])
+        font = pygame.font.SysFont(None, 50)
+        surf = font.render("Scored %d out of %d shots!" % (self.score, self.num_shots), True, [255,255,0,255])
+        self.image._surf.blit(surf,[(500-surf.get_width())*.5, (200-surf.get_height())*.5])
+        surf = font.render("Points awarded: " + self.earnings.__str__(),True,[255,255,0,255])
         self.image._surf.blit(surf,[250-surf.get_width()/2,200-surf.get_height()/2])
 
-        if self.score >= 4:
-            self.pet.current_clue += 1
-
-
-    def update(self,dt):
-        for event in self.event_handler.get():
-            if event['type'] == 'KEYDOWN':
-                if event['key'] == 27 or event['key'] == 13:
-                    # esc or enter
-                    spyral.director.pop()
-                    self.pet.get_last_posn()
-                    return
