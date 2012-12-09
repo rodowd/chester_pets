@@ -30,6 +30,7 @@ class WalkingPet(spyral.Sprite):
         self.facing = "up"
         self.set_moving_images()
         self.changed_room = False
+        self.active = True
         self.render()
     def set_moving_images(self):
         move1 = self.get_move1()
@@ -142,6 +143,8 @@ class WalkingPet(spyral.Sprite):
             self.hat = self.mapgrid.pet.hat
             self.set_moving_images()
             self.render()
+        if not(self.active):
+            return
         if self.moving:
             self.moved+=dt
             if self.moved>=MOVE_DELAY:
@@ -285,7 +288,11 @@ class Room(MapGrid):
         self.grid[12][6] = "Chest"
         self.grid[12][7] = "Chest"
     def on_enter(self):
-        bg = spyral.Image(filename = "images/town/the_room.png")
+        bg = 0
+        if self.number==self.pet.get_clue().number and self.shape==self.pet.get_clue().shape:
+            bg = spyral.Image(filename = "images/town/the_room.png")
+        else:
+            bg = spyral.Image(filename = "images/town/empty_room.png")
         self.camera.set_background(bg)
     def update(self,dt):
         MapGrid.update(self,dt)
@@ -305,7 +312,7 @@ class Room(MapGrid):
                 elif self.pet.get_game()=="Cooking":
                     spyral.director.push(Cooking.Cooking(self.pet))
                 else:
-                    # next "game" is ending screen
+                    self.walking_pet.active = False
                     spyral.director.replace(EndingScreen.EndingScreen(self.walking_pet))
                     return
 
@@ -553,7 +560,7 @@ class HatShop(Shop):
         self.group.add(self.pet)
         self.pet.pos = [TM_WIDTH/2,TM_HEIGHT/2]
         self.oldHat = self.pet.hat
-        self.hats = [False,"cap_red","top","rice_white","rice_black"]
+        self.hats = [False,"cap_red","cap_green","cap_magenta","cap_tan","cap_cyan","cap_yellow","cap_blue","cap_black","cap_white","top","rice_white","rice_black","santa"]
         self.cost = [random.randint(50,150) for x in self.hats]
         self.cost[0] = 0
         self.hat_index = 1
