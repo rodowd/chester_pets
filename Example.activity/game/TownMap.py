@@ -425,7 +425,7 @@ class MoneySprite(spyral.Sprite):
         self.image._surf.blit(surf,[25,50-surf.get_height()/2])
         surf = font.render("Arrow Keys: Cycle through items.",True,[0,0,0,255])
         self.image._surf.blit(surf,[25,100-surf.get_height()/2])
-        surf = font.render("Enter Key: Purchase item.",True,[0,0,0,255])
+        surf = font.render("Enter Key: Purchase/equip item.",True,[0,0,0,255])
         self.image._surf.blit(surf,[25,150-surf.get_height()/2])
         surf = font.render("Escape Key: Leave shop.",True,[0,0,0,255])
         self.image._surf.blit(surf,[25,200-surf.get_height()/2])
@@ -479,6 +479,8 @@ class PriceSprite(spyral.Sprite):
     def render(self):
         self.image = spyral.Image(size=[500,100])
         string = "Cost: "+self.cost.__str__()
+        if self.cost == "Wearing" or self.cost == "Using" or self.cost == "Already Owned":
+            string = self.cost
         font = pygame.font.SysFont(None,50)
         surf = font.render(string,True,[0,0,0,255])
         self.image._surf.blit(surf,[250-surf.get_width()/2,50-surf.get_height()/2])
@@ -509,10 +511,14 @@ class MotorShop(Shop):
         self.group.remove(self.pet.vehicle)
         self.pet.vehicle = self.vehicles[self.car_index]
         self.group.add(self.pet.vehicle)
-        if self.pet.vehicle == self.old_vehicle:
-            self.costsprite.change_cost("Already Have")
-        else:
-            self.costsprite.change_cost(self.cost[self.car_index])
+        if self.pet.vehicle.name == self.old_vehicle.name:
+            self.costsprite.change_cost("Using")
+            return
+        for string in self.pet.vehicles:
+            if string==self.pet.vehicle.name:
+                self.costsprite.change_cost("Already Owned")
+                return
+        self.costsprite.change_cost(self.cost[self.car_index])
     def cycleLeft(self):
         self.car_index = (self.car_index-1)%len(self.vehicles)
         self.update_vehicle()
@@ -522,9 +528,16 @@ class MotorShop(Shop):
     def pressEnter(self):
         if self.old_vehicle == self.pet.vehicle:
             return
+        for string in self.pet.vehicles:
+            if string == self.pet.vehicle.name:
+                print string,"poop"
+                self.old_vehicle = self.pet.vehicle
+                self.update_vehicle()
+                return
         if self.pet.money >= self.cost[self.car_index]:
             self.pet.money -= self.cost[self.car_index]
             self.old_vehicle = self.pet.vehicle
+            self.pet.vehicles.append(self.pet.vehicle.name)
             self.update_vehicle()
     def on_enter(self):
         bg = spyral.Image(filename = "images/town/motorshop.png")
@@ -550,9 +563,13 @@ class HatShop(Shop):
         self.pet.hat = self.hats[self.hat_index]
         self.pet.set_pet_image("big")
         if self.pet.hat == self.oldHat:
-            self.costsprite.change_cost("Already Have")
-        else:
-            self.costsprite.change_cost(self.cost[self.hat_index])
+            self.costsprite.change_cost("Wearing")
+            return
+        for string in self.pet.hats:
+            if string==self.pet.hat:
+                self.costsprite.change_cost("Already Owned")
+                return
+        self.costsprite.change_cost(self.cost[self.hat_index])
     def cycleLeft(self):
         self.hat_index = (self.hat_index-1)%len(self.hats)
         self.update_hat()
@@ -562,9 +579,15 @@ class HatShop(Shop):
     def pressEnter(self):
         if self.oldHat == self.pet.hat:
             return
+        for string in self.pet.hats:
+            if string == self.pet.hat:
+                self.oldHat = self.pet.hat
+                self.update_hat()
+                return
         if self.pet.money >= self.cost[self.hat_index]:
             self.pet.money -= self.cost[self.hat_index]
             self.oldHat = self.pet.hat
+            self.pet.hats.append(self.oldHat)
             self.update_hat()
     def on_enter(self):
         bg = spyral.Image(filename = "images/town/hat_shop.png")
