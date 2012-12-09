@@ -59,7 +59,7 @@ class Pet(spyral.Sprite):
         self.hats = [False]
 
         self.anchor = "center"
-        self.money = 1000
+        self.money = 0
 
         self.previous_posns = []
 
@@ -232,5 +232,4 @@ class PetSelection(Scene):
                 elif event['key'] == 13:
                     # enter
                     spyral.director.replace(WorldMap.WorldMap(self.pet))
-                    spyral.director.push(TownMap.Touheyville(self.pet))
                     spyral.director.push(IntroScreen.IntroScreen())
