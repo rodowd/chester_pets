@@ -1,0 +1,8 @@
+[Activity]
+name = Chester Pets
+activity_version = 1.0
+host_version = 1
+service_name = org.laptop.community.udel.cisc374.chester pets
+bundle_id = org.laptop.community.udel.cisc374.chester pets
+icon = activity
+exec = sugar-activity activity.Activity
