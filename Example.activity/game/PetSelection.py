@@ -56,6 +56,7 @@ class Pet(spyral.Sprite):
         self.color = 0
         self.pet_type = 0
         self.hat = False
+        self.hats = [False]
 
         self.anchor = "center"
         self.money = 1000
@@ -75,6 +76,7 @@ class Pet(spyral.Sprite):
         self.destination = "Touheyville"
 
         self.vehicle = Vehicle("car",[200,50,300,300])
+        self.vehicles = ["car"]
 
         self.set_pet()
 
