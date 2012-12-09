@@ -66,10 +66,13 @@ class Pet(spyral.Sprite):
         self.selection_x = 600
         self.selection_y = 450
 
-        self.minigames = ["Crossword", "Basketball", "Cooking", "Ending"]
+        games = ["Crossword", "Basketball", "Cooking"]
+        self.minigames = [games[i%3] for i in range(10)]
+        self.minigames[9] = "Ending"
+
 
         self.clues = [Clue.Clue("Start")]
-        for i in range(3):
+        for i in range(10):
             self.clues.append(Clue.Clue(self.clues[i].town))
         self.current_clue = 0
         

@@ -33,6 +33,7 @@ SCOREBOARD_HEIGHT = 200
 FONT_SIZE = 37
 GRAVITY = 500.0
 SHOT_TIME = 3.0
+MAX_SHOT_TIME = 4.5
 BALL_X1 = 1040.0
 BALL_Y1 = 700.0
 POINTS_PER_BASKET = 20
@@ -476,6 +477,7 @@ class Basketball(spyral.Scene):
 
         self.up_ball.pos = (BALL_X1, BALL_Y1)
         self.up_ball.vel_y = 0
+        self.up_ball.timer = 0
 
         self.x_input = ""
         self.y_input = ""
@@ -576,7 +578,7 @@ class Basketball(spyral.Scene):
                                dt)
             self.user_has_shot = False
 
-        elif self.up_ball.pos[1] > (HEIGHT + 200):
+        elif self.up_ball.timer > MAX_SHOT_TIME:
             self.reset()
         
 

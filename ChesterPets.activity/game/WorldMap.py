@@ -10,9 +10,6 @@ __doc__ = ''' The central hub for getting to all of the towns '''
 import spyral
 import pygame
 import Racing
-import Basketball # @TODO: for debug; delete
-import CrosswordPuzzle # @TODO: for debug; delete
-import Cooking # @TODO: for debug; delete
 import TownMap
 
 WIDTH = 1200
@@ -137,13 +134,3 @@ class WorldMap(spyral.Scene):
                     self.pet.destination = new_dest
                     self.reset_pos = self.pet.pos
                     spyral.director.push(Racing.RacingMain(self.pet))
-                # @TODO: rest is for debug; delete
-                elif event['ascii'] == 'q':
-                    self.pet.previous_posns.append(self.pet.pos)
-                    spyral.director.push(CrosswordPuzzle.CrosswordMain(self.pet))
-                elif event['ascii'] == 'w':
-                    self.pet.previous_posns.append(self.pet.pos)
-                    spyral.director.push(Basketball.Basketball(self.pet))
-                elif event['ascii'] == 'e':
-                    self.pet.previous_posns.append(self.pet.pos)
-                    spyral.director.push(Cooking.Cooking(self.pet))
