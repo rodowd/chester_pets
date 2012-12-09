@@ -72,10 +72,13 @@ class WorldMap(spyral.Scene):
         self.pet.pos = CITY_POSNS[self.curr_city][1]
         self.group.add(self.pet)
         self.reset_pos = False
+        self.clue_sprite = TownMap.ClueSprite(self.group,self.pet)
 
 
     def on_enter(self):
         background = spyral.Image(filename="images/world/world.png")
+        background.draw_rect([128,128,128,255],[0,0],[200,350])
+        background.draw_rect([0,0,0,255],[0,0],[199,349],3)
         self.camera.set_background(background)
 
         
@@ -83,6 +86,11 @@ class WorldMap(spyral.Scene):
         # Simply tell the group to draw
         self.group.draw()
 
+    def reset_pet_pos(self):
+        posn = CITY_POSNS[self.curr_city][1]
+        if not(self.pet.x == posn[0]) or not(self.pet.y == posn[1]):
+            self.pet.pos = [posn[0],posn[1]]
+            self.pet.set_pet_image("big")
 
     def update(self, dt):
         """
@@ -90,6 +98,7 @@ class WorldMap(spyral.Scene):
         of time which has passed since the last time update was called.
         """
         self.group.update(dt)
+        self.reset_pet_pos()
         if self.reset_pos:
             self.pet.pos = self.reset_pos
             self.reset_pos = False
@@ -104,15 +113,15 @@ class WorldMap(spyral.Scene):
             if event['type'] == 'KEYDOWN':
                 if event['key'] == 276 or event['key'] == 274:
                     # left arrow
-                    self.curr_city -= 1
-                    self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
+                    self.curr_city = (self.curr_city-1)%3
+                    self.pet.pos = CITY_POSNS[self.curr_city][1]
                 elif event['key'] == 275 or event['key'] == 273:
                     # right arrow
-                    self.curr_city += 1
-                    self.pet.pos = CITY_POSNS[self.curr_city % 3][1]
+                    self.curr_city = (self.curr_city+1)%3
+                    self.pet.pos = CITY_POSNS[self.curr_city][1]
                 elif event['key'] == 13:
                     # enter key
-                    new_dest = CITY_POSNS[self.curr_city % 3][0]
+                    new_dest = CITY_POSNS[self.curr_city][0]
                     if self.pet.destination == new_dest:
                         self.reset_pos = self.pet.pos
                         if new_dest == "Touheyville":
