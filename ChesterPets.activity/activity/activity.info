@@ -1,8 +1,8 @@
 [Activity]
-name = Chester Pets
+name = ChesterPets
 activity_version = 1.0
 host_version = 1
-service_name = org.laptop.community.udel.cisc374.chester pets
-bundle_id = org.laptop.community.udel.cisc374.chester pets
+service_name = org.laptop.community.udel.cisc374.chesterpets
+bundle_id = org.laptop.community.udel.cisc374.chesterpets
 icon = activity
 exec = sugar-activity activity.Activity
